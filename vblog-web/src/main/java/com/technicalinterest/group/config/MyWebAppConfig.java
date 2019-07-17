@@ -19,10 +19,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 public class MyWebAppConfig extends WebMvcConfigurerAdapter {
 
-//    @Bean
-//    MyInterceptor myInterceptor() {
-//        return new MyInterceptor();
-//    }
+    @Bean
+    MyInterceptor myInterceptor() {
+        return new MyInterceptor();
+    }
 
 //	@Bean
 //	public HandlerInterceptor getRequestLimitInterceptor(){
