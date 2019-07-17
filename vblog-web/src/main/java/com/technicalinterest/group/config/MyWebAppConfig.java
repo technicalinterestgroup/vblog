@@ -51,7 +51,6 @@ public class MyWebAppConfig extends WebMvcConfigurerAdapter {
 
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("docs.html").addResourceLocations("classpath:/META-INF/resources/");
-
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
