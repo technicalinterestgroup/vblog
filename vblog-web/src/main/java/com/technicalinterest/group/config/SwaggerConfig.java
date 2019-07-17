@@ -9,9 +9,12 @@ import org.springframework.web.context.request.async.DeferredResult;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.util.ArrayList;
 
 /**
  * @package:com.ganinfo.common.configuration
@@ -21,6 +24,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @date:2018-11-30 18:13
  * @version:V1.0
  **/
+@EnableSwagger2
 @Configuration
 public class SwaggerConfig {
 
@@ -68,10 +72,22 @@ public class SwaggerConfig {
     }
 
     @SuppressWarnings("deprecation")
+//    private ApiInfo apiInfo() {
+//        return new ApiInfoBuilder().title(SwaggerConstant.TITLE_STRING)//大标题
+//                .description(SwaggerConstant.DESCRIPTION_STRING).termsOfServiceUrl(SwaggerConstant.SERVICE_URL_STRING).contact(SwaggerConstant.CONTACT_STRING).version(SwaggerConstant.VERSION_STRING)//版本
+//                .build();
+//    }
+
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().title(SwaggerConstant.TITLE_STRING)//大标题
-                .description(SwaggerConstant.DESCRIPTION_STRING).termsOfServiceUrl(SwaggerConstant.SERVICE_URL_STRING).contact(SwaggerConstant.CONTACT_STRING).version(SwaggerConstant.VERSION_STRING)//版本
-                .build();
+        ApiInfo apiInfo = new ApiInfo("账务还款服务接口文档",
+                "账务还款服务接口",
+                "",
+                "http://fin-repayment.mljr.com",
+                new Contact("fin-repayment", "", ""),
+                "",
+                "", new ArrayList<>());
+        return apiInfo;
     }
+
 
 }

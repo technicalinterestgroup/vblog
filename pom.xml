@@ -28,7 +28,7 @@
     <properties>
         <vblog.version>0.0.1-SNAPSHOT</vblog.version>
         <java.version>1.8</java.version>
-        <springfox-swagger2.version>2.6.1</springfox-swagger2.version>
+        <springfox-swagger2.version>2.7.0</springfox-swagger2.version>
         <swagger.version>1.5.13</swagger.version>
         <mysql.version>8.0.15</mysql.version>
         <lombok.version>1.18.8</lombok.version>
@@ -98,11 +98,11 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${springfox-swagger2.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>io.swagger</groupId>-->
-<!--                <artifactId>swagger-annotations</artifactId>-->
-<!--                <version>${swagger.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-annotations</artifactId>
+                <version>${swagger.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.github.caspar-chen</groupId>
                 <artifactId>swagger-ui-layer</artifactId>
