@@ -37,28 +37,6 @@
         </dependency>
 
 
-        <!--swagger2 -->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>${springfox-swagger2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>${springfox-swagger2.version}</version>
-        </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.swagger</groupId>-->
-<!--            <artifactId>swagger-annotations</artifactId>-->
-<!--            <version>${swagger.version}</version>-->
-<!--        </dependency>-->
-        <dependency>
-            <groupId>com.github.caspar-chen</groupId>
-            <artifactId>swagger-ui-layer</artifactId>
-            <version>${swagger.ui.version}</version>
-        </dependency>
-
 
     </dependencies>
 

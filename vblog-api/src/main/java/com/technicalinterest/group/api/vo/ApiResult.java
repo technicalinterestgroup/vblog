@@ -16,9 +16,9 @@ import java.io.Serializable;
  * @date:2018-11-30 18:13
  * @version:V1.0
  **/
+@ApiModel(description= "返回响应数据")
 @Data
-@ApiModel(description = "统一返回封装类")
-public final class ApiResult implements Serializable {
+public final class ApiResult<T> implements Serializable {
 
 	/**
 	 * @Field： 状态编码
@@ -29,27 +29,28 @@ public final class ApiResult implements Serializable {
 	 * @Field：提示信息
 	 */
 	@ApiModelProperty(value = "提示信息")
-	private String message;
+	private String msg;
 	/**
 	 * @Field：主要数据
 	 */
 	@ApiModelProperty(value = "数据体")
-	private Object data;
+	private T data;
 
 	public ApiResult() {
 		super();
+		this.setCode(ResultCode.ERROR);
 	}
 
-	private ApiResult(Integer code, String message) {
+	private ApiResult(Integer code, String msg) {
 		super();
 		this.code = code;
-		this.message = message;
+		this.msg = msg;
 	}
 
-	public ApiResult(Integer code, String message, Object data) {
+	public ApiResult(Integer code, String msg, T data) {
 		super();
 		this.code = code;
-		this.message = message;
+		this.msg = msg;
 		this.data = data;
 	}
 
@@ -70,7 +71,11 @@ public final class ApiResult implements Serializable {
 	}
 
 	public void setMessage(ResultMessage message) {
-		this.message = message.getMessage();
+		this.msg = message.getMessage();
+	}
+
+	public void setMessage(String msg) {
+		this.msg = msg;
 	}
 
 	/**
@@ -80,20 +85,25 @@ public final class ApiResult implements Serializable {
 	 * @param: null
 	 * @return: null
 	 */
-	public void setSuccess(Object data) {
+	public void success(T data) {
 		this.setCode(ResultCode.SUCCESS);
 		this.setMessage(ResultMessage.SUCCESS);
 		this.data = data;
 	}
 
-	public void setSuccess() {
+	public void success() {
 		this.setCode(ResultCode.SUCCESS);
 		this.setMessage(ResultMessage.SUCCESS);
 	}
 
-	public void setFail(ResultMessage resultMessage) {
+	public void fail(ResultMessage resultMessage) {
 		this.setCode(ResultCode.ERROR);
 		this.setMessage(resultMessage);
+	}
+
+	public void fail(String msg) {
+		this.setCode(ResultCode.ERROR);
+		this.setMessage(msg);
 	}
 
 }
