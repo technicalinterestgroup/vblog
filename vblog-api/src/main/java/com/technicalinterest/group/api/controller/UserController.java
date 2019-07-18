@@ -40,6 +40,7 @@ public class UserController {
 		return new UserDTO();
 	}
 
+	@ApiOperation(value = "测试接口")
 	@PostMapping(value = "/test")
 	public ApiResult test(UserVO userVO) {
 		int a = 1 / 0;

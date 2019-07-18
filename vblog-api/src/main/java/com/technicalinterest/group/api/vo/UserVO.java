@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.vo;
 
+import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -14,6 +15,7 @@ import javax.validation.constraints.Size;
  * @since: 0.1
  **/
 @Data
+@ApiModel
 public class UserVO {
     @NotEmpty(message="用户名不能为空！")
     private String userName;
