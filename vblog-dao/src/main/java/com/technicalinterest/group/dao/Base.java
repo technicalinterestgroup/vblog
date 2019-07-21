@@ -1,5 +1,7 @@
 package com.technicalinterest.group.dao;
 
+import lombok.Data;
+
 import java.util.Date;
 
 /**
@@ -10,9 +12,11 @@ import java.util.Date;
  * @date: 2019-07-14 15:50
  * @since: 0.1
  **/
-
+@Data
 public class Base {
     private Long id;
+
+    private Short isDel;
 
     private Date createTime;
 

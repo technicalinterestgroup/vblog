@@ -15,13 +15,30 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends Base{
-
-    private String userName;
-
-    private String passWord;
-
-    private String email;
-
+public class User extends Base {
+	/**
+	 * 用户名
+	 */
+	private String userName;
+	/**
+	 * 密码
+	 */
+	private String passWord;
+	/**
+	 * 头像
+	 */
+	private String email;
+	/**
+	 * 头像
+	 */
+	private String photo;
+	/**
+	 * 积分
+	 */
+	private Integer integral;
+	/**
+	 * 状态0：待激活，1：已激活ßßß
+	 */
+	private Short state;
 
 }

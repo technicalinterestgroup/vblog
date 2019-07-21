@@ -19,5 +19,5 @@ public interface UserMapper {
      * @author: shuyu.wang
      * @date: 2019-07-14 18:41
      */
-    User userByUser(@Param("user") User user);
+    User getUserByUser(@Param("user") User user);
 }

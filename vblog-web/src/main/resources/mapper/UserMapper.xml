@@ -9,6 +9,9 @@
         <result column="id" property="id"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
+        <result column="photo" property="photo"/>
+        <result column="integral" property="integral"/>
+        <result column="is_del" property="isDel"/>
     </resultMap>
 
     <!--auto generated Code-->
@@ -18,7 +21,10 @@
         `email`,
         `id`,
         `create_time`,
-        `update_time`
+        `update_time`,
+        `photo`,
+        `integral`,
+        `is_del`
     </sql>
 
 
@@ -49,17 +55,17 @@
     <update id="update">
         UPDATE user
         <set>
-            <if test="pojo.userName != null">`user_name` = #{pojo.userName},</if>
             <if test="pojo.passWord != null">`pass_word` = #{pojo.passWord},</if>
             <if test="pojo.email != null">`email` = #{pojo.email},</if>
-            <if test="pojo.id != null">`id` = #{pojo.id},</if>
-            <if test="pojo.createTime != null">`create_time` = #{pojo.createTime},</if>
             <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime}</if>
+            <if test="pojo.photo != null">`photo` = #{pojo.photo}</if>
+            <if test="pojo.integral != null">`integral` = #{pojo.integral}</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel}</if>
         </set>
         WHERE id = #{pojo.id}
     </update>
 
-    <select id="userByUser" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.User">
+    <select id="getUserByUser" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.User">
         select
         <include refid="all_column"></include>
         from user where

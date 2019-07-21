@@ -41,7 +41,10 @@ public final class ReturnClass<T> implements Serializable {
 		this.success = true;
 	}
 
-
+	public void success(T data) {
+		this.success = true;
+		this.data = data;
+	}
 
 	@Override
 	public String toString() {
