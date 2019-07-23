@@ -17,10 +17,10 @@
     </parent>
 
     <modules>
-        <module>api</module>
-        <module>web</module>
-        <module>service</module>
-        <module>dao</module>
+        <module>vblog-api</module>
+        <module>vblog-web</module>
+        <module>vblog-service</module>
+        <module>vblog-dao</module>
     </modules>
 
 
@@ -30,41 +30,36 @@
         <java.version>1.8</java.version>
         <springfox-swagger2.version>2.7.0</springfox-swagger2.version>
         <swagger.version>1.5.13</swagger.version>
+        <mysql.version>8.0.15</mysql.version>
+        <lombok.version>1.18.8</lombok.version>
+        <redis.version>2.1.5.RELEASE</redis.version>
+        <collections.version>3.2.1</collections.version>
+        <fastjson.version>1.2.38</fastjson.version>
+        <swagger.ui.version>1.1.3</swagger.ui.version>
+        <mybatis.version>2.0.1</mybatis.version>
+
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>2.1.6.RELEASE</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>2.1.6.RELEASE</version>
-                <scope>test</scope>
-            </dependency>
-
             <!-- 数据库驱动 -->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.15</version>
+                <version>${mysql.version}</version>
             </dependency>
 
             <!--mybaits -->
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>2.0.1</version>
+                <version>${mybatis.version}</version>
             </dependency>
             <!--lombok-->
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.8</version>
+                <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -72,27 +67,22 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-redis</artifactId>
-                <version>2.1.5.RELEASE</version>
-            </dependency>
-
-            <dependency><!--页面模板依赖-->
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                <version>${redis.version}</version>
             </dependency>
 
 
             <dependency>
                 <groupId>commons-collections</groupId>
                 <artifactId>commons-collections</artifactId>
-                <version>3.2.1</version>
+                <version>${collections.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.38</version>
+                <version>${fastjson.version}</version>
             </dependency>
-
+            <!--swagger2 -->
             <dependency>
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-swagger2</artifactId>
@@ -111,18 +101,11 @@
             <dependency>
                 <groupId>com.github.caspar-chen</groupId>
                 <artifactId>swagger-ui-layer</artifactId>
-                <version>1.1.3</version>
+                <version>${swagger.ui.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+
 
 </project>
