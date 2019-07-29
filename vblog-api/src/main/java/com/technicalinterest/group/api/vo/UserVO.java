@@ -1,4 +1,4 @@
-package com.technicalinterest.group.service.vo;
+package com.technicalinterest.group.api.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -19,4 +19,6 @@ public class UserVO {
     private String userName;
     @ApiModelProperty(value = "唯一token")
     private String userToken;
+    @ApiModelProperty(value = "昵称")
+    private String nickName;
 }

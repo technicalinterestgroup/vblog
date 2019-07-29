@@ -16,6 +16,8 @@ public class UrlConstant {
 
     public static final String LOGOUT_URL_STRING = "logout";
 
+    public static final String NEW_URL_STRING = "user/new";
+
     public static final String CONTENT_TYPE_STRING = "text/json;charset=UTF-8";
 
     public static final String ORIGIN_HEADER_STRING="Access-Control-Allow-Origin";

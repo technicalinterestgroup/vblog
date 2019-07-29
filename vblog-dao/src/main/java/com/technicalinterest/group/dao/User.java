@@ -21,6 +21,10 @@ public class User extends Base {
 	 */
 	private String userName;
 	/**
+	 * 昵称
+	 */
+	private String nickName;
+	/**
 	 * 密码
 	 */
 	private String passWord;

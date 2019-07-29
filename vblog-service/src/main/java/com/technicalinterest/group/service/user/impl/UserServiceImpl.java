@@ -1,20 +1,19 @@
 package com.technicalinterest.group.service.user.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.service.constant.UserConstant;
+import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.EditUserDTO;
-import com.technicalinterest.group.service.dto.NewUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.user.UserService;
 import com.technicalinterest.group.service.util.RedisUtil;
-import com.technicalinterest.group.service.vo.UserVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -39,13 +38,13 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * 登录
 	 * @param userDTO
-	 * @return ReturnClass<UserVO>
+	 * @return ReturnClass<UserDTO>
 	 * @author: shuyu.wang
 	 * @date: 2019-07-14 18:48
 	 */
 	@Override
-	public ReturnClass<UserVO> login(UserDTO userDTO) {
-		ReturnClass<UserVO> returnClass = new ReturnClass<>();
+	public ReturnClass<UserDTO> login(EditUserDTO userDTO) {
+		ReturnClass<UserDTO> returnClass = new ReturnClass<>();
 		User user = new User();
 		user.setUserName(userDTO.getUserName());
 		//用户名判断
@@ -62,7 +61,7 @@ public class UserServiceImpl implements UserService {
 			return returnClass;
 		}
 		//生成token
-		UserVO userVO = new UserVO();
+		UserDTO userVO = new UserDTO();
 		userVO.setUserToken(setToken(userDTO.getUserName()));
 		userVO.setUserName(userDTO.getUserName());
 		returnClass.success(userVO);
@@ -84,7 +83,7 @@ public class UserServiceImpl implements UserService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass<String> addUser(NewUserDTO newUserDTO) {
+	public ReturnClass<String> addUser(EditUserDTO newUserDTO) {
 		ReturnClass<String> returnClass = new ReturnClass<String>();
 		User user = new User();
 		user.setUserName(newUserDTO.getUserName());
@@ -101,6 +100,8 @@ public class UserServiceImpl implements UserService {
 			return returnClass;
 		}
 		BeanUtils.copyProperties(newUserDTO, user);
+		user.setState((short) 1);
+		user.setCreateTime(new Date());
 		int i = userMapper.insertSelective(user);
 		if (i != 1) {
 			returnClass.setMsg(UserConstant.ADD_USER_ERROR);
@@ -113,6 +114,7 @@ public class UserServiceImpl implements UserService {
 		}
 		return returnClass;
 	}
+
 	/**
 	 * 更新用户信息
 	 * @author: shuyu.wang
@@ -123,12 +125,19 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ReturnClass<String> updateUser(EditUserDTO editUserDTO) {
 		ReturnClass<String> returnClass = new ReturnClass<String>();
-		User user=new User();
-		BeanUtils.copyProperties(editUserDTO,user);
+		User user = new User();
+
+		ReturnClass<UserDTO> userByToken = getUserByToken();
+		if (!userByToken.isSuccess()){
+			returnClass.setMsg(UserConstant.FAILD_GET_USER_INFO);
+			return returnClass;
+		}
+		user.setId(userByToken.getData().getId());
+		BeanUtils.copyProperties(editUserDTO, user);
 		int update = userMapper.update(user);
-		if (update!=1){
+		if (update != 1) {
 			returnClass.setMsg(UserConstant.EDIT_USER_ERROR);
-		}else {
+		} else {
 			returnClass.success();
 		}
 		return returnClass;
@@ -143,12 +152,34 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public ReturnClass<Boolean> logout(String token) {
-		ReturnClass<Boolean> returnClass=new ReturnClass<Boolean>();
+		ReturnClass<Boolean> returnClass = new ReturnClass<Boolean>();
 		Object o = redisUtil.get(token);
-		if (!Objects.isNull(o)){
-			redisUtil.del(token,o.toString());
+		if (!Objects.isNull(o)) {
+			redisUtil.del(token, o.toString());
 		}
 		returnClass.success();
+		return returnClass;
+	}
+
+	/**
+	 * @Description: 根据toke获取用户信息
+	 * @author: shuyu.wang
+	 * @date: 2019-07-28 19:43
+	 * @return null
+	 */
+	@Override
+	public ReturnClass<UserDTO> getUserByToken() {
+		ReturnClass<UserDTO> returnClass=new ReturnClass<>();
+		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+		String userName=(String)redisUtil.get(accessToken);
+		User user=new User();
+		user.setUserName(userName);
+		User userByUser = userMapper.getUserByUser(user);
+		if (!Objects.isNull(userByUser)){
+			UserDTO userDTO=new UserDTO();
+			BeanUtils.copyProperties(userByUser, userDTO);
+			returnClass.success(userDTO);
+		}
 		return returnClass;
 	}
 }

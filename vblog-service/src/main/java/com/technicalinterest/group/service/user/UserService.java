@@ -2,10 +2,8 @@ package com.technicalinterest.group.service.user;
 
 
 import com.technicalinterest.group.service.dto.EditUserDTO;
-import com.technicalinterest.group.service.dto.NewUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
-import com.technicalinterest.group.service.vo.UserVO;
 
 /**
  * @package: com.shuyu.blog.service
@@ -25,7 +23,7 @@ public interface UserService {
      * @param userDTO
      * @return UserDTO
     */
-    ReturnClass<UserVO> login(UserDTO userDTO);
+    ReturnClass<UserDTO> login(EditUserDTO userDTO);
 
 
 
@@ -36,7 +34,7 @@ public interface UserService {
      * @param newUserDTO
      * @return null
     */
-    ReturnClass<String> addUser(NewUserDTO newUserDTO);
+    ReturnClass<String> addUser(EditUserDTO newUserDTO);
 
 
    /**
@@ -56,4 +54,13 @@ public interface UserService {
      * @return null
     */
     ReturnClass<Boolean> logout(String token);
+
+
+    /**
+     * @Description: 根据toke获取用户信息
+     * @author: shuyu.wang
+     * @date: 2019-07-28 19:43
+     * @return null
+    */
+    ReturnClass<UserDTO> getUserByToken();
 }

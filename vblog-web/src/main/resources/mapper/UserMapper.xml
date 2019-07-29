@@ -4,7 +4,7 @@
     <!--auto generated Code-->
     <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.User">
         <result column="user_name" property="userName"/>
-        <result column="pass_word" property="passWord"/>
+        <result column="nick_name" property="nickName"/>
         <result column="email" property="email"/>
         <result column="id" property="id"/>
         <result column="create_time" property="createTime"/>
@@ -17,7 +17,7 @@
     <!--auto generated Code-->
     <sql id="all_column">
         `user_name`,
-        `pass_word`,
+        `nick_name`,
         `email`,
         `id`,
         `create_time`,
@@ -33,6 +33,7 @@
         INSERT INTO user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.userName!=null">`user_name`,</if>
+            <if test="pojo.nickName!=null">`nick_name`,</if>
             <if test="pojo.passWord!=null">`pass_word`,</if>
             <if test="pojo.email!=null">`email`,</if>
             <if test="pojo.id!=null">`id`,</if>
@@ -42,7 +43,8 @@
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.userName!=null">#{pojo.userName},</if>
-            <if test="pojo.passWord!=null">#{pojo.passWord},</if>
+            <if test="pojo.nickName!=null">#{pojo.nickName},</if>
+            <if test="pojo.passWord!=null">MD5(#{pojo.passWord}),</if>
             <if test="pojo.email!=null">#{pojo.email},</if>
             <if test="pojo.id!=null">#{pojo.id},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
@@ -55,6 +57,7 @@
     <update id="update">
         UPDATE user
         <set>
+            <if test="pojo.nickName!=null">nick_name=#{pojo.nickName},</if>
             <if test="pojo.passWord != null">`pass_word` = #{pojo.passWord},</if>
             <if test="pojo.email != null">`email` = #{pojo.email},</if>
             <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime}</if>

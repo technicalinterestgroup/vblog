@@ -25,4 +25,6 @@ public class UserConstant {
 
     public static final String EDIT_USER_ERROR="更新用户信息失败！";
 
+    public static final String FAILD_GET_USER_INFO="获取用户信息失败！";
+
 }
