@@ -1,8 +1,11 @@
 package com.technicalinterest.group.service.dto;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * @package: com.shuyu.blog.vo
@@ -13,10 +16,29 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-@ApiModel(description = "登录请求参数")
 public class UserDTO {
-    @ApiParam(value = "用户名",required = true)
+
+    private Long id;
+
+    private String userToken;
+    /**
+     * 用户名
+     */
     private String userName;
-    @ApiParam(value = "密码",required = true)
-    private String passWord;
+    /**
+     * 昵称
+     */
+    private String nickName;
+    /**
+     * 邮箱
+     */
+    private String email;
+    /**
+     * 头像
+     */
+    private String photo;
+    /**
+     * 积分
+     */
+    private Integer integral;
 }

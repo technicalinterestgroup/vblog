@@ -2,8 +2,11 @@ package com.technicalinterest.group.config;
 
 
 import com.technicalinterest.group.interceptor.MyInterceptor;
+import com.technicalinterest.group.interceptor.RequestHeaderContextInterceptor;
+import com.technicalinterest.group.interceptor.RequestLimitInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -24,15 +27,15 @@ public class MyWebAppConfig extends WebMvcConfigurerAdapter {
         return new MyInterceptor();
     }
 
-//	@Bean
-//	public HandlerInterceptor getRequestLimitInterceptor(){
-//		return new RequestLimitInterceptor();
-//	}
+	@Bean
+	public HandlerInterceptor getRequestLimitInterceptor(){
+		return new RequestLimitInterceptor();
+	}
 
-//	@Bean
-//	public RequestHeaderContextInterceptor requestHeaderContextInterceptor() {
-//		return new RequestHeaderContextInterceptor();
-//	}
+	@Bean
+	public RequestHeaderContextInterceptor requestHeaderContextInterceptor() {
+		return new RequestHeaderContextInterceptor();
+	}
 
 
     @Override
@@ -40,17 +43,15 @@ public class MyWebAppConfig extends WebMvcConfigurerAdapter {
         // 多个拦截器组成一个拦截器链
         // addPathPatterns 用于添加拦截规则
         // excludePathPatterns 用户排除拦截
-//        registry.addInterceptor(myInterceptor()).addPathPatterns("/**");
-//		registry.addInterceptor(requestHeaderContextInterceptor()).addPathPatterns(MyWebConstant.PATH_PATTERN_STRING);
-//		registry.addInterceptor(getRequestLimitInterceptor()).addPathPatterns(MyWebConstant.PATH_PATTERN_STRING);
+        registry.addInterceptor(myInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(requestHeaderContextInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(getRequestLimitInterceptor()).addPathPatterns("/**");
         super.addInterceptors(registry);
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-//        registry.addResourceHandler("docs.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 

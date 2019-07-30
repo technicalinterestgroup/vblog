@@ -2,13 +2,21 @@ package com.technicalinterest.group.interceptor;
 
 
 
+import com.alibaba.fastjson.JSONObject;
+import com.technicalinterest.group.api.constant.ResultCode;
+import com.technicalinterest.group.api.constant.ResultMessage;
+import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.constant.UrlConstant;
+import com.technicalinterest.group.service.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.util.Objects;
 
 /**
  * @package: com.ganinfo.common.interceptor
@@ -21,10 +29,10 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class MyInterceptor implements HandlerInterceptor {
 
-//    @Autowired
-//    private RedisFactory redisFactory;
-//    @Value("${spring.token.check.flag:true}")
-//    private String TOKEN_CHECK_FLAG;
+    @Autowired
+    private RedisUtil redisUtil;
+
+    private static final long ACTIVATION_TIME = 60 * 60 * 24;
 
     /**
      * @param request
@@ -38,7 +46,6 @@ public class MyInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-//        RedisService redisService = redisFactory.getRedis();
         boolean flag = true;
         response.setHeader(UrlConstant.ORIGIN_HEADER_STRING, UrlConstant.HEADER_ALL_VALUE_STRING);
         response.setHeader(UrlConstant.CREDENTIALS_HEADER_STRING, UrlConstant.CREDENTIALS_VALUE_STRING);
@@ -47,31 +54,30 @@ public class MyInterceptor implements HandlerInterceptor {
         response.setHeader(UrlConstant.ALLOW_HEADERS_HEADER_STRING, UrlConstant.ALLOW_HEADERS_VALUE_STRING);
         response.setHeader(UrlConstant.EXPOSE_HEADERS_HEADER_STRING, UrlConstant.HEADER_ALL_VALUE_STRING);
         String url = request.getRequestURL().toString();
-//        if (BooleanConstant.TRUE_STRING.equals(TOKEN_CHECK_FLAG)){
-//            if (!url.endsWith(UrlConstant.LOGIN_URL_STRING) && !url.endsWith(UrlConstant.LOGOUT_URL_STRING)) {
-//                String ACCESS_TOKEN_STRING = request.getHeader(UrlConstant.ACCESS_TOKEN_STRING);
-//                if (CommonUtil.isNotNullEmpty(ACCESS_TOKEN_STRING)) {
-//                    String userCode = redisService.getUserCode(ACCESS_TOKEN_STRING);
-//                    if (!CommonUtil.isNotNullEmpty(userCode)) {
-//                        response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
-//                        ApiResult result = new ApiResult(ResultCode.TIME_OUT, ResultMessage.TIME_OUT);
-//                        PrintWriter out = response.getWriter();
-//                        out.write(GsonUtil.GsonString(result));
-//                        out.close();
-//                        return false;
-//                    }
-//                    redisService.validate(ACCESS_TOKEN_STRING);
-//                    return true;
-//                } else {
-//                    response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
-//                    ApiResult result = new ApiResult(ResultCode.ACCESTOKEN_NULL, ResultMessage.ACCESTOKEN_NULL);
-//                    PrintWriter out = response.getWriter();
-//                    out.write(GsonUtil.GsonString(result));
-//                    out.close();
-//                    return false;
-//                }
-//            }
-//        }
+            if (!url.endsWith(UrlConstant.LOGIN_URL_STRING) && !url.endsWith(UrlConstant.LOGOUT_URL_STRING)&&!url.endsWith(UrlConstant.NEW_URL_STRING)) {
+                String ACCESS_TOKEN_STRING = request.getHeader(UrlConstant.ACCESS_TOKEN_STRING);
+                if (!Objects.isNull(ACCESS_TOKEN_STRING)) {
+                    String userName =(String)redisUtil.get(ACCESS_TOKEN_STRING);
+                    if (Objects.isNull(userName)) {
+                        response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
+                        ApiResult result = new ApiResult(ResultCode.TIME_OUT, ResultMessage.TIME_OUT);
+                        PrintWriter out = response.getWriter();
+                        out.write(JSONObject.toJSONString(result));
+                        out.close();
+                        return false;
+                    }
+                    redisUtil.expire(ACCESS_TOKEN_STRING,ACTIVATION_TIME);
+                    redisUtil.expire(userName,ACTIVATION_TIME);
+                    return true;
+                } else {
+                    response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
+                    ApiResult result = new ApiResult(ResultCode.ACCESTOKEN_NULL, ResultMessage.ACCESTOKEN_NULL);
+                    PrintWriter out = response.getWriter();
+                    out.write(JSONObject.toJSONString(result));
+                    out.close();
+                    return false;
+                }
+            }
         return flag;
     }
 

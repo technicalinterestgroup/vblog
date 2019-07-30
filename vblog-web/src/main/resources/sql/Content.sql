@@ -1,0 +1,11 @@
+-- auto Generated on 2019-07-28 18:01:46 
+-- DROP TABLE IF EXISTS `content`; 
+CREATE TABLE `content`(
+    `article_id` BIGINT (15) NOT NULL DEFAULT -1 COMMENT '文章id',
+    `content` VARCHAR (50) NOT NULL DEFAULT '' COMMENT '文章内容',
+    `id` BIGINT (15) NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `is_del` SMALLINT (5) NOT NULL DEFAULT -1 COMMENT 'isDel',
+    `create_time` DATETIME NOT NULL COMMENT 'createTime',
+    `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updateTime',
+    PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT '文章内容';

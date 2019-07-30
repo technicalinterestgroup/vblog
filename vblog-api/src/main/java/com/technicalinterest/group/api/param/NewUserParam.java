@@ -1,4 +1,4 @@
-package com.technicalinterest.group.service.dto;
+package com.technicalinterest.group.api.param;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -15,34 +15,25 @@ import javax.validation.constraints.NotBlank;
  * @since: 0.1
  **/
 @Data
-public class EditUserDTO {
-	private Long id;
+@ApiModel(description = "注册用户参数")
+public class NewUserParam {
 	/**
 	 * 用户名
 	 */
+	@ApiModelProperty(value = "用户名",required = true)
+	@NotBlank(message = "用户名不能为空")
 	private String userName;
 	/**
 	 * 密码
 	 */
+	@ApiModelProperty(value = "密码",required = true)
+	@NotBlank(message = "密码不能为空")
 	private String passWord;
 	/**
 	 * 邮箱
 	 */
+	@ApiModelProperty(value = "邮箱",required = true)
+	@NotBlank(message = "邮箱不能为空")
 	private String email;
-	/**
-	 * 头像
-	 */
-	private String photo;
-	/**
-	 * 积分
-	 */
-	private Integer integral;
-	/**
-	 * 状态0：待激活，1：已激活
-	 */
-	private Short state;
-
-	private String nickName;
-
 
 }

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.ArticleMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.Article">
+        <result column="title" property="title"/>
+        <result column="submit" property="submit"/>
+        <result column="is_top" property="isTop"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="is_review" property="isReview"/>
+        <result column="tag" property="tag"/>
+        <result column="user_name" property="userName"/>
+        <result column="id" property="id"/>
+        <result column="is_del" property="isDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `title`,
+        `submit`,
+        `is_top`,
+        `category_id`,
+        `is_review`,
+        `tag`,
+        `user_name`,
+        `id`,
+        `is_del`,
+        `create_time`,
+        `update_time`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO article (
+            `title`,
+            `submit`,
+            `is_top`,
+            `category_id`,
+            `is_review`,
+            `tag`,
+            `user_name`,
+            `id`,
+            `is_del`,
+            `create_time`,
+            `update_time`
+        ) VALUES (
+            #{pojo.title},
+            #{pojo.submit},
+            #{pojo.isTop},
+            #{pojo.categoryId},
+            #{pojo.isReview},
+            #{pojo.tag},
+            #{pojo.userName},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+        )
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.title!=null"> `title`,</if>
+            <if test="pojo.submit!=null"> `submit`,</if>
+            <if test="pojo.isTop!=null"> `is_top`,</if>
+            <if test="pojo.categoryId!=null"> `category_id`,</if>
+            <if test="pojo.isReview!=null"> `is_review`,</if>
+            <if test="pojo.tag!=null"> `tag`,</if>
+            <if test="pojo.userName!=null"> `user_name`,</if>
+            <if test="pojo.id!=null"> `id`,</if>
+            <if test="pojo.isDel!=null"> `is_del`,</if>
+            <if test="pojo.createTime!=null"> `create_time`,</if>
+            <if test="pojo.updateTime!=null"> `update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.title!=null">#{pojo.title},</if>
+            <if test="pojo.submit!=null">#{pojo.submit},</if>
+            <if test="pojo.isTop!=null">#{pojo.isTop},</if>
+            <if test="pojo.categoryId!=null">#{pojo.categoryId},</if>
+            <if test="pojo.isReview!=null">#{pojo.isReview},</if>
+            <if test="pojo.tag!=null">#{pojo.tag},</if>
+            <if test="pojo.userName!=null">#{pojo.userName},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO article (
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.title},
+            #{pojo.submit},
+            #{pojo.isTop},
+            #{pojo.categoryId},
+            #{pojo.isReview},
+            #{pojo.tag},
+            #{pojo.userName},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE article
+        <set>
+            <if test="pojo.title != null"> `title` = #{pojo.title}, </if>
+            <if test="pojo.submit != null"> `submit` = #{pojo.submit}, </if>
+            <if test="pojo.isTop != null"> `is_top` = #{pojo.isTop}, </if>
+            <if test="pojo.categoryId != null"> `category_id` = #{pojo.categoryId}, </if>
+            <if test="pojo.isReview != null"> `is_review` = #{pojo.isReview}, </if>
+            <if test="pojo.tag != null"> `tag` = #{pojo.tag}, </if>
+            <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
+            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
+            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
+            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+</mapper>
+
