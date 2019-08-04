@@ -29,4 +29,8 @@ public class UserConstant {
 
     public static final String LOG_OUT_INFO="登录失效，请重新登录！";
 
+    public static final String MAIL_TITLE="用户激活邮件！";
+
+    public static final String ACTIVATION_URL="http://127.0.0.1:8082/vblog/admin/activation/";
+
 }
