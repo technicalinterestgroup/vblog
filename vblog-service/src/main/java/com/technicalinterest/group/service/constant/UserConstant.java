@@ -27,4 +27,6 @@ public class UserConstant {
 
     public static final String FAILD_GET_USER_INFO="获取用户信息失败！";
 
+    public static final String LOG_OUT_INFO="登录失效，请重新登录！";
+
 }

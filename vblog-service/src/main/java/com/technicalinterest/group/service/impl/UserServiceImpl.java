@@ -1,4 +1,4 @@
-package com.technicalinterest.group.service.user.impl;
+package com.technicalinterest.group.service.impl;
 
 import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.mapper.UserMapper;
@@ -7,7 +7,8 @@ import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
-import com.technicalinterest.group.service.user.UserService;
+import com.technicalinterest.group.service.UserService;
+import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.RedisUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,29 +44,25 @@ public class UserServiceImpl implements UserService {
 	 * @date: 2019-07-14 18:48
 	 */
 	@Override
-	public ReturnClass<UserDTO> login(EditUserDTO userDTO) {
-		ReturnClass<UserDTO> returnClass = new ReturnClass<>();
+	public ReturnClass login(EditUserDTO userDTO) {
 		User user = new User();
 		user.setUserName(userDTO.getUserName());
 		//用户名判断
 		User user1 = userMapper.getUserByUser(user);
 		if (Objects.isNull(user1)) {
-			returnClass.setMsg(UserConstant.NO_USER);
-			return returnClass;
+			return ReturnClass.fail(UserConstant.NO_USER);
 		}
 		//密码判断
 		user.setPassWord(user.getPassWord());
 		user1 = userMapper.getUserByUser(user);
 		if (Objects.isNull(user1)) {
-			returnClass.setMsg(UserConstant.PASSWORD_ERROR);
-			return returnClass;
+			return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
 		}
 		//生成token
 		UserDTO userVO = new UserDTO();
 		userVO.setUserToken(setToken(userDTO.getUserName()));
 		userVO.setUserName(userDTO.getUserName());
-		returnClass.success(userVO);
-		return returnClass;
+		return ReturnClass.success(userVO);
 	}
 
 	private String setToken(String userName) {
@@ -83,36 +80,30 @@ public class UserServiceImpl implements UserService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass<String> addUser(EditUserDTO newUserDTO) {
-		ReturnClass<String> returnClass = new ReturnClass<String>();
+	public ReturnClass addUser(EditUserDTO newUserDTO) {
 		User user = new User();
 		user.setUserName(newUserDTO.getUserName());
 		User userByUser = userMapper.getUserByUser(user);
 		if (!Objects.isNull(userByUser)) {
-			returnClass.setMsg(UserConstant.DUPLICATE_USER_NAME);
-			return returnClass;
+			return ReturnClass.fail(UserConstant.DUPLICATE_USER_NAME);
 		}
 		User user2 = new User();
 		user2.setUserName(newUserDTO.getUserName());
 		User userByUser2 = userMapper.getUserByUser(user2);
 		if (!Objects.isNull(userByUser2)) {
-			returnClass.setMsg(UserConstant.DUPLICATE_USER_EMAIL);
-			return returnClass;
+			return ReturnClass.fail(UserConstant.DUPLICATE_USER_EMAIL);
 		}
 		BeanUtils.copyProperties(newUserDTO, user);
 		user.setState((short) 1);
-		user.setCreateTime(new Date());
 		int i = userMapper.insertSelective(user);
 		if (i != 1) {
-			returnClass.setMsg(UserConstant.ADD_USER_ERROR);
+			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
 		} else {
 			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
 			redisUtil.set(key, user.getId(), activation_time);
 			//发送邮件
-			returnClass.setMsg(UserConstant.ADD_EMAIL_SEND);
-			returnClass.success();
+			return ReturnClass.success(UserConstant.ADD_EMAIL_SEND);
 		}
-		return returnClass;
 	}
 
 	/**
@@ -123,24 +114,22 @@ public class UserServiceImpl implements UserService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass<String> updateUser(EditUserDTO editUserDTO) {
-		ReturnClass<String> returnClass = new ReturnClass<String>();
+	public ReturnClass updateUser(EditUserDTO editUserDTO) {
 		User user = new User();
 
-		ReturnClass<UserDTO> userByToken = getUserByToken();
-		if (!userByToken.isSuccess()){
-			returnClass.setMsg(UserConstant.FAILD_GET_USER_INFO);
-			return returnClass;
+		ReturnClass userByToken = getUserByToken();
+		if (!userByToken.isSuccess()) {
+			throw new VLogException(UserConstant.FAILD_GET_USER_INFO);
 		}
-		user.setId(userByToken.getData().getId());
+		UserDTO userDTO = (UserDTO) userByToken.getData();
+		user.setId(userDTO.getId());
 		BeanUtils.copyProperties(editUserDTO, user);
 		int update = userMapper.update(user);
 		if (update != 1) {
-			returnClass.setMsg(UserConstant.EDIT_USER_ERROR);
+			return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
 		} else {
-			returnClass.success();
+			return ReturnClass.success();
 		}
-		return returnClass;
 	}
 
 	/**
@@ -151,14 +140,12 @@ public class UserServiceImpl implements UserService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass<Boolean> logout(String token) {
-		ReturnClass<Boolean> returnClass = new ReturnClass<Boolean>();
+	public ReturnClass logout(String token) {
 		Object o = redisUtil.get(token);
 		if (!Objects.isNull(o)) {
 			redisUtil.del(token, o.toString());
 		}
-		returnClass.success();
-		return returnClass;
+		return ReturnClass.success();
 	}
 
 	/**
@@ -168,18 +155,20 @@ public class UserServiceImpl implements UserService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass<UserDTO> getUserByToken() {
-		ReturnClass<UserDTO> returnClass=new ReturnClass<>();
+	public ReturnClass getUserByToken() {
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		String userName=(String)redisUtil.get(accessToken);
-		User user=new User();
+		String userName = (String) redisUtil.get(accessToken);
+		if(Objects.isNull(userName)){
+			throw new VLogException(UserConstant.LOG_OUT_INFO);
+		}
+		User user = new User();
 		user.setUserName(userName);
 		User userByUser = userMapper.getUserByUser(user);
-		if (!Objects.isNull(userByUser)){
-			UserDTO userDTO=new UserDTO();
+		if (Objects.nonNull(userByUser)) {
+			UserDTO userDTO = new UserDTO();
 			BeanUtils.copyProperties(userByUser, userDTO);
-			returnClass.success(userDTO);
+			return ReturnClass.success(userDTO);
 		}
-		return returnClass;
+		return ReturnClass.fail();
 	}
 }

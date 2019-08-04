@@ -8,12 +8,13 @@
         <result column="is_top" property="isTop"/>
         <result column="category_id" property="categoryId"/>
         <result column="is_review" property="isReview"/>
-        <result column="tag" property="tag"/>
+        <result column="tag_id" property="tagId"/>
         <result column="user_name" property="userName"/>
         <result column="id" property="id"/>
         <result column="is_del" property="isDel"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
+        <result column="state" property="state"/>
     </resultMap>
 
     <!--auto generated Code-->
@@ -23,13 +24,14 @@
         `is_top`,
         `category_id`,
         `is_review`,
-        `tag`,
+        `tag_id`,
         `user_name`,
         `id`,
         `is_del`,
         `create_time`,
-        `update_time`
-    </sql>
+        `update_time`,
+        `state`
+</sql>
 
     <!--auto generated Code-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
@@ -39,24 +41,26 @@
             `is_top`,
             `category_id`,
             `is_review`,
-            `tag`,
+            `tag_id`,
             `user_name`,
             `id`,
             `is_del`,
             `create_time`,
-            `update_time`
+            `update_time`,
+            `state`
         ) VALUES (
             #{pojo.title},
             #{pojo.submit},
             #{pojo.isTop},
             #{pojo.categoryId},
             #{pojo.isReview},
-            #{pojo.tag},
+            #{pojo.tagId},
             #{pojo.userName},
             #{pojo.id},
             #{pojo.isDel},
             #{pojo.createTime},
-            #{pojo.updateTime}
+            #{pojo.updateTime},
+            #{pojo.state}
         )
     </insert>
 
@@ -64,17 +68,18 @@
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
         INSERT INTO article
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="pojo.title!=null"> `title`,</if>
-            <if test="pojo.submit!=null"> `submit`,</if>
-            <if test="pojo.isTop!=null"> `is_top`,</if>
-            <if test="pojo.categoryId!=null"> `category_id`,</if>
-            <if test="pojo.isReview!=null"> `is_review`,</if>
-            <if test="pojo.tag!=null"> `tag`,</if>
-            <if test="pojo.userName!=null"> `user_name`,</if>
-            <if test="pojo.id!=null"> `id`,</if>
-            <if test="pojo.isDel!=null"> `is_del`,</if>
-            <if test="pojo.createTime!=null"> `create_time`,</if>
-            <if test="pojo.updateTime!=null"> `update_time`,</if>
+            <if test="pojo.title!=null">`title`,</if>
+            <if test="pojo.submit!=null">`submit`,</if>
+            <if test="pojo.isTop!=null">`is_top`,</if>
+            <if test="pojo.categoryId!=null">`category_id`,</if>
+            <if test="pojo.isReview!=null">`is_review`,</if>
+            <if test="pojo.tagId!=null">`tag_id`,</if>
+            <if test="pojo.userName!=null">`user_name`,</if>
+            <if test="pojo.id!=null">`id`,</if>
+            <if test="pojo.isDel!=null">`is_del`,</if>
+            <if test="pojo.createTime!=null">`create_time`,</if>
+            <if test="pojo.updateTime!=null">`update_time`,</if>
+            <if test="pojo.state!=null">`state`</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -83,18 +88,19 @@
             <if test="pojo.isTop!=null">#{pojo.isTop},</if>
             <if test="pojo.categoryId!=null">#{pojo.categoryId},</if>
             <if test="pojo.isReview!=null">#{pojo.isReview},</if>
-            <if test="pojo.tag!=null">#{pojo.tag},</if>
+            <if test="pojo.tagId!=null">#{pojo.tagId},</if>
             <if test="pojo.userName!=null">#{pojo.userName},</if>
             <if test="pojo.id!=null">#{pojo.id},</if>
             <if test="pojo.isDel!=null">#{pojo.isDel},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
             <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+            <if test="pojo.state!=null">#{pojo.state}</if>
         </trim>
     </insert>
 
     <!--auto generated Code-->
     <insert id="insertList">
-        INSERT INTO article (
+        INSERT INTO article(
         <include refid="all_column"/>
         )VALUES
         <foreach collection="pojos" item="pojo" index="index" separator=",">
@@ -104,31 +110,34 @@
             #{pojo.isTop},
             #{pojo.categoryId},
             #{pojo.isReview},
-            #{pojo.tag},
+            #{pojo.tagId},
             #{pojo.userName},
             #{pojo.id},
             #{pojo.isDel},
             #{pojo.createTime},
-            #{pojo.updateTime}
+            #{pojo.updateTime},
+            #{pojo.state}
             )
         </foreach>
     </insert>
 
     <!--auto generated Code-->
     <update id="update">
+
         UPDATE article
         <set>
-            <if test="pojo.title != null"> `title` = #{pojo.title}, </if>
-            <if test="pojo.submit != null"> `submit` = #{pojo.submit}, </if>
-            <if test="pojo.isTop != null"> `is_top` = #{pojo.isTop}, </if>
-            <if test="pojo.categoryId != null"> `category_id` = #{pojo.categoryId}, </if>
-            <if test="pojo.isReview != null"> `is_review` = #{pojo.isReview}, </if>
-            <if test="pojo.tag != null"> `tag` = #{pojo.tag}, </if>
-            <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
-            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
-            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
-            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
-            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+            <if test="pojo.title != null">`title` = #{pojo.title},</if>
+            <if test="pojo.submit != null">`submit` = #{pojo.submit},</if>
+            <if test="pojo.isTop != null">`is_top` = #{pojo.isTop},</if>
+            <if test="pojo.categoryId != null">`category_id` = #{pojo.categoryId},</if>
+            <if test="pojo.isReview != null">`is_review` = #{pojo.isReview},</if>
+            <if test="pojo.tagId != null">`tag_id` = #{pojo.tagId},</if>
+            <if test="pojo.userName != null">`user_name` = #{pojo.userName},</if>
+            <if test="pojo.id != null">`id` = #{pojo.id},</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
+            <if test="pojo.createTime != null">`create_time` = #{pojo.createTime},</if>
+            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime},</if>
+            <if test="pojo.state != null">`state` = #{pojo.state}</if>
         </set>
         WHERE id = #{pojo.id}
     </update>

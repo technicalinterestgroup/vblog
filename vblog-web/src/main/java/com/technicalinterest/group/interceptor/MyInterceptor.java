@@ -54,7 +54,7 @@ public class MyInterceptor implements HandlerInterceptor {
         response.setHeader(UrlConstant.ALLOW_HEADERS_HEADER_STRING, UrlConstant.ALLOW_HEADERS_VALUE_STRING);
         response.setHeader(UrlConstant.EXPOSE_HEADERS_HEADER_STRING, UrlConstant.HEADER_ALL_VALUE_STRING);
         String url = request.getRequestURL().toString();
-            if (!url.endsWith(UrlConstant.LOGIN_URL_STRING) && !url.endsWith(UrlConstant.LOGOUT_URL_STRING)&&!url.endsWith(UrlConstant.NEW_URL_STRING)) {
+            if (!url.endsWith(UrlConstant.LOGIN_URL_STRING) && !url.endsWith(UrlConstant.LOGOUT_URL_STRING)&&!url.endsWith(UrlConstant.NEW_URL_STRING)&&!url.endsWith(UrlConstant.DOC_URL_STRING)) {
                 String ACCESS_TOKEN_STRING = request.getHeader(UrlConstant.ACCESS_TOKEN_STRING);
                 if (!Objects.isNull(ACCESS_TOKEN_STRING)) {
                     String userName =(String)redisUtil.get(ACCESS_TOKEN_STRING);
