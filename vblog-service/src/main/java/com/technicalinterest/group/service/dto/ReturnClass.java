@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @version:V1.0
  **/
 @Data
-public final class ReturnClass<T> implements Serializable {
+public final class ReturnClass implements Serializable {
 	private static final long serialVersionUID = 1098033339357933985L;
 	/**
 	 * @Field：请求状态
@@ -26,28 +26,50 @@ public final class ReturnClass<T> implements Serializable {
 	/**
 	 * @Field：数据
 	 */
-	private T data;
+	private Object data;
 
 	public ReturnClass() {
 		this.success = false;
 		this.msg = "请求失败";
 	}
 
+	public ReturnClass(Boolean success, String msg) {
+		super();
+		this.success = success;
+		this.msg = msg;
+	}
+
+	public ReturnClass(Boolean success, String msg, Object data) {
+		super();
+		this.success = success;
+		this.msg = msg;
+		this.data = data;
+	}
+
 	public Boolean isSuccess() {
 		return success;
 	}
 
-	public void success() {
-		this.success = true;
+	public static ReturnClass success() {
+		return new ReturnClass(true, "请求成功！");
 	}
 
-	public void success(T data) {
-		this.success = true;
-		this.data = data;
+	public static ReturnClass success(Object data) {
+		return new ReturnClass(true, "请求成功！", data);
 	}
 
-	@Override
-	public String toString() {
-		return "ReturnClass [success=" + success + ", msg=" + msg + ", data=" + data + "]";
+	public static ReturnClass success(String msg, Object data) {
+		return new ReturnClass(true, msg, data);
+	}
+
+	public static ReturnClass success(String msg) {
+		return new ReturnClass(true, msg);
+	}
+
+	public static ReturnClass fail(String msg) {
+		return new ReturnClass(false, msg);
+	}
+	public static ReturnClass fail() {
+		return new ReturnClass(false, "请求失败");
 	}
 }

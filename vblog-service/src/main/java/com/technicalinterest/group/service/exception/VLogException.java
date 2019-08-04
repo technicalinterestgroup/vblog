@@ -9,33 +9,37 @@ package com.technicalinterest.group.service.exception;
  * @since: 0.1
  **/
 
-public class VLogException extends RuntimeException{
+public class VLogException extends RuntimeException {
 
 	private static final long serialVersionUID = -8616472009504184287L;
 
-	protected String code;
+	protected Integer code;
 
 	protected String message;
-
 
 	public VLogException() {
 		super();
 	}
 
-	public VLogException(String code, String message) {
+	public VLogException(String message) {
+		this.message = message;
+	}
+
+	public VLogException(Integer code, String message) {
 		super();
 		this.code = code;
 		this.message = message;
 	}
 
-	public String getCode() {
+	public Integer getCode() {
 		return code;
 	}
 
-	public void setCode(String code) {
+	public void setCode(Integer code) {
 		this.code = code;
 	}
-    @Override
+
+	@Override
 	public String getMessage() {
 		return message;
 	}

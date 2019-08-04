@@ -5,6 +5,9 @@ import com.technicalinterest.group.api.constant.ResultMessage;
 import com.technicalinterest.group.api.vo.ApiResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,12 +26,44 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class ControllerExceptionAOP {
 
+
+	/**
+	 * @Description: 全局参数校验拦截
+	 * @author: shuyu.wang
+	 * @date: 2019-08-04 16:47
+	 * @param e
+	 * @return null
+	 */
+	@ExceptionHandler(BindException.class)
+	@ResponseBody
+	public ApiResult exception(BindException e) {
+		BindingResult bindingResult = e.getBindingResult();
+		ApiResult apiResult = new ApiResult();
+		if (bindingResult.hasErrors()) {
+			apiResult.fail(bindingResult.getFieldError().getDefaultMessage());
+			return apiResult;
+		} else {
+			apiResult.success();
+			return apiResult;
+		}
+
+	}
+	/**
+	 * @Description: 全局异常拦截
+	 * @author: shuyu.wang
+	 * @date: 2019-08-04 16:47
+	 * @param e
+	 * @return null
+	*/
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.OK)
 	@ResponseBody
 	ApiResult handleException(Exception e, HttpServletRequest request) {
-		log.error("出错啦！", e);
+		log.error("未catch异常！", e);
 		return new ApiResult(ResultCode.SERVER_ERROR, ResultMessage.SERVER_ERROR);
 	}
+
+
+
 
 }

@@ -1,4 +1,4 @@
-package com.technicalinterest.group.service.user;
+package com.technicalinterest.group.service;
 
 
 import com.technicalinterest.group.service.dto.EditUserDTO;
@@ -23,7 +23,7 @@ public interface UserService {
      * @param userDTO
      * @return UserDTO
     */
-    ReturnClass<UserDTO> login(EditUserDTO userDTO);
+    ReturnClass login(EditUserDTO userDTO);
 
 
 
@@ -34,7 +34,7 @@ public interface UserService {
      * @param newUserDTO
      * @return null
     */
-    ReturnClass<String> addUser(EditUserDTO newUserDTO);
+    ReturnClass addUser(EditUserDTO newUserDTO);
 
 
    /**
@@ -44,7 +44,7 @@ public interface UserService {
     * @param editUserDTO
     * @return null
    */
-    ReturnClass<String> updateUser(EditUserDTO editUserDTO);
+    ReturnClass updateUser(EditUserDTO editUserDTO);
 
     /**
      * @Description: 退出登录
@@ -53,7 +53,7 @@ public interface UserService {
      * @param token
      * @return null
     */
-    ReturnClass<Boolean> logout(String token);
+    ReturnClass logout(String token);
 
 
     /**
@@ -62,5 +62,5 @@ public interface UserService {
      * @date: 2019-07-28 19:43
      * @return null
     */
-    ReturnClass<UserDTO> getUserByToken();
+    ReturnClass getUserByToken();
 }

@@ -16,9 +16,9 @@ import java.util.Date;
 public class Base {
     private Long id;
 
-    private Short isDel;
+    private Short isDel=0;
 
-    private Date createTime;
+    private Date createTime=new Date();
 
-    private Date updateTime;
+    private Date updateTime=new Date();
 }
