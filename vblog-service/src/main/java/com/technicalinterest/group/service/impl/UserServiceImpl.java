@@ -2,6 +2,7 @@ package com.technicalinterest.group.service.impl;
 
 import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.mapper.UserMapper;
+import com.technicalinterest.group.service.MailService;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.EditUserDTO;
@@ -14,7 +15,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,6 +33,8 @@ public class UserServiceImpl implements UserService {
 	private UserMapper userMapper;
 	@Autowired
 	private RedisUtil redisUtil;
+	@Autowired
+	private MailService mailService;
 
 	private static final long activation_time = 60 * 60 * 24;
 
@@ -102,6 +104,8 @@ public class UserServiceImpl implements UserService {
 			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
 			redisUtil.set(key, user.getId(), activation_time);
 			//发送邮件
+			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
+			mailService.sendHtmlMail(newUserDTO.getEmail(),UserConstant.MAIL_TITLE,"<a href=\""+UserConstant.ACTIVATION_URL+key+"\">"+UserConstant.ACTIVATION_URL+key+"</a>");
 			return ReturnClass.success(UserConstant.ADD_EMAIL_SEND);
 		}
 	}

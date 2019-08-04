@@ -14,10 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -68,7 +65,7 @@ public class UserController {
 	 */
 	@ApiOperation(value = "注册", notes = "新用户注册")
 	@PostMapping(value = "/user/new")
-	public ApiResult<String> saveUser(@Valid NewUserParam newUserParam) {
+	public ApiResult<String> saveUser(@Valid @RequestBody NewUserParam newUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO newUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(newUserParam, newUserDTO);
@@ -92,7 +89,7 @@ public class UserController {
 	 */
 	@ApiOperation(value = "修改信息", notes = "用户模块")
 	@PostMapping(value = "/user/edit")
-	public ApiResult<String> editUser(@Valid EditUserParam editUserParam) {
+	public ApiResult<String> editUser(@Valid @RequestBody EditUserParam editUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(editUserParam, editUserDTO);
