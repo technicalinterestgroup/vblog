@@ -2,6 +2,7 @@ package com.technicalinterest.group.service.impl;
 
 import com.technicalinterest.group.dao.Article;
 import com.technicalinterest.group.dao.Content;
+import com.technicalinterest.group.dao.QueryArticleDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.ContentMapper;
 import com.technicalinterest.group.service.ArticleService;
@@ -98,5 +99,17 @@ public class ArticleServiceImpl implements ArticleService {
 			return ReturnClass.success(ArticleConstant.SUS_EDIT);
 		}
 		return ReturnClass.fail(ArticleConstant.FAIL_EDIT);
+	}
+
+	/**
+	 * @Description: 更新文章
+	 * @author: shuyu.wang
+	 * @date: 2019-08-04 15:12
+	 * @param queryArticleDTO
+	 * @return ReturnClass
+	 */
+	@Override
+	public ReturnClass listArticle(QueryArticleDTO queryArticleDTO) {
+		return null;
 	}
 }

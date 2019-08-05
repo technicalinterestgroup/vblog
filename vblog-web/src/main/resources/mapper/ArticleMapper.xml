@@ -141,5 +141,16 @@
         </set>
         WHERE id = #{pojo.id}
     </update>
+
+    <select id="listArticle" resultType="com.technicalinterest.group.dao.ArticleContentDTO" parameterType="com.technicalinterest.group.dao.QueryArticleDTO">
+        select * from article
+        <where>
+            <if test="pojo.userName != null"> user_name=#{pojo.userName}</if>
+            <if test="pojo.state != null"> state=#{pojo.state}</if>
+            <if test="pojo.title != null"> title like CONCAT('%',#{pojo.title},'%')</if>
+        </where>
+        order by id desc
+
+    </select>
 </mapper>
 

@@ -22,13 +22,21 @@ public enum ResultCode {
      */
     PARAM_ERROR(2),
     /**
+     * @Field：数据格式异常
+     */
+    DATA_ERROR(3),
+    /**
      * @Field：ACCESTOKEN为空
      */
-    ACCESTOKEN_NULL(10),
+    ACCESTOKEN_NULL(4),
     /**
      * @Field：登录超时
      */
-    TIME_OUT(20),
+    TIME_OUT(5),
+    /**
+     * @Field：业务异常
+     */
+    SERVICE_ERROR(3),
     /**
      * @Field：url不存在
      */
