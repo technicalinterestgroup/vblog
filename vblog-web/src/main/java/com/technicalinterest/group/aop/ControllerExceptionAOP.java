@@ -6,10 +6,12 @@ import com.technicalinterest.group.api.constant.ResultMessage;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.service.exception.VLogException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -40,21 +42,26 @@ public class ControllerExceptionAOP {
 	 * @param e
 	 * @return null
 	 */
-	@ExceptionHandler({ MethodArgumentNotValidException.class, BindException.class })
+	@ExceptionHandler( BindException.class )
 	@ResponseBody
 	public ApiResult exception(BindException e) {
 		BindingResult bindingResult = e.getBindingResult();
 		ApiResult apiResult = new ApiResult();
-//		if (bindingResult.hasErrors()) {
 			log.info("校验参数异常 message:{}", bindingResult.getFieldError().getDefaultMessage());
 			apiResult.fail(bindingResult.getFieldError().getDefaultMessage());
 			apiResult.setCode(ResultCode.PARAM_ERROR);
 			return apiResult;
-//		} else {
-//			apiResult.success();
-//			return apiResult;
-//		}
+	}
 
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ResponseBody
+	public ApiResult validationError(MethodArgumentNotValidException ex) {
+		ApiResult apiResult = new ApiResult();
+		FieldError fieldError = ex.getBindingResult().getFieldError();
+		log.info("校验参数异常 message:{}",fieldError.getField()+fieldError.getDefaultMessage());
+		apiResult.fail(fieldError.getField()+fieldError.getDefaultMessage());
+		apiResult.setCode(ResultCode.PARAM_ERROR);
+		return apiResult;
 	}
 
 	/**
@@ -62,23 +69,23 @@ public class ControllerExceptionAOP {
 	 * @param e
 	 * @return
 	 */
-//	@ExceptionHandler(ConstraintViolationException.class)
-//	@ResponseBody
-//	public ApiResult handleValidationException(ConstraintViolationException e) {
-//		ApiResult apiResult = new ApiResult();
-//		StringBuilder sb = new StringBuilder();
-//		for (ConstraintViolation<?> s : e.getConstraintViolations()) {
-//			log.info("value:{} message:{}", s.getInvalidValue(), s.getMessage());
-//			sb.append(s.getMessage()).append('!');
-//		}
-//		if (sb != null && sb.length() > 0) {
-//			log.info("校验参数异常 message:{}", sb.toString());
-//			apiResult.fail(sb.toString());
-//
-//		}
-//		apiResult.setCode(ResultCode.PARAM_ERROR);
-//		return apiResult;
-//	}
+	@ExceptionHandler(ConstraintViolationException.class)
+	@ResponseBody
+	public ApiResult handleValidationException(ConstraintViolationException e) {
+		ApiResult apiResult = new ApiResult();
+		StringBuilder sb = new StringBuilder();
+		for (ConstraintViolation<?> s : e.getConstraintViolations()) {
+			log.info("value:{} message:{}", s.getInvalidValue(), s.getMessage());
+			sb.append(s.getMessage()).append('!');
+		}
+		if (sb != null && sb.length() > 0) {
+			log.info("校验参数异常 message:{}", sb.toString());
+			apiResult.fail(sb.toString());
+
+		}
+		apiResult.setCode(ResultCode.PARAM_ERROR);
+		return apiResult;
+	}
 
 	/**
 	 * @Description: 全局异常拦截
@@ -111,7 +118,7 @@ public class ControllerExceptionAOP {
 		if (log.isDebugEnabled()) {
 			log.debug(e != null ? e.getMessage() : "");
 		}
-		log.error("json格式转换异常", e);
+		log.info("json格式转换异常", e);
 		apiResult.fail(ResultMessage.DATA_ERROR);
 		apiResult.setCode(ResultCode.DATA_ERROR);
 		return apiResult;
@@ -129,7 +136,7 @@ public class ControllerExceptionAOP {
 	@ExceptionHandler(value = VLogException.class)
 	@ResponseBody
 	public ApiResult myErrorHandler(VLogException e) {
-		log.error("自定义异常", e);
+		log.info("自定义异常", e);
 		ApiResult apiResult = new ApiResult();
 		apiResult.fail(e.getMessage());
 		apiResult.setCode(ResultCode.SERVICE_ERROR);
@@ -146,7 +153,7 @@ public class ControllerExceptionAOP {
 	@ExceptionHandler(value = HttpMessageNotReadableException.class)
 	@ResponseBody
 	public ApiResult handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-		log.error("参数获取异常", e);
+		log.info("参数获取异常", e);
 		ApiResult apiResult = new ApiResult();
 		apiResult.fail(ResultMessage.PARAM_ERROR);
 		apiResult.setCode(ResultCode.PARAM_ERROR);
@@ -163,7 +170,7 @@ public class ControllerExceptionAOP {
 	@ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
 	@ResponseBody
 	public ApiResult httpRequestMethodNotSupportedException(HttpMessageNotReadableException e) {
-		log.error("请求方式不支持", e);
+		log.info("请求方式不支持", e);
 		ApiResult apiResult = new ApiResult();
 		apiResult.fail(ResultMessage.METHOD_NOT_ALLOWED);
 		apiResult.setCode(ResultCode.METHOD_NOT_ALLOWED);
@@ -181,12 +188,23 @@ public class ControllerExceptionAOP {
 	@ExceptionHandler(value = HttpMediaTypeNotSupportedException.class)
 	@ResponseBody
 	public ApiResult httpMessageNotReadableException(HttpServletRequest req, HttpMediaTypeNotSupportedException e) {
-		log.error("媒体类型异常", e);
+		log.info("媒体类型异常", e);
 		ApiResult apiResult = new ApiResult();
 		apiResult.fail(ResultMessage.MEDIATYPE_ERROR);
 		apiResult.setCode(ResultCode.MEDIATYPE_ERROR);
 		return apiResult;
 	}
+
+
+	@ExceptionHandler(DuplicateKeyException.class)
+	public ApiResult handleDuplicateKeyException(DuplicateKeyException e){
+		log.info("数据库唯一键重复异常", e);
+		ApiResult apiResult = new ApiResult();
+		apiResult.fail("数据库唯一键重复异常");
+		apiResult.setCode(ResultCode.ERROR);
+		return apiResult;
+	}
+
 
 
 }
