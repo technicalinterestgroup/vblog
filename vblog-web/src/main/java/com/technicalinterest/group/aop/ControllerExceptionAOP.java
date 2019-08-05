@@ -183,8 +183,8 @@ public class ControllerExceptionAOP {
 	public ApiResult httpMessageNotReadableException(HttpServletRequest req, HttpMediaTypeNotSupportedException e) {
 		log.error("媒体类型异常", e);
 		ApiResult apiResult = new ApiResult();
-		apiResult.fail(ResultMessage.METHOD_NOT_ALLOWED);
-		apiResult.setCode(ResultCode.METHOD_NOT_ALLOWED);
+		apiResult.fail(ResultMessage.MEDIATYPE_ERROR);
+		apiResult.setCode(ResultCode.MEDIATYPE_ERROR);
 		return apiResult;
 	}
 
