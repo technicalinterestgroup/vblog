@@ -36,7 +36,12 @@ public enum ResultCode {
     /**
      * @Field：业务异常
      */
-    SERVICE_ERROR(3),
+    SERVICE_ERROR(6),
+
+    /**
+     * @Field：媒体类型不支持
+     */
+    MEDIATYPE_ERROR(7),
     /**
      * @Field：url不存在
      */

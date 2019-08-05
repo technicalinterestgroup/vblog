@@ -7,8 +7,11 @@ import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.service.exception.VLogException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -109,7 +112,7 @@ public class ControllerExceptionAOP {
 			log.debug(e != null ? e.getMessage() : "");
 		}
 		log.error("json格式转换异常", e);
-		apiResult.fail("json格式异常!");
+		apiResult.fail(ResultMessage.DATA_ERROR);
 		apiResult.setCode(ResultCode.DATA_ERROR);
 		return apiResult;
 	}
@@ -122,15 +125,68 @@ public class ControllerExceptionAOP {
      * @param e
      * @return null
     */
-	@ResponseBody
+
 	@ExceptionHandler(value = VLogException.class)
+	@ResponseBody
 	public ApiResult myErrorHandler(VLogException e) {
+		log.error("自定义异常", e);
 		ApiResult apiResult = new ApiResult();
 		apiResult.fail(e.getMessage());
 		apiResult.setCode(ResultCode.SERVICE_ERROR);
 		return apiResult;
 	}
 
+	/**
+	 * @Description: 参数未接收到
+	 * @author: shuyu.wang
+	 * @date: 2019-08-05 18:02
+	 * @param e
+	 * @return null
+	*/
+	@ExceptionHandler(value = HttpMessageNotReadableException.class)
+	@ResponseBody
+	public ApiResult handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+		log.error("参数获取异常", e);
+		ApiResult apiResult = new ApiResult();
+		apiResult.fail(e.getMessage());
+		apiResult.setCode(ResultCode.PARAM_ERROR);
+		return apiResult;
+	}
+
+	/**
+	 * @Description: 请求方式不支持
+	 * @author: shuyu.wang
+	 * @date: 2019-08-05 18:02
+	 * @param e
+	 * @return null
+	 */
+	@ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
+	@ResponseBody
+	public ApiResult httpRequestMethodNotSupportedException(HttpMessageNotReadableException e) {
+		log.error("请求方式不支持", e);
+		ApiResult apiResult = new ApiResult();
+		apiResult.fail(ResultMessage.METHOD_NOT_ALLOWED);
+		apiResult.setCode(ResultCode.METHOD_NOT_ALLOWED);
+		return apiResult;
+	}
+
+
+	/**
+	 * @Description: 媒体类型检查
+	 * @author: shuyu.wang
+	 * @date: 2019-08-05 18:10
+	 * @param e
+	 * @return null
+	*/
+	@ExceptionHandler(value = HttpMediaTypeNotSupportedException.class)
+	@ResponseBody
+	public ApiResult httpMessageNotReadableException(HttpServletRequest req, HttpMediaTypeNotSupportedException e) {
+		log.error("媒体类型异常", e);
+		ApiResult apiResult = new ApiResult();
+		apiResult.fail(ResultMessage.METHOD_NOT_ALLOWED);
+		apiResult.setCode(ResultCode.METHOD_NOT_ALLOWED);
+		return apiResult;
+	}
 
 
 }
