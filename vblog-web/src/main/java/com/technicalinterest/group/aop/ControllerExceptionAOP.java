@@ -45,15 +45,15 @@ public class ControllerExceptionAOP {
 	public ApiResult exception(BindException e) {
 		BindingResult bindingResult = e.getBindingResult();
 		ApiResult apiResult = new ApiResult();
-		if (bindingResult.hasErrors()) {
+//		if (bindingResult.hasErrors()) {
 			log.info("校验参数异常 message:{}", bindingResult.getFieldError().getDefaultMessage());
 			apiResult.fail(bindingResult.getFieldError().getDefaultMessage());
 			apiResult.setCode(ResultCode.PARAM_ERROR);
 			return apiResult;
-		} else {
-			apiResult.success();
-			return apiResult;
-		}
+//		} else {
+//			apiResult.success();
+//			return apiResult;
+//		}
 
 	}
 
@@ -62,23 +62,23 @@ public class ControllerExceptionAOP {
 	 * @param e
 	 * @return
 	 */
-	@ExceptionHandler(ConstraintViolationException.class)
-	@ResponseBody
-	public ApiResult handleValidationException(ConstraintViolationException e) {
-		ApiResult apiResult = new ApiResult();
-		StringBuilder sb = new StringBuilder();
-		for (ConstraintViolation<?> s : e.getConstraintViolations()) {
-			log.info("value:{} message:{}", s.getInvalidValue(), s.getMessage());
-			sb.append(s.getMessage()).append('!');
-		}
-		if (sb != null && sb.length() > 0) {
-			log.info("校验参数异常 message:{}", sb.toString());
-			apiResult.fail(sb.toString());
-
-		}
-		apiResult.setCode(ResultCode.PARAM_ERROR);
-		return apiResult;
-	}
+//	@ExceptionHandler(ConstraintViolationException.class)
+//	@ResponseBody
+//	public ApiResult handleValidationException(ConstraintViolationException e) {
+//		ApiResult apiResult = new ApiResult();
+//		StringBuilder sb = new StringBuilder();
+//		for (ConstraintViolation<?> s : e.getConstraintViolations()) {
+//			log.info("value:{} message:{}", s.getInvalidValue(), s.getMessage());
+//			sb.append(s.getMessage()).append('!');
+//		}
+//		if (sb != null && sb.length() > 0) {
+//			log.info("校验参数异常 message:{}", sb.toString());
+//			apiResult.fail(sb.toString());
+//
+//		}
+//		apiResult.setCode(ResultCode.PARAM_ERROR);
+//		return apiResult;
+//	}
 
 	/**
 	 * @Description: 全局异常拦截
@@ -148,7 +148,7 @@ public class ControllerExceptionAOP {
 	public ApiResult handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
 		log.error("参数获取异常", e);
 		ApiResult apiResult = new ApiResult();
-		apiResult.fail(e.getMessage());
+		apiResult.fail(ResultMessage.PARAM_ERROR);
 		apiResult.setCode(ResultCode.PARAM_ERROR);
 		return apiResult;
 	}

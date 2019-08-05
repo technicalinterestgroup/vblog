@@ -42,13 +42,7 @@ public class ArticleController {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
 		BeanUtils.copyProperties(articleContentParam, articleContentDTO);
-		ReturnClass addUser = null;
-		try {
-			addUser = articleService.saveArticle(articleContentDTO);
-		} catch (VLogException v) {
-			apiResult.setMsg(v.getMessage());
-			return apiResult;
-		}
+		ReturnClass addUser = articleService.saveArticle(articleContentDTO);
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getMsg());
 		} else {
@@ -63,13 +57,7 @@ public class ArticleController {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
 		BeanUtils.copyProperties(editArticleContentParam, articleContentDTO);
-		ReturnClass addUser = null;
-		try {
-			addUser = articleService.saveArticle(articleContentDTO);
-		} catch (VLogException v) {
-			apiResult.setMsg(v.getMessage());
-			return apiResult;
-		}
+		ReturnClass addUser = articleService.saveArticle(articleContentDTO);
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getMsg());
 		} else {

@@ -152,5 +152,14 @@
         order by id desc
 
     </select>
+
+    <select id="listArticleCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dao.QueryArticleDTO">
+        select count(1) from article
+        <where>
+            <if test="pojo.userName != null"> user_name=#{pojo.userName}</if>
+            <if test="pojo.state != null"> state=#{pojo.state}</if>
+            <if test="pojo.title != null"> title like CONCAT('%',#{pojo.title},'%')</if>
+        </where>
+    </select>
 </mapper>
 

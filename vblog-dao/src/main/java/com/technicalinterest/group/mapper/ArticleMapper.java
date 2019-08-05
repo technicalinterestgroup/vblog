@@ -27,4 +27,16 @@ public interface ArticleMapper {
      * @return null
     */
     List<ArticleContentDTO> listArticle(@Param("pojo")QueryArticleDTO queryArticleDTO);
+
+
+    /**
+     * @Description: 条数
+     * @author: shuyu.wang
+     * @date: 2019-08-05 13:25
+     * @param queryArticleDTO
+     * @return null
+     */
+    Integer listArticleCount(@Param("pojo")QueryArticleDTO queryArticleDTO);
+
+
 }

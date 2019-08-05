@@ -12,7 +12,7 @@ public enum ResultMessage {
 
 	SUCCESS("请求成功！"),
 	ERROR("请求失败！"),
-	PARAM_ERROR("参数异常！"),
+	PARAM_ERROR("参数获取异常！"),
 	DATA_ERROR("数据格式异常"),
 	ACCESTOKEN_NULL("accessToken为空，请先登录！"),
 	TIME_OUT("登录超时，请重新登录！"),

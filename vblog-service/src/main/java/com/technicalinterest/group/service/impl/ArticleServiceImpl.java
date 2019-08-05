@@ -102,7 +102,7 @@ public class ArticleServiceImpl implements ArticleService {
 	}
 
 	/**
-	 * @Description: 更新文章
+	 * @Description: 文章列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-04 15:12
 	 * @param queryArticleDTO
