@@ -8,16 +8,13 @@ import com.technicalinterest.group.api.vo.UserVO;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.exception.VLogException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 
 /**
  * @package: com.shuyu.blog.controller
@@ -30,7 +27,7 @@ import javax.validation.constraints.NotBlank;
 @Api(tags = "用户管理")
 @RestController
 @RequestMapping("admin")
-public class UserController {
+public class UserController{
 	@Autowired
 	private UserService userService;
 
