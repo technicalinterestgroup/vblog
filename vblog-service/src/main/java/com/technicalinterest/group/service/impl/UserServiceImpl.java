@@ -14,6 +14,7 @@ import com.technicalinterest.group.service.util.RedisUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -60,6 +61,9 @@ public class UserServiceImpl implements UserService {
 		if (Objects.isNull(user1)) {
 			return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
 		}
+		if (user.getState()==0){
+			return ReturnClass.fail(UserConstant.NO_ACTIVATION);
+		}
 		//生成token
 		UserDTO userVO = new UserDTO();
 		userVO.setUserToken(setToken(userDTO.getUserName()));
@@ -83,26 +87,24 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public ReturnClass addUser(EditUserDTO newUserDTO) {
-		User user = new User();
-		user.setUserName(newUserDTO.getUserName());
+		User user = User.builder().userName(newUserDTO.getUserName()).build();
 		User userByUser = userMapper.getUserByUser(user);
 		if (!Objects.isNull(userByUser)) {
 			return ReturnClass.fail(UserConstant.DUPLICATE_USER_NAME);
 		}
-		User user2 = new User();
-		user2.setUserName(newUserDTO.getUserName());
+		User user2 = User.builder().userName(newUserDTO.getUserName()).build();
 		User userByUser2 = userMapper.getUserByUser(user2);
 		if (!Objects.isNull(userByUser2)) {
 			return ReturnClass.fail(UserConstant.DUPLICATE_USER_EMAIL);
 		}
 		BeanUtils.copyProperties(newUserDTO, user);
-		user.setState((short) 1);
+//		user.setState((short) 1);
 		int i = userMapper.insertSelective(user);
 		if (i != 1) {
 			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
 		} else {
 			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
-			redisUtil.set(key, user.getId(), activation_time);
+			redisUtil.set(key, String.valueOf(user.getId()), activation_time);
 			//发送邮件
 			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
 			mailService.sendHtmlMail(newUserDTO.getEmail(),UserConstant.MAIL_TITLE,"<a href=\""+UserConstant.ACTIVATION_URL+key+"\">"+UserConstant.ACTIVATION_URL+key+"</a>");
@@ -120,7 +122,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ReturnClass updateUser(EditUserDTO editUserDTO) {
 		User user = new User();
-
 		ReturnClass userByToken = getUserByToken();
 		if (!userByToken.isSuccess()) {
 			throw new VLogException(UserConstant.FAILD_GET_USER_INFO);
@@ -165,8 +166,7 @@ public class UserServiceImpl implements UserService {
 		if(Objects.isNull(userName)){
 			throw new VLogException(UserConstant.LOG_OUT_INFO);
 		}
-		User user = new User();
-		user.setUserName(userName);
+		User user = User.builder().userName(userName).build();
 		User userByUser = userMapper.getUserByUser(user);
 		if (Objects.nonNull(userByUser)) {
 			UserDTO userDTO = new UserDTO();
@@ -174,5 +174,29 @@ public class UserServiceImpl implements UserService {
 			return ReturnClass.success(userDTO);
 		}
 		return ReturnClass.fail();
+	}
+
+	/**
+	 * @Description: 账号激活
+	 * @author: shuyu.wang
+	 * @date: 2019/8/5 21:24
+	 * @param key
+	 * @return null
+	 */
+	@Override
+	public ReturnClass activationUser(String key) {
+		String id=(String)redisUtil.get(key);
+		if (!StringUtils.isEmpty(id)){
+			User user =new User();
+			user.setId(Long.parseLong(id));
+			user.setState((short)1);
+			int update = userMapper.update(user);
+			if (update<1){
+                  throw new VLogException(UserConstant.FAILD_GET_USER_INFO);
+			}
+			return ReturnClass.success(UserConstant.ACTIVATION_SUC);
+		}else {
+			return  ReturnClass.fail(UserConstant.MAIL_OUTTIME);
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package com.technicalinterest.group.service;
 
+import com.technicalinterest.group.dao.QueryArticleDTO;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 
@@ -33,4 +34,14 @@ public interface ArticleService {
 	 * @return ReturnClass
 	 */
 	ReturnClass editArticle(ArticleContentDTO articleContentDTO);
+
+
+	/**
+	 * @Description: 更新文章
+	 * @author: shuyu.wang
+	 * @date: 2019-08-04 15:12
+	 * @param queryArticleDTO
+	 * @return ReturnClass
+	 */
+	ReturnClass listArticle(QueryArticleDTO queryArticleDTO);
 }

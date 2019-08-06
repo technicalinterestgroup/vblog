@@ -8,12 +8,10 @@ import com.technicalinterest.group.api.vo.UserVO;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.exception.VLogException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +27,7 @@ import javax.validation.Valid;
 @Api(tags = "用户管理")
 @RestController
 @RequestMapping("admin")
-public class UserController {
+public class UserController{
 	@Autowired
 	private UserService userService;
 
@@ -93,13 +91,7 @@ public class UserController {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(editUserParam, editUserDTO);
-		ReturnClass addUser = null;
-		try {
-			addUser = userService.updateUser(editUserDTO);
-		} catch (VLogException v) {
-			apiResult.setMsg(v.getMessage());
-			return apiResult;
-		}
+		ReturnClass addUser = userService.updateUser(editUserDTO);
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getData());
 		} else {
@@ -125,6 +117,25 @@ public class UserController {
 			apiResult.success(addUser.getData());
 		} else {
 			apiResult.setMsg(addUser.getMsg());
+		}
+		return apiResult;
+	}
+
+	/**
+	 * 账号激活
+	 * @author: shuyu.wang
+	 * @date: 2019-07-21 22:27
+	 * @return null
+	 */
+	@ApiOperation(value = "账号激活", notes = "激活")
+	@GetMapping(value = "/user/activation/{key}")
+	public ApiResult<String> activationUser(@PathVariable("key") String key) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass activationUser = userService.activationUser(key);
+		if (activationUser.isSuccess()) {
+			apiResult.success(activationUser.getMsg());
+		} else {
+			apiResult.setMsg(activationUser.getMsg());
 		}
 		return apiResult;
 	}

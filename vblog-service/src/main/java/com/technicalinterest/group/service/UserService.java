@@ -63,4 +63,14 @@ public interface UserService {
      * @return null
     */
     ReturnClass getUserByToken();
+    
+    /**
+     * @Description: 账号激活
+     * @author: shuyu.wang
+     * @date: 2019/8/5 21:24
+     * @param key
+     * @return null
+    */
+    ReturnClass activationUser(String key);
+
 }

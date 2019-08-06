@@ -60,10 +60,11 @@
             <if test="pojo.nickName!=null">nick_name=#{pojo.nickName},</if>
             <if test="pojo.passWord != null">`pass_word` = #{pojo.passWord},</if>
             <if test="pojo.email != null">`email` = #{pojo.email},</if>
-            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime}</if>
-            <if test="pojo.photo != null">`photo` = #{pojo.photo}</if>
-            <if test="pojo.integral != null">`integral` = #{pojo.integral}</if>
-            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel}</if>
+            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime},</if>
+            <if test="pojo.photo != null">`photo` = #{pojo.photo},</if>
+            <if test="pojo.integral != null">`integral` = #{pojo.integral},</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
+            <if test="pojo.state != null">`state` = #{pojo.state},</if>
         </set>
         WHERE id = #{pojo.id}
     </update>

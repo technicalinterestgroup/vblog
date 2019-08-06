@@ -18,7 +18,7 @@ import java.io.Serializable;
  **/
 @ApiModel(description = "返回响应数据")
 @Data
-public final class ApiResult<T> implements Serializable{
+public final class ApiResult<T> implements Serializable {
 
 	/**
 	 * @Field： 状态编码
@@ -81,6 +81,17 @@ public final class ApiResult<T> implements Serializable{
 
 	}
 
+	public void success(String msg, T data) {
+		this.setCode(ResultCode.SUCCESS);
+		this.setMsg(msg);
+		this.data = data;
+
+	}
+
+	public void fail(ResultCode resultCode, ResultMessage resultMessage) {
+		this.setCode(resultCode);
+		this.setMsg(resultMessage);
+	}
 
 	public void fail(ResultMessage resultMessage) {
 		this.setCode(ResultCode.ERROR);

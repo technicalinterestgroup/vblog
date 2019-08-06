@@ -1,5 +1,6 @@
 package com.technicalinterest.group.dao;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
