@@ -1,6 +1,6 @@
 package com.technicalinterest.group.mapper;
 
-import com.technicalinterest.group.dao.ArticleContentDTO;
+import com.technicalinterest.group.dao.ArticlesDTO;
 import com.technicalinterest.group.dao.QueryArticleDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -26,7 +26,7 @@ public interface ArticleMapper {
      * @param queryArticleDTO
      * @return null
     */
-    List<ArticleContentDTO> listArticle(@Param("pojo")QueryArticleDTO queryArticleDTO);
+    List<ArticlesDTO> listArticle(@Param("pojo")QueryArticleDTO queryArticleDTO);
 
 
     /**
@@ -37,6 +37,16 @@ public interface ArticleMapper {
      * @return null
      */
     Integer listArticleCount(@Param("pojo")QueryArticleDTO queryArticleDTO);
+
+
+    /**
+     * @Description:
+     * @author: shuyu.wang
+     * @date: 2019-08-08 13:24
+     * @param id
+     * @return null
+    */
+    Article getArticleInfo(@Param("id")Long id);
 
 
 }

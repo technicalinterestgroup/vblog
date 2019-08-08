@@ -1,6 +1,9 @@
 package com.technicalinterest.group.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.technicalinterest.group.dao.Article;
+import com.technicalinterest.group.dao.ArticlesDTO;
 import com.technicalinterest.group.dao.Content;
 import com.technicalinterest.group.dao.QueryArticleDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
@@ -10,14 +13,17 @@ import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.ArticleConstant;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
+import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.exception.VLogException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -86,6 +92,12 @@ public class ArticleServiceImpl implements ArticleService {
 		if (!userByToken.isSuccess()) {
 			throw new VLogException(-1, UserConstant.FAILD_GET_USER_INFO);
 		}
+		Article articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId());
+		UserDTO userDTO =(UserDTO)userByToken.getData();
+		if (!StringUtils.equals(articleInfo.getUserName(),userDTO.getUserName())){
+			throw new VLogException(-1, UserConstant.NO_AUTH);
+		}
+
 		article.setSubmit(articleContentDTO.getContent().length() > 50 ? articleContentDTO.getContent().substring(0, 49) : articleContentDTO.getContent());
 		articleMapper.update(article);
 		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
@@ -110,6 +122,11 @@ public class ArticleServiceImpl implements ArticleService {
 	 */
 	@Override
 	public ReturnClass listArticle(QueryArticleDTO queryArticleDTO) {
-		return null;
+		PageHelper.startPage(queryArticleDTO.getPageNum(),queryArticleDTO.getPageSize());
+		Integer integer = articleMapper.listArticleCount(queryArticleDTO);
+		List<ArticlesDTO> articlesDTOS = articleMapper.listArticle(queryArticleDTO);
+		PageInfo<ArticlesDTO> pageInfo = new PageInfo<>(articlesDTOS,queryArticleDTO.getPageSize());
+		PageBean<ArticlesDTO> page=new PageBean<>(articlesDTOS,integer);
+		return ReturnClass.success(pageInfo);
 	}
 }

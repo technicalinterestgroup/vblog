@@ -1,23 +1,24 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.pagehelper.PageInfo;
+import com.technicalinterest.group.api.constant.ResultCode;
+import com.technicalinterest.group.api.constant.ResultMessage;
 import com.technicalinterest.group.api.param.ArticleContentParam;
 import com.technicalinterest.group.api.param.EditArticleContentParam;
-import com.technicalinterest.group.api.param.NewUserParam;
+import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.vo.ApiResult;
+import com.technicalinterest.group.api.vo.ArticlesVO;
+import com.technicalinterest.group.dao.QueryArticleDTO;
 import com.technicalinterest.group.service.ArticleService;
+import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
-import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -35,6 +36,8 @@ import javax.validation.Valid;
 public class ArticleController {
 	@Autowired
 	private ArticleService articleService;
+	@Autowired
+	private UserService userService;
 
 	@ApiOperation(value = "文章发布", notes = "文章发布")
 	@PostMapping(value = "/new")
@@ -57,11 +60,32 @@ public class ArticleController {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
 		BeanUtils.copyProperties(editArticleContentParam, articleContentDTO);
-		ReturnClass addUser = articleService.saveArticle(articleContentDTO);
+		ReturnClass addUser = articleService.editArticle(articleContentDTO);
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getMsg());
 		} else {
 			apiResult.setMsg(addUser.getMsg());
+		}
+		return apiResult;
+	}
+
+	@ApiOperation(value = "文章列表", notes = "文章列表")
+	@GetMapping(value = "/{userName}")
+	public ApiResult<PageInfo<ArticlesVO>> listArticle(@PathVariable("userName") String userName,@Valid QueryArticleParam queryArticleParam) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass returnClass = userService.getUserByuserName(userName);
+		if (!returnClass.isSuccess()){
+			throw new VLogException(ResultCode.NO_URL.getCode(), ResultMessage.NO_URL.getMessage());
+		}
+		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
+		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
+		ReturnClass listArticle = articleService.listArticle(queryArticleDTO);
+		if (listArticle.isSuccess()) {
+			PageInfo<ArticlesVO> pageInfo=new PageInfo<ArticlesVO>();
+			BeanUtils.copyProperties(listArticle.getData(),pageInfo);
+			apiResult.setData(pageInfo);
+		} else {
+			apiResult.setMsg(listArticle.getMsg());
 		}
 		return apiResult;
 	}

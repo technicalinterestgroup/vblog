@@ -46,7 +46,7 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo apiInfo() {
-		ApiInfo apiInfo = new ApiInfo("开源系统接口文档", "开源系统服务接口", "", "", new Contact("vblog", "", ""), "", "", new ArrayList<>());
+		ApiInfo apiInfo = new ApiInfo("开源博客接口文档", "开源博客服务接口", "", "", new Contact("vblog", "", ""), "", "", new ArrayList<>());
 		return apiInfo;
 	}
 

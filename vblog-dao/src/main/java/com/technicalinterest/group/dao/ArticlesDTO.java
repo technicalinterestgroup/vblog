@@ -11,7 +11,7 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-public class ArticleContentDTO {
+public class ArticlesDTO {
 	private Long id;
 
 	/**

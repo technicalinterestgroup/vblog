@@ -37,6 +37,8 @@
         <fastjson.version>1.2.38</fastjson.version>
         <mybatis.version>2.0.1</mybatis.version>
         <swagger-bootstrap-ui.version>1.9.4</swagger-bootstrap-ui.version>
+        <pagehelper.version>5.1.2</pagehelper.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
     </properties>
 
     <dependencyManagement>
@@ -102,6 +104,18 @@
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>swagger-bootstrap-ui</artifactId>
                 <version>${swagger-bootstrap-ui.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper</artifactId>
+                <version>${pagehelper.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -11,10 +11,10 @@ import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.RedisUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -98,7 +98,6 @@ public class UserServiceImpl implements UserService {
 			return ReturnClass.fail(UserConstant.DUPLICATE_USER_EMAIL);
 		}
 		BeanUtils.copyProperties(newUserDTO, user);
-//		user.setState((short) 1);
 		int i = userMapper.insertSelective(user);
 		if (i != 1) {
 			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
@@ -154,6 +153,29 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
+	 * @Description: 账号激活
+	 * @author: shuyu.wang
+	 * @date: 2019/8/5 21:24
+	 * @param key
+	 * @return null
+	 */
+	@Override
+	public ReturnClass activationUser(String key) {
+		String id=(String)redisUtil.get(key);
+		if (!StringUtils.isEmpty(id)){
+			User user =new User();
+			user.setId(Long.parseLong(id));
+			user.setState((short)1);
+			int update = userMapper.update(user);
+			if (update<1){
+				throw new VLogException(UserConstant.FAILD_GET_USER_INFO);
+			}
+			return ReturnClass.success(UserConstant.ACTIVATION_SUC);
+		}else {
+			return  ReturnClass.fail(UserConstant.MAIL_OUTTIME);
+		}
+	}
+	/**
 	 * @Description: 根据toke获取用户信息
 	 * @author: shuyu.wang
 	 * @date: 2019-07-28 19:43
@@ -176,27 +198,42 @@ public class UserServiceImpl implements UserService {
 		return ReturnClass.fail();
 	}
 
+
+
 	/**
-	 * @Description: 账号激活
+	 * @Description:根据用户名查询用户信息
 	 * @author: shuyu.wang
-	 * @date: 2019/8/5 21:24
-	 * @param key
+	 * @date: 2019-08-08 13:08
+	 * @param userName
 	 * @return null
 	 */
 	@Override
-	public ReturnClass activationUser(String key) {
-		String id=(String)redisUtil.get(key);
-		if (!StringUtils.isEmpty(id)){
-			User user =new User();
-			user.setId(Long.parseLong(id));
-			user.setState((short)1);
-			int update = userMapper.update(user);
-			if (update<1){
-                  throw new VLogException(UserConstant.FAILD_GET_USER_INFO);
-			}
-			return ReturnClass.success(UserConstant.ACTIVATION_SUC);
-		}else {
-			return  ReturnClass.fail(UserConstant.MAIL_OUTTIME);
+	public ReturnClass getUserByuserName(String userName) {
+		User user=User.builder().userName(userName).build();
+		User userByUser = userMapper.getUserByUser(user);
+		if (Objects.nonNull(userByUser)){
+			return ReturnClass.success(userByUser);
 		}
+		return ReturnClass.fail();
+	}
+
+	/**
+	 * @Description: 判断用户名是否是当前操作登录的用户
+	 * @author: shuyu.wang
+	 * @date: 2019-08-08 13:12
+	 * @param userName
+	 * @return null
+	 */
+	@Override
+	public ReturnClass userNameIsLoginUser(String userName) {
+		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+		String userNameLogin = (String) redisUtil.get(accessToken);
+		if(Objects.isNull(userNameLogin)){
+			throw new VLogException(UserConstant.LOG_OUT_INFO);
+		}
+		if (StringUtils.equals(userName,userNameLogin)){
+			return ReturnClass.success();
+		}
+		return ReturnClass.fail();
 	}
 }
