@@ -45,11 +45,11 @@ public class ArticleController {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
 		BeanUtils.copyProperties(articleContentParam, articleContentDTO);
-		ReturnClass addUser = articleService.saveArticle(articleContentDTO);
-		if (addUser.isSuccess()) {
-			apiResult.success(addUser.getMsg());
+		ReturnClass saveArticle = articleService.saveArticle(articleContentDTO);
+		if (saveArticle.isSuccess()) {
+			apiResult.success(null,saveArticle.getMsg());
 		} else {
-			apiResult.setMsg(addUser.getMsg());
+			apiResult.fail(saveArticle.getMsg());
 		}
 		return apiResult;
 	}
@@ -60,17 +60,17 @@ public class ArticleController {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
 		BeanUtils.copyProperties(editArticleContentParam, articleContentDTO);
-		ReturnClass addUser = articleService.editArticle(articleContentDTO);
-		if (addUser.isSuccess()) {
-			apiResult.success(addUser.getMsg());
+		ReturnClass editArticle = articleService.editArticle(articleContentDTO);
+		if (editArticle.isSuccess()) {
+			apiResult.success(null,editArticle.getMsg());
 		} else {
-			apiResult.setMsg(addUser.getMsg());
+			apiResult.fail(editArticle.getMsg());
 		}
 		return apiResult;
 	}
 
 	@ApiOperation(value = "文章列表", notes = "文章列表")
-	@GetMapping(value = "/{userName}")
+	@GetMapping(value = "/list/{userName}")
 	public ApiResult<PageInfo<ArticlesVO>> listArticle(@PathVariable("userName") String userName,@Valid QueryArticleParam queryArticleParam) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass returnClass = userService.getUserByuserName(userName);
@@ -83,7 +83,7 @@ public class ArticleController {
 		if (listArticle.isSuccess()) {
 			PageInfo<ArticlesVO> pageInfo=new PageInfo<ArticlesVO>();
 			BeanUtils.copyProperties(listArticle.getData(),pageInfo);
-			apiResult.setData(pageInfo);
+			apiResult.success(pageInfo);
 		} else {
 			apiResult.setMsg(listArticle.getMsg());
 		}

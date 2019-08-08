@@ -49,7 +49,7 @@ public class UserController{
 			BeanUtils.copyProperties(login.getData(), userVO);
 			apiResult.success(userVO);
 		} else {
-			apiResult.setMsg(login.getMsg());
+			apiResult.fail(login.getMsg());
 		}
 		return apiResult;
 	}
@@ -71,7 +71,7 @@ public class UserController{
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getData());
 		} else {
-			apiResult.setMsg(addUser.getMsg());
+			apiResult.fail(addUser.getMsg());
 		}
 		return apiResult;
 	}
@@ -95,7 +95,7 @@ public class UserController{
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getData());
 		} else {
-			apiResult.setMsg(addUser.getMsg());
+			apiResult.fail(addUser.getMsg());
 		}
 		return apiResult;
 	}
@@ -116,7 +116,7 @@ public class UserController{
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getData());
 		} else {
-			apiResult.setMsg(addUser.getMsg());
+			apiResult.fail(addUser.getMsg());
 		}
 		return apiResult;
 	}
@@ -135,7 +135,7 @@ public class UserController{
 		if (activationUser.isSuccess()) {
 			apiResult.success(activationUser.getMsg());
 		} else {
-			apiResult.setMsg(activationUser.getMsg());
+			apiResult.fail(activationUser.getMsg());
 		}
 		return apiResult;
 	}

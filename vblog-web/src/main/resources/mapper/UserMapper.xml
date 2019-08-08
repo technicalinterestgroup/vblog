@@ -12,6 +12,7 @@
         <result column="photo" property="photo"/>
         <result column="integral" property="integral"/>
         <result column="is_del" property="isDel"/>
+        <result column="state" property="state"/>
     </resultMap>
 
     <!--auto generated Code-->
@@ -24,7 +25,8 @@
         `update_time`,
         `photo`,
         `integral`,
-        `is_del`
+        `is_del`,
+         state
     </sql>
 
 

@@ -90,7 +90,7 @@
             <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
             <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
         </set>
-        WHERE id = #{pojo.id}
+        WHERE article_id = #{pojo.articleId}
     </update>
 </mapper>
 

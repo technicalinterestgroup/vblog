@@ -61,13 +61,14 @@ public class UserServiceImpl implements UserService {
 		if (Objects.isNull(user1)) {
 			return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
 		}
-		if (user.getState()==0){
+		if (user1.getState()==0){
 			return ReturnClass.fail(UserConstant.NO_ACTIVATION);
 		}
 		//生成token
 		UserDTO userVO = new UserDTO();
-		userVO.setUserToken(setToken(userDTO.getUserName()));
-		userVO.setUserName(userDTO.getUserName());
+		userVO.setUserToken(setToken(user1.getUserName()));
+		userVO.setUserName(user1.getUserName());
+		userVO.setNickName(user1.getNickName());
 		return ReturnClass.success(userVO);
 	}
 
