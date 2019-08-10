@@ -15,4 +15,6 @@ public interface ContentMapper {
     int insertList(@Param("pojos") List<Content> pojo);
 
     int update(@Param("pojo") Content pojo);
+
+    Content getContent(@Param("articleId")Long articleId);
 }

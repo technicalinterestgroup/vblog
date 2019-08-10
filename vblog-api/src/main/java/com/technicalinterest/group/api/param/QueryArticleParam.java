@@ -1,5 +1,6 @@
-package com.technicalinterest.group.dao;
+package com.technicalinterest.group.api.param;
 
+import com.technicalinterest.group.dao.PageBase;
 import lombok.Data;
 
 /**
@@ -11,7 +12,7 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-public class QueryArticleDTO extends PageBase{
+public class QueryArticleParam extends PageBase {
 	/**
 	 * 标题
 	 */
@@ -27,16 +28,11 @@ public class QueryArticleDTO extends PageBase{
 	/**
 	 * 分类
 	 */
-	private Long categoryCN;
+	private String categoryCN;
 	/**
-	 * 标签id
+	 * 标签
 	 */
-	private Long  tagCN;
-
-	/**
-	 * 文章作者
-	 */
-	private String userName;
+	private String  tagCN;
 
 	/**
 	 * 文章状态 0：草稿，1：发布

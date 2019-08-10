@@ -1,9 +1,8 @@
 package com.technicalinterest.group.aop;
 
 import com.alibaba.fastjson.JSONException;
-import com.technicalinterest.group.api.constant.ResultCode;
-import com.technicalinterest.group.api.constant.ResultMessage;
 import com.technicalinterest.group.api.vo.ApiResult;
+import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.exception.VLogException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +50,7 @@ public class ControllerExceptionAOP {
 		ApiResult apiResult = new ApiResult();
 		log.info("校验参数异常 message:{}", bindingResult.getFieldError().getDefaultMessage());
 		apiResult.fail(bindingResult.getFieldError().getDefaultMessage());
-		apiResult.setCode(ResultCode.PARAM_ERROR);
+		apiResult.setCode(ResultEnum.PARAM_ERROR.getCode());
 		return apiResult;
 	}
 
@@ -61,7 +61,7 @@ public class ControllerExceptionAOP {
 		FieldError fieldError = ex.getBindingResult().getFieldError();
 		log.info("校验参数异常 message:{}", fieldError.getField() + fieldError.getDefaultMessage());
 		apiResult.fail(fieldError.getField() + fieldError.getDefaultMessage());
-		apiResult.setCode(ResultCode.PARAM_ERROR);
+		apiResult.setCode(ResultEnum.PARAM_ERROR.getCode());
 		return apiResult;
 	}
 
@@ -84,7 +84,7 @@ public class ControllerExceptionAOP {
 			apiResult.fail(sb.toString());
 
 		}
-		apiResult.setCode(ResultCode.PARAM_ERROR);
+		apiResult.setCode(ResultEnum.PARAM_ERROR.getCode());
 		return apiResult;
 	}
 
@@ -100,7 +100,7 @@ public class ControllerExceptionAOP {
 	@ResponseBody
 	public ApiResult handleException(Exception e, HttpServletRequest request) {
 		log.error("未catch异常！", e);
-		return new ApiResult(ResultCode.SERVER_ERROR, ResultMessage.SERVER_ERROR);
+		return new ApiResult(ResultEnum.SERVER_ERROR);
 	}
 
 	/**
@@ -112,15 +112,12 @@ public class ControllerExceptionAOP {
 	 */
 	@ExceptionHandler(value = { JSONException.class })
 	@ResponseBody
-	public ApiResult noJSONFormatException(HttpServletRequest req,JSONException e) {
-		ApiResult apiResult = new ApiResult();
+	public ApiResult noJSONFormatException(HttpServletRequest req, JSONException e) {
 		if (log.isDebugEnabled()) {
 			log.debug(e != null ? e.getMessage() : "");
 		}
 		log.info("json格式转换异常", e);
-		apiResult.fail(ResultMessage.DATA_ERROR);
-		apiResult.setCode(ResultCode.DATA_ERROR);
-		return apiResult;
+		return new ApiResult(ResultEnum.JSON_ERROR);
 	}
 
 	/**
@@ -137,7 +134,7 @@ public class ControllerExceptionAOP {
 		log.info("自定义异常", e);
 		ApiResult apiResult = new ApiResult();
 		apiResult.fail(e.getMessage());
-		apiResult.setCode(ResultCode.SERVICE_ERROR);
+		apiResult.setCode(e.getCode());
 		return apiResult;
 	}
 
@@ -150,12 +147,9 @@ public class ControllerExceptionAOP {
 	 */
 	@ExceptionHandler(value = HttpMessageNotReadableException.class)
 	@ResponseBody
-	public ApiResult handleHttpMessageNotReadableException(HttpServletRequest req,HttpMessageNotReadableException e) {
-		log.info("参数获取异常", e);
-		ApiResult apiResult = new ApiResult();
-		apiResult.fail(ResultMessage.PARAM_ERROR);
-		apiResult.setCode(ResultCode.PARAM_ERROR);
-		return apiResult;
+	public ApiResult handleHttpMessageNotReadableException(HttpServletRequest req, HttpMessageNotReadableException e) {
+		log.error("参数获取异常", e);
+		return new ApiResult(ResultEnum.PARAM_ERROR);
 	}
 
 	/**
@@ -167,12 +161,9 @@ public class ControllerExceptionAOP {
 	 */
 	@ExceptionHandler(value = HttpRequestMethodNotSupportedException.class)
 	@ResponseBody
-	public ApiResult httpRequestMethodNotSupportedException(HttpServletRequest req,HttpMessageNotReadableException e) {
-		log.info("请求方式不支持", e);
-		ApiResult apiResult = new ApiResult();
-		apiResult.fail(ResultMessage.METHOD_NOT_ALLOWED);
-		apiResult.setCode(ResultCode.METHOD_NOT_ALLOWED);
-		return apiResult;
+	public ApiResult httpRequestMethodNotSupportedException(HttpServletRequest req, HttpRequestMethodNotSupportedException e) {
+		log.error("请求方式不支持", e);
+		return new ApiResult(ResultEnum.METHOD_NOT_ALLOWED);
 	}
 
 	/**
@@ -185,11 +176,8 @@ public class ControllerExceptionAOP {
 	@ExceptionHandler(value = HttpMediaTypeNotSupportedException.class)
 	@ResponseBody
 	public ApiResult httpMessageNotReadableException(HttpServletRequest req, HttpMediaTypeNotSupportedException e) {
-		log.info("媒体类型异常", e);
-		ApiResult apiResult = new ApiResult();
-		apiResult.fail(ResultMessage.MEDIATYPE_ERROR);
-		apiResult.setCode(ResultCode.MEDIATYPE_ERROR);
-		return apiResult;
+		log.error("媒体类型异常", e);
+		return new ApiResult(ResultEnum.MEDIATYPE_ERROR);
 	}
 
 	/**
@@ -202,11 +190,8 @@ public class ControllerExceptionAOP {
 	@ExceptionHandler(DuplicateKeyException.class)
 	@ResponseBody
 	public ApiResult handleDuplicateKeyException(DuplicateKeyException e) {
-		log.info("数据库唯一键重复异常", e);
-		ApiResult apiResult = new ApiResult();
-		apiResult.fail("数据库唯一键重复异常");
-		apiResult.setCode(ResultCode.ERROR);
-		return apiResult;
+		log.error("数据库唯一键重复异常", e);
+		return new ApiResult(ResultEnum.DUPLICATE_ERROR);
 	}
 
 	/**
@@ -218,11 +203,23 @@ public class ControllerExceptionAOP {
 	 */
 	@ExceptionHandler(NoHandlerFoundException.class)
 	@ResponseBody
-	public ApiResult handleNoHandlerFoundException(HttpServletRequest req,NoHandlerFoundException e) {
-		log.info("url无效");
-		ApiResult apiResult = new ApiResult();
-		apiResult.fail(ResultCode.NO_URL, ResultMessage.NO_URL);
-		return apiResult;
+	public ApiResult handleNoHandlerFoundException(HttpServletRequest req, NoHandlerFoundException e) {
+		log.info("url无效={}", req.getRequestURI());
+		return new ApiResult(ResultEnum.NO_URL);
+	}
+
+	/**
+	 * @Description: 文件超过最大限制
+	 * @author: shuyu.wang
+	 * @date: 2019-08-09 14:04
+	 * @param e
+	 * @return null
+	 */
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	@ResponseBody
+	public ApiResult handleMaxUploadSizeExceededException(HttpServletRequest req, MaxUploadSizeExceededException e) {
+		log.error("文件超过最大限制！",e);
+		return new ApiResult(ResultEnum.FILESIZE_ERROR);
 	}
 
 	private String getIpAddress(HttpServletRequest request) {

@@ -3,6 +3,7 @@ package com.technicalinterest.group.service.impl;
 import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.service.MailService;
+import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.EditUserDTO;
@@ -11,10 +12,10 @@ import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.RedisUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -61,13 +62,14 @@ public class UserServiceImpl implements UserService {
 		if (Objects.isNull(user1)) {
 			return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
 		}
-		if (user.getState()==0){
+		if (user1.getState()==0){
 			return ReturnClass.fail(UserConstant.NO_ACTIVATION);
 		}
 		//生成token
 		UserDTO userVO = new UserDTO();
-		userVO.setUserToken(setToken(userDTO.getUserName()));
-		userVO.setUserName(userDTO.getUserName());
+		userVO.setUserToken(setToken(user1.getUserName()));
+		userVO.setUserName(user1.getUserName());
+		userVO.setNickName(user1.getNickName());
 		return ReturnClass.success(userVO);
 	}
 
@@ -98,7 +100,6 @@ public class UserServiceImpl implements UserService {
 			return ReturnClass.fail(UserConstant.DUPLICATE_USER_EMAIL);
 		}
 		BeanUtils.copyProperties(newUserDTO, user);
-//		user.setState((short) 1);
 		int i = userMapper.insertSelective(user);
 		if (i != 1) {
 			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
@@ -124,11 +125,11 @@ public class UserServiceImpl implements UserService {
 		User user = new User();
 		ReturnClass userByToken = getUserByToken();
 		if (!userByToken.isSuccess()) {
-			throw new VLogException(UserConstant.FAILD_GET_USER_INFO);
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		UserDTO userDTO = (UserDTO) userByToken.getData();
-		user.setId(userDTO.getId());
 		BeanUtils.copyProperties(editUserDTO, user);
+		user.setId(userDTO.getId());
 		int update = userMapper.update(user);
 		if (update != 1) {
 			return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
@@ -154,29 +155,6 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
-	 * @Description: 根据toke获取用户信息
-	 * @author: shuyu.wang
-	 * @date: 2019-07-28 19:43
-	 * @return null
-	 */
-	@Override
-	public ReturnClass getUserByToken() {
-		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		String userName = (String) redisUtil.get(accessToken);
-		if(Objects.isNull(userName)){
-			throw new VLogException(UserConstant.LOG_OUT_INFO);
-		}
-		User user = User.builder().userName(userName).build();
-		User userByUser = userMapper.getUserByUser(user);
-		if (Objects.nonNull(userByUser)) {
-			UserDTO userDTO = new UserDTO();
-			BeanUtils.copyProperties(userByUser, userDTO);
-			return ReturnClass.success(userDTO);
-		}
-		return ReturnClass.fail();
-	}
-
-	/**
 	 * @Description: 账号激活
 	 * @author: shuyu.wang
 	 * @date: 2019/8/5 21:24
@@ -192,11 +170,76 @@ public class UserServiceImpl implements UserService {
 			user.setState((short)1);
 			int update = userMapper.update(user);
 			if (update<1){
-                  throw new VLogException(UserConstant.FAILD_GET_USER_INFO);
+				throw new VLogException(ResultEnum.USERINFO_ERROR);
 			}
 			return ReturnClass.success(UserConstant.ACTIVATION_SUC);
 		}else {
 			return  ReturnClass.fail(UserConstant.MAIL_OUTTIME);
 		}
 	}
+	/**
+	 * @Description: 根据toke获取用户信息
+	 * @author: shuyu.wang
+	 * @date: 2019-07-28 19:43
+	 * @return null
+	 */
+	@Override
+	public ReturnClass getUserByToken() {
+		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+		String userName = (String) redisUtil.get(accessToken);
+		if(Objects.isNull(userName)){
+			throw new VLogException(ResultEnum.TIME_OUT);
+		}
+		User user = User.builder().userName(userName).build();
+		User userByUser = userMapper.getUserByUser(user);
+		if (Objects.nonNull(userByUser)) {
+			UserDTO userDTO = new UserDTO();
+			BeanUtils.copyProperties(userByUser, userDTO);
+			return ReturnClass.success(userDTO);
+		}
+		return ReturnClass.fail();
+	}
+
+
+
+	/**
+	 * @Description:根据用户名查询用户信息
+	 * @author: shuyu.wang
+	 * @date: 2019-08-08 13:08
+	 * @param userName
+	 * @return null
+	 */
+	@Override
+	public ReturnClass getUserByuserName(String userName) {
+		User user=User.builder().userName(userName).build();
+		User userByUser = userMapper.getUserByUser(user);
+		if (Objects.nonNull(userByUser)){
+			UserDTO userDTO=new UserDTO();
+			BeanUtils.copyProperties(userByUser,userDTO);
+			return ReturnClass.success(userDTO);
+		}
+		return ReturnClass.fail();
+	}
+
+	/**
+	 * @Description: 判断用户名是否是当前操作登录的用户
+	 * @author: shuyu.wang
+	 * @date: 2019-08-08 13:12
+	 * @param userName
+	 * @return null
+	 */
+	@Override
+	public ReturnClass userNameIsLoginUser(String userName) {
+		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+		String userNameLogin = (String) redisUtil.get(accessToken);
+		if(Objects.isNull(userNameLogin)){
+			throw new VLogException(ResultEnum.TIME_OUT);
+		}
+		if (StringUtils.equals(userName,userNameLogin)){
+			return ReturnClass.success();
+		}
+		return ReturnClass.fail();
+	}
+
+
 }

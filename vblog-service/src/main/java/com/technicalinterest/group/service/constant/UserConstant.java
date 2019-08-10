@@ -39,4 +39,6 @@ public class UserConstant {
 
 	public static final String ACTIVATION_URL = "http://127.0.0.1:8082/vblog/admin/user/activation/";
 
+	public static final String NO_AUTH = "无当前操作权限！";
+
 }

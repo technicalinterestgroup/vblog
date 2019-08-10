@@ -43,5 +43,14 @@ public interface ArticleService {
 	 * @param queryArticleDTO
 	 * @return ReturnClass
 	 */
-	ReturnClass listArticle(QueryArticleDTO queryArticleDTO);
+	ReturnClass listArticle(String userName,QueryArticleDTO queryArticleDTO);
+
+    /**
+     * @Description:获取文章详情
+     * @author: shuyu.wang
+     * @date: 2019-08-09 16:37
+     * @param id
+     * @return null
+    */
+	ReturnClass articleDetail(Long id);
 }

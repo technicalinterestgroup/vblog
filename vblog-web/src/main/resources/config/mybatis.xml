@@ -26,5 +26,11 @@
     <plugins>
         <!-- 打印sql拦截器 -->
         <plugin interceptor="com.technicalinterest.group.interceptor.MybatisInterceptor"></plugin>
+        <!-- 分页 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- config params as the following -->
+            <!--<!–分页参数合理化  –>-->
+            <property name="reasonable" value="true"/>
+        </plugin>
     </plugins>
 </configuration>

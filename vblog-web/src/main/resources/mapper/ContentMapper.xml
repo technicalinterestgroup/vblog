@@ -44,12 +44,12 @@
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
         INSERT INTO content
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="pojo.articleId!=null"> `article_id`,</if>
-            <if test="pojo.content!=null"> `content`,</if>
-            <if test="pojo.id!=null"> `id`,</if>
-            <if test="pojo.isDel!=null"> `is_del`,</if>
-            <if test="pojo.createTime!=null"> `create_time`,</if>
-            <if test="pojo.updateTime!=null"> `update_time`,</if>
+            <if test="pojo.articleId!=null">`article_id`,</if>
+            <if test="pojo.content!=null">`content`,</if>
+            <if test="pojo.id!=null">`id`,</if>
+            <if test="pojo.isDel!=null">`is_del`,</if>
+            <if test="pojo.createTime!=null">`create_time`,</if>
+            <if test="pojo.updateTime!=null">`update_time`,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -83,14 +83,20 @@
     <update id="update">
         UPDATE content
         <set>
-            <if test="pojo.articleId != null"> `article_id` = #{pojo.articleId}, </if>
-            <if test="pojo.content != null"> `content` = #{pojo.content}, </if>
-            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
-            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
-            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
-            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+            <if test="pojo.articleId != null">`article_id` = #{pojo.articleId},</if>
+            <if test="pojo.content != null">`content` = #{pojo.content},</if>
+            <if test="pojo.id != null">`id` = #{pojo.id},</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
+            <if test="pojo.createTime != null">`create_time` = #{pojo.createTime},</if>
+            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime}</if>
         </set>
-        WHERE id = #{pojo.id}
+        WHERE article_id = #{pojo.articleId}
     </update>
+
+    <select id="getContent" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Content">
+        select
+        <include refid="all_column"/>
+        from content WHERE article_id = #{articleId}
+    </select>
 </mapper>
 

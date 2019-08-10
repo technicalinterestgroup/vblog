@@ -55,6 +55,14 @@ public interface UserService {
     */
     ReturnClass logout(String token);
 
+    /**
+     * @Description: 账号激活
+     * @author: shuyu.wang
+     * @date: 2019/8/5 21:24
+     * @param key
+     * @return null
+     */
+    ReturnClass activationUser(String key);
 
     /**
      * @Description: 根据toke获取用户信息
@@ -64,13 +72,25 @@ public interface UserService {
     */
     ReturnClass getUserByToken();
     
+
     /**
-     * @Description: 账号激活
+     * @Description:根据用户名查询用户信息
      * @author: shuyu.wang
-     * @date: 2019/8/5 21:24
-     * @param key
+     * @date: 2019-08-08 13:08
+     * @param userName
      * @return null
     */
-    ReturnClass activationUser(String key);
+    ReturnClass getUserByuserName(String userName);
+
+
+    
+    /**
+     * @Description: 判断用户名是否是当前操作登录的用户
+     * @author: shuyu.wang
+     * @date: 2019-08-08 13:12
+     * @param userName
+     * @return null
+    */
+    ReturnClass userNameIsLoginUser(String userName);
 
 }

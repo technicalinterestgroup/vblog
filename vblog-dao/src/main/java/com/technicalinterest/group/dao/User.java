@@ -31,7 +31,7 @@ public class User extends Base {
 	 */
 	private String passWord;
 	/**
-	 * 头像
+	 * 邮件
 	 */
 	private String email;
 	/**
