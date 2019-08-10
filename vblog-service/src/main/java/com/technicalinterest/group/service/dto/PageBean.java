@@ -32,6 +32,14 @@ public class PageBean<T> {
 	public PageBean() {
 	}
 
+	public PageBean(List<T> pageData, Integer currentPage, Integer pageSize, Integer totalCount) {
+		super();
+		this.pageData = pageData;
+		this.currentPage = currentPage;
+		this.pageSize = pageSize;
+		this.totalCount = totalCount;
+	}
+
 	public boolean isFirst() {
 		return (this.currentPage.intValue() == 1) || (this.totalCount.intValue() == 0);
 	}

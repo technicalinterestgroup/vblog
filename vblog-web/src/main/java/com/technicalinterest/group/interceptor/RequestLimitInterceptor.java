@@ -2,9 +2,8 @@ package com.technicalinterest.group.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.util.concurrent.RateLimiter;
-import com.technicalinterest.group.api.constant.ResultCode;
-import com.technicalinterest.group.api.constant.ResultMessage;
 import com.technicalinterest.group.api.vo.ApiResult;
+import com.technicalinterest.group.service.constant.ResultEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -24,7 +23,7 @@ public class RequestLimitInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         if (!LIMITER.tryAcquire()) {
-            ApiResult result = new ApiResult(ResultCode.NET_BLOCK, ResultMessage.NET_BLOCK);
+            ApiResult result = new ApiResult(ResultEnum.NET_BLOCK);
             returnJson(httpServletResponse, JSON.toJSONString(result));
             return false;
         }

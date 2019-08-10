@@ -28,7 +28,7 @@ public class ArticleContentDTO {
 	/**
 	 * 是否置顶
 	 */
-	private Short isTop=0;
+	private Short isTop;
 	/**
 	 * 分类id
 	 */
@@ -36,7 +36,7 @@ public class ArticleContentDTO {
 	/**
 	 * 是否审核
 	 */
-	private Short isReview=1;
+	private Short isReview;
 	/**
 	 * 标签id
 	 */

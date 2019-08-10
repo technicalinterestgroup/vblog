@@ -3,10 +3,9 @@ package com.technicalinterest.group.interceptor;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.technicalinterest.group.api.constant.ResultCode;
-import com.technicalinterest.group.api.constant.ResultMessage;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.constant.UrlConstant;
+import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +59,7 @@ public class MyInterceptor implements HandlerInterceptor {
                     String userName =(String)redisUtil.get(ACCESS_TOKEN_STRING);
                     if (Objects.isNull(userName)) {
                         response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
-                        ApiResult result = new ApiResult(ResultCode.TIME_OUT, ResultMessage.TIME_OUT);
+                        ApiResult result = new ApiResult(ResultEnum.TIME_OUT);
                         PrintWriter out = response.getWriter();
                         out.write(JSONObject.toJSONString(result));
                         out.close();
@@ -71,7 +70,7 @@ public class MyInterceptor implements HandlerInterceptor {
                     return true;
                 } else {
                     response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
-                    ApiResult result = new ApiResult(ResultCode.ACCESTOKEN_NULL, ResultMessage.ACCESTOKEN_NULL);
+                    ApiResult result = new ApiResult(ResultEnum.ACCESTOKEN_NULL);
                     PrintWriter out = response.getWriter();
                     out.write(JSONObject.toJSONString(result));
                     out.close();

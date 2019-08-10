@@ -92,4 +92,5 @@ public interface UserService {
      * @return null
     */
     ReturnClass userNameIsLoginUser(String userName);
+
 }

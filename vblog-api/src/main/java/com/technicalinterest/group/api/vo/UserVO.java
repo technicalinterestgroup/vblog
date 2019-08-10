@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -13,7 +14,8 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-@ApiModel(description = "登录返回参数")
+@ApiModel(description = "用户信息")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserVO {
     @ApiModelProperty(value = "用户名")
     private String userName;
@@ -21,4 +23,8 @@ public class UserVO {
     private String userToken;
     @ApiModelProperty(value = "昵称")
     private String nickName;
+    @ApiModelProperty(value = "头像url")
+    private String photo;
+    @ApiModelProperty(value = "积分")
+    private Integer integral;
 }

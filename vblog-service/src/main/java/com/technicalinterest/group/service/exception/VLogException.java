@@ -1,5 +1,7 @@
 package com.technicalinterest.group.service.exception;
 
+import com.technicalinterest.group.service.constant.ResultEnum;
+
 /**
  * @package: com.technicalinterest.group.service.exception
  * @className: VLogException
@@ -13,7 +15,7 @@ public class VLogException extends RuntimeException {
 
 	private static final long serialVersionUID = -8616472009504184287L;
 
-	protected Integer code;
+	protected String code;
 
 	protected String message;
 
@@ -22,20 +24,27 @@ public class VLogException extends RuntimeException {
 	}
 
 	public VLogException(String message) {
+		this.code=ResultEnum.ERROR.getCode();
 		this.message = message;
 	}
 
-	public VLogException(Integer code, String message) {
+	public VLogException(String code, String message) {
 		super();
 		this.code = code;
 		this.message = message;
 	}
 
-	public Integer getCode() {
+	public VLogException(ResultEnum resultEnum) {
+		super();
+		this.code = resultEnum.getCode();
+		this.message = resultEnum.getMsg();
+	}
+
+	public String getCode() {
 		return code;
 	}
 
-	public void setCode(Integer code) {
+	public void setCode(String code) {
 		this.code = code;
 	}
 

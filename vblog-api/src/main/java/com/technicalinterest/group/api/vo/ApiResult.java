@@ -1,7 +1,6 @@
 package com.technicalinterest.group.api.vo;
 
-import com.technicalinterest.group.api.constant.ResultCode;
-import com.technicalinterest.group.api.constant.ResultMessage;
+import com.technicalinterest.group.service.constant.ResultEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,7 +23,7 @@ public final class ApiResult<T> implements Serializable {
 	 * @Field： 状态编码
 	 */
 	@ApiModelProperty(value = "状态码")
-	private Integer code;
+	private String code;
 	/**
 	 * @Field：提示信息
 	 */
@@ -37,69 +36,64 @@ public final class ApiResult<T> implements Serializable {
 	private T data;
 
 	public ApiResult() {
-		this.setCode(ResultCode.ERROR);
+		this.code = ResultEnum.ERROR.getCode();
 	}
 
-	private ApiResult(Integer code, String msg) {
+	private ApiResult(String code, String msg) {
 		super();
 		this.code = code;
 		this.msg = msg;
 	}
 
-	private ApiResult(Integer code, String msg, T data) {
+	private ApiResult(String code, String msg, T data) {
 		super();
 		this.code = code;
 		this.msg = msg;
 		this.data = data;
 	}
 
-	public ApiResult(ResultCode code, ResultMessage message) {
-		this(code.getCode(), message.getMessage());
+	public ApiResult(ResultEnum resultEnum) {
+		this(resultEnum.getCode(), resultEnum.getMsg());
 	}
 
-	public void setCode(ResultCode code) {
-		this.code = code.getCode();
-	}
-
-	public void setMsg(ResultMessage message) {
-		this.msg = message.getMessage();
-	}
+	//	public void setCode(ResultCode code) {
+	//		this.code = code.getCode();
+	//	}
+	//
+	//	public void setMsg(ResultMessage message) {
+	//		this.msg = message.getMessage();
+	//	}
 
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
 
 	public void success() {
-		this.setCode(ResultCode.SUCCESS);
-		this.setMsg(ResultMessage.SUCCESS);
+		this.setCode(ResultEnum.SUCCESS.getCode());
+		this.setMsg(ResultEnum.SUCCESS.getMsg());
 	}
 
 	public void success(T data) {
-		this.setCode(ResultCode.SUCCESS);
-		this.setMsg(ResultMessage.SUCCESS);
+		this.setCode(ResultEnum.SUCCESS.getCode());
+		this.setMsg(ResultEnum.SUCCESS.getMsg());
 		this.data = data;
 
 	}
 
 	public void success(String msg, T data) {
-		this.setCode(ResultCode.SUCCESS);
+		this.setCode(ResultEnum.SUCCESS.getCode());
 		this.setMsg(msg);
 		this.data = data;
 
 	}
 
-	public void fail(ResultCode resultCode, ResultMessage resultMessage) {
-		this.setCode(resultCode);
-		this.setMsg(resultMessage);
-	}
-
-	public void fail(ResultMessage resultMessage) {
-		this.setCode(ResultCode.ERROR);
-		this.setMsg(resultMessage);
+	public void fail(ResultEnum resultEnum) {
+		this.setCode(resultEnum.getCode());
+		this.setMsg(resultEnum.getMsg());
 	}
 
 	public void fail(String msg) {
-		this.setCode(ResultCode.ERROR);
+		this.setCode(ResultEnum.ERROR.getCode());
 		this.setMsg(msg);
 	}
 

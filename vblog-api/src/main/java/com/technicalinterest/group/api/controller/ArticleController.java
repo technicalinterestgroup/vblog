@@ -1,17 +1,17 @@
 package com.technicalinterest.group.api.controller;
 
-import com.github.pagehelper.PageInfo;
-import com.technicalinterest.group.api.constant.ResultCode;
-import com.technicalinterest.group.api.constant.ResultMessage;
 import com.technicalinterest.group.api.param.ArticleContentParam;
 import com.technicalinterest.group.api.param.EditArticleContentParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.vo.ApiResult;
+import com.technicalinterest.group.api.vo.ArticleContentVO;
 import com.technicalinterest.group.api.vo.ArticlesVO;
 import com.technicalinterest.group.dao.QueryArticleDTO;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
+import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
+import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
 import io.swagger.annotations.Api;
@@ -47,7 +47,7 @@ public class ArticleController {
 		BeanUtils.copyProperties(articleContentParam, articleContentDTO);
 		ReturnClass saveArticle = articleService.saveArticle(articleContentDTO);
 		if (saveArticle.isSuccess()) {
-			apiResult.success(null,saveArticle.getMsg());
+			apiResult.success(null, saveArticle.getMsg());
 		} else {
 			apiResult.fail(saveArticle.getMsg());
 		}
@@ -62,7 +62,7 @@ public class ArticleController {
 		BeanUtils.copyProperties(editArticleContentParam, articleContentDTO);
 		ReturnClass editArticle = articleService.editArticle(articleContentDTO);
 		if (editArticle.isSuccess()) {
-			apiResult.success(null,editArticle.getMsg());
+			apiResult.success(null, editArticle.getMsg());
 		} else {
 			apiResult.fail(editArticle.getMsg());
 		}
@@ -71,22 +71,42 @@ public class ArticleController {
 
 	@ApiOperation(value = "文章列表", notes = "文章列表")
 	@GetMapping(value = "/list/{userName}")
-	public ApiResult<PageInfo<ArticlesVO>> listArticle(@PathVariable("userName") String userName,@Valid QueryArticleParam queryArticleParam) {
+	public ApiResult<PageBean<ArticlesVO>> listArticle(@PathVariable("userName") String userName, @Valid QueryArticleParam queryArticleParam) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass returnClass = userService.getUserByuserName(userName);
-		if (!returnClass.isSuccess()){
-			throw new VLogException(ResultCode.NO_URL.getCode(), ResultMessage.NO_URL.getMessage());
+		if (!returnClass.isSuccess()) {
+			throw new VLogException(ResultEnum.NO_URL);
 		}
 		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
 		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
-		ReturnClass listArticle = articleService.listArticle(queryArticleDTO);
+		ReturnClass listArticle = articleService.listArticle(userName, queryArticleDTO);
 		if (listArticle.isSuccess()) {
-			PageInfo<ArticlesVO> pageInfo=new PageInfo<ArticlesVO>();
-			BeanUtils.copyProperties(listArticle.getData(),pageInfo);
+			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();
+			BeanUtils.copyProperties(listArticle.getData(), pageInfo);
 			apiResult.success(pageInfo);
+
 		} else {
 			apiResult.setMsg(listArticle.getMsg());
 		}
 		return apiResult;
 	}
+
+	@ApiOperation(value = "文章详情", notes = "文章详情")
+	@GetMapping(value = "/detail/{id}")
+	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass articleDetail = articleService.articleDetail(id);
+
+		ArticleContentVO articleContentVO = new ArticleContentVO();
+		if (articleDetail.isSuccess()) {
+			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();
+			BeanUtils.copyProperties(articleDetail.getData(), articleContentVO);
+			apiResult.success(articleContentVO);
+
+		} else {
+			apiResult.setMsg(articleDetail.getMsg());
+		}
+		return apiResult;
+	}
+
 }

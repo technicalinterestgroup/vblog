@@ -5,9 +5,11 @@ import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.UserParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.UserVO;
+import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.UserService;
+import com.technicalinterest.group.service.exception.VLogException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -27,7 +29,7 @@ import javax.validation.Valid;
 @Api(tags = "用户管理")
 @RestController
 @RequestMapping("admin")
-public class UserController{
+public class UserController {
 	@Autowired
 	private UserService userService;
 
@@ -76,8 +78,6 @@ public class UserController{
 		return apiResult;
 	}
 
-	//修改信息设置
-
 	/**
 	 * 修改信息设置
 	 * @author: shuyu.wang
@@ -100,7 +100,27 @@ public class UserController{
 		return apiResult;
 	}
 
-	//退出
+	/**
+	 * 用户信息接口
+	 * @return null
+	 * @author: shuyu.wang
+	 * @date: 2019-07-14 19:24
+	 */
+	@ApiOperation(value = "用户信息", notes = "用户信息")
+	@GetMapping(value = "/user/detail/{userName}")
+	public ApiResult<UserVO> detail(@PathVariable("userName") String userName) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass getUserByuserName = userService.getUserByuserName(userName);
+		if (getUserByuserName.isSuccess()) {
+			UserVO userVO = new UserVO();
+			BeanUtils.copyProperties(getUserByuserName.getData(), userVO);
+			apiResult.success(userVO);
+
+		} else {
+			throw new VLogException(ResultEnum.NO_URL);
+		}
+		return apiResult;
+	}
 
 	/**
 	 * 注销登录

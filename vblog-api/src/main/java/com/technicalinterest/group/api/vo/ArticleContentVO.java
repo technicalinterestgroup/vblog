@@ -16,8 +16,8 @@ import java.util.Date;
  * @since: 0.1
  **/
 @Data
-@ApiModel(description = "文章列表")
-public class ArticlesVO {
+@ApiModel(description = "文章详情")
+public class ArticleContentVO {
 	@ApiModelProperty(value = "文章id")
 	private Long id;
 	@ApiModelProperty(value = "标题")
@@ -39,12 +39,7 @@ public class ArticlesVO {
 
 	@ApiModelProperty(value = "标签名称")
 	private String tagCN;
-
-	@ApiModelProperty(value = "文章作者")
-	private String userName;
-
-	@ApiModelProperty(value = "发布时间")
-	@JSONField(format = "yyyy-MM-dd")
-	private Date updateTime;
+	@ApiModelProperty(value = "文章详情")
+	private String content;
 
 }

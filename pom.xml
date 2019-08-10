@@ -24,7 +24,6 @@
     </modules>
 
 
-
     <properties>
         <vblog.version>0.0.1-SNAPSHOT</vblog.version>
         <java.version>1.8</java.version>
@@ -39,6 +38,7 @@
         <swagger-bootstrap-ui.version>1.9.4</swagger-bootstrap-ui.version>
         <pagehelper.version>5.1.2</pagehelper.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
+        <thumbnailator.version>0.4.8</thumbnailator.version>
     </properties>
 
     <dependencyManagement>
@@ -105,7 +105,7 @@
                 <artifactId>swagger-bootstrap-ui</artifactId>
                 <version>${swagger-bootstrap-ui.version}</version>
             </dependency>
-
+            <!--mybatis分页-->
             <dependency>
                 <groupId>com.github.pagehelper</groupId>
                 <artifactId>pagehelper</artifactId>
@@ -117,9 +117,14 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
             </dependency>
+            <!--图片压缩-->
+            <dependency>
+                <groupId>net.coobird</groupId>
+                <artifactId>thumbnailator</artifactId>
+                <version>${thumbnailator.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
 
 
 </project>

@@ -3,6 +3,7 @@ package com.technicalinterest.group.service.impl;
 import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.service.MailService;
+import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.EditUserDTO;
@@ -124,11 +125,11 @@ public class UserServiceImpl implements UserService {
 		User user = new User();
 		ReturnClass userByToken = getUserByToken();
 		if (!userByToken.isSuccess()) {
-			throw new VLogException(UserConstant.FAILD_GET_USER_INFO);
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		UserDTO userDTO = (UserDTO) userByToken.getData();
-		user.setId(userDTO.getId());
 		BeanUtils.copyProperties(editUserDTO, user);
+		user.setId(userDTO.getId());
 		int update = userMapper.update(user);
 		if (update != 1) {
 			return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
@@ -169,7 +170,7 @@ public class UserServiceImpl implements UserService {
 			user.setState((short)1);
 			int update = userMapper.update(user);
 			if (update<1){
-				throw new VLogException(UserConstant.FAILD_GET_USER_INFO);
+				throw new VLogException(ResultEnum.USERINFO_ERROR);
 			}
 			return ReturnClass.success(UserConstant.ACTIVATION_SUC);
 		}else {
@@ -187,7 +188,7 @@ public class UserServiceImpl implements UserService {
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
 		String userName = (String) redisUtil.get(accessToken);
 		if(Objects.isNull(userName)){
-			throw new VLogException(UserConstant.LOG_OUT_INFO);
+			throw new VLogException(ResultEnum.TIME_OUT);
 		}
 		User user = User.builder().userName(userName).build();
 		User userByUser = userMapper.getUserByUser(user);
@@ -213,7 +214,9 @@ public class UserServiceImpl implements UserService {
 		User user=User.builder().userName(userName).build();
 		User userByUser = userMapper.getUserByUser(user);
 		if (Objects.nonNull(userByUser)){
-			return ReturnClass.success(userByUser);
+			UserDTO userDTO=new UserDTO();
+			BeanUtils.copyProperties(userByUser,userDTO);
+			return ReturnClass.success(userDTO);
 		}
 		return ReturnClass.fail();
 	}
@@ -230,11 +233,13 @@ public class UserServiceImpl implements UserService {
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
 		String userNameLogin = (String) redisUtil.get(accessToken);
 		if(Objects.isNull(userNameLogin)){
-			throw new VLogException(UserConstant.LOG_OUT_INFO);
+			throw new VLogException(ResultEnum.TIME_OUT);
 		}
 		if (StringUtils.equals(userName,userNameLogin)){
 			return ReturnClass.success();
 		}
 		return ReturnClass.fail();
 	}
+
+
 }
