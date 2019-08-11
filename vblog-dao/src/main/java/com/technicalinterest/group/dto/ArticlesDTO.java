@@ -1,4 +1,4 @@
-package com.technicalinterest.group.dao;
+package com.technicalinterest.group.dto;
 
 import lombok.Data;
 

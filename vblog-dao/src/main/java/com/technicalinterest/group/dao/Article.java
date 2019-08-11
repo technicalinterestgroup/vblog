@@ -11,7 +11,7 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-public class Article extends Base{
+public class Article extends BaseDao {
 	/** 
 	* 标题
 	*/ 

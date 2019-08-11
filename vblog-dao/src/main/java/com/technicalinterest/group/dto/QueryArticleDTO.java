@@ -1,5 +1,6 @@
-package com.technicalinterest.group.dao;
+package com.technicalinterest.group.dto;
 
+import com.technicalinterest.group.dao.PageBase;
 import lombok.Data;
 
 /**
@@ -11,7 +12,7 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-public class QueryArticleDTO extends PageBase{
+public class QueryArticleDTO extends PageBase {
 	/**
 	 * 搜索条件
 	 */

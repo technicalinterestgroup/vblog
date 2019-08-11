@@ -142,7 +142,7 @@
         WHERE id = #{pojo.id}
     </update>
 
-    <select id="listArticle" resultType="com.technicalinterest.group.dao.ArticlesDTO" parameterType="com.technicalinterest.group.dao.QueryArticleDTO">
+    <select id="listArticle" resultType="com.technicalinterest.group.dto.ArticlesDTO" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
         select * from article
         <where>
             <if test="pojo.userName != null">user_name=#{pojo.userName}</if>
@@ -154,7 +154,7 @@
 
     </select>
 
-    <select id="listArticleCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dao.QueryArticleDTO">
+    <select id="listArticleCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
         select count(1) from article
         <where>
             <if test="pojo.userName != null">user_name=#{pojo.userName}</if>

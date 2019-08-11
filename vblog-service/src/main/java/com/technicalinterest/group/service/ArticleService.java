@@ -1,6 +1,6 @@
 package com.technicalinterest.group.service;
 
-import com.technicalinterest.group.dao.QueryArticleDTO;
+import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 

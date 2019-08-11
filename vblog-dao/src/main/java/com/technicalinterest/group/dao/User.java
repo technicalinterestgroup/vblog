@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class User extends Base {
+public class User extends BaseDao {
 	/**
 	 * 用户名
 	 */

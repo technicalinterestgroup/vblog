@@ -1,7 +1,7 @@
 package com.technicalinterest.group.mapper;
 
-import com.technicalinterest.group.dao.ArticlesDTO;
-import com.technicalinterest.group.dao.QueryArticleDTO;
+import com.technicalinterest.group.dto.ArticlesDTO;
+import com.technicalinterest.group.dto.QueryArticleDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

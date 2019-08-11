@@ -2,9 +2,9 @@ package com.technicalinterest.group.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.Article;
-import com.technicalinterest.group.dao.ArticlesDTO;
+import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dao.Content;
-import com.technicalinterest.group.dao.QueryArticleDTO;
+import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.ContentMapper;
 import com.technicalinterest.group.service.ArticleService;

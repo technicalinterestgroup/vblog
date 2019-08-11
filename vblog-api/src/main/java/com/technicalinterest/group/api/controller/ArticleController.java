@@ -6,7 +6,7 @@ import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleContentVO;
 import com.technicalinterest.group.api.vo.ArticlesVO;
-import com.technicalinterest.group.dao.QueryArticleDTO;
+import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.ResultEnum;
