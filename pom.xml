@@ -25,6 +25,7 @@
 
 
     <properties>
+        <profiles.dir>src/profiles</profiles.dir>
         <vblog.version>0.0.1-SNAPSHOT</vblog.version>
         <java.version>1.8</java.version>
         <springfox-swagger2.version>2.7.0</springfox-swagger2.version>

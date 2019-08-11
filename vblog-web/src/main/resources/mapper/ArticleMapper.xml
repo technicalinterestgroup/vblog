@@ -147,7 +147,8 @@
         <where>
             <if test="pojo.userName != null">user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">state=#{pojo.state}</if>
-            <if test="pojo.title != null">title like CONCAT('%',#{pojo.title},'%')</if>
+            <if test="pojo.condition != null">title like CONCAT('%',#{pojo.condition},'%')</if>
+            <if test="pojo.condition != null">submit like CONCAT('%',#{pojo.condition},'%')</if>
         </where>
         order by id desc
 
@@ -158,7 +159,8 @@
         <where>
             <if test="pojo.userName != null">user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">state=#{pojo.state}</if>
-            <if test="pojo.title != null">title like CONCAT('%',#{pojo.title},'%')</if>
+            <if test="pojo.condition != null">title like CONCAT('%',#{pojo.condition},'%')</if>
+            <if test="pojo.condition != null">submit like CONCAT('%',#{pojo.condition},'%')</if>
         </where>
     </select>
 
