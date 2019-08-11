@@ -1,6 +1,8 @@
 package com.technicalinterest.group.api.param;
 
 import com.technicalinterest.group.dao.PageBase;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -12,30 +14,17 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
+@ApiModel(description = "新增文章参数")
 public class QueryArticleParam extends PageBase {
-	/**
-	 * 标题
-	 */
-	private String title;
-	/**
-	 * 摘要
-	 */
-	private String submit;
-	/**
-	 * 是否置顶
-	 */
-	private Short isTop;
-	/**
-	 * 分类
-	 */
-	private String categoryCN;
-	/**
-	 * 标签
-	 */
-	private String  tagCN;
 
-	/**
-	 * 文章状态 0：草稿，1：发布
-	 */
-	private Short state;
+	@ApiModelProperty(value = "搜索条件")
+	private String condition;
+	@ApiModelProperty(value = "文章分类id")
+	private String categoryId;
+	@ApiModelProperty(value = "文章标签id")
+	private String  tagId;
+	@ApiModelProperty(value = "文章状态",allowableValues = " 0：草稿，1：发布")
+	private Short state=1;
+	@ApiModelProperty(hidden = true)
+	private String userName;
 }

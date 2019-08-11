@@ -1,0 +1,38 @@
+app:
+  name: @project.artifactId@
+  version: ${project.version}
+  buildTime: '${buildTimestamp}'
+
+spring:
+  application:
+    name: @project.artifactId@
+  jmx:
+    enabled: false
+#  profiles:
+#    active: @build.env.name@
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 1MB
+info:
+  app:
+    name: @project.artifactId@
+#    env: @build.env.name@
+    version: 1.0.0
+    build:
+      artifactId: @project.artifactId@
+      version: @project.version@
+
+server:
+  port: ${server.port}
+  tomcat:
+    max-threads: 200
+    accesslog:
+      enabled: true
+    #basedir: target/tomcat
+  jmx:
+    enabled: false
+  servlet:
+    session:
+      timeout: 600
+

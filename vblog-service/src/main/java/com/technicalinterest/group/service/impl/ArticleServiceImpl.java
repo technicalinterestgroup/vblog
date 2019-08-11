@@ -95,6 +95,7 @@ public class ArticleServiceImpl implements ArticleService {
 		if (!userByToken.isSuccess()) {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
+		//判断是否是本人操作
 		Article articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId());
 		UserDTO userDTO = (UserDTO) userByToken.getData();
 		if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {

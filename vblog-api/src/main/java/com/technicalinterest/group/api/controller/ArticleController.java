@@ -79,6 +79,7 @@ public class ArticleController {
 		}
 		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
 		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
+		queryArticleDTO.setUserName(userName);
 		ReturnClass listArticle = articleService.listArticle(userName, queryArticleDTO);
 		if (listArticle.isSuccess()) {
 			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();

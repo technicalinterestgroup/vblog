@@ -13,13 +13,9 @@ import lombok.Data;
 @Data
 public class QueryArticleDTO extends PageBase{
 	/**
-	 * 标题
+	 * 搜索条件
 	 */
-	private String title;
-	/**
-	 * 摘要
-	 */
-	private String submit;
+	private String condition;
 	/**
 	 * 是否置顶
 	 */
@@ -27,11 +23,11 @@ public class QueryArticleDTO extends PageBase{
 	/**
 	 * 分类
 	 */
-	private Long categoryCN;
+	private Long categoryId;
 	/**
 	 * 标签id
 	 */
-	private Long  tagCN;
+	private Long  tagId;
 
 	/**
 	 * 文章作者
