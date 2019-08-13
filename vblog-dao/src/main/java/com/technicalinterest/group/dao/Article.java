@@ -45,6 +45,10 @@ public class Article extends BaseDao {
 	 * 文章状态 0：草稿，1：发布
 	 */
 	private Short state=0;
+	/**
+	 * 文章状态阅量
+	 */
+	private Long readCount;
 
 
 	

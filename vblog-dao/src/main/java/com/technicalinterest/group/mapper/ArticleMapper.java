@@ -48,5 +48,25 @@ public interface ArticleMapper {
     */
     Article getArticleInfo(@Param("id")Long id);
 
+    /**
+     * @Description: 文章名列表
+     * @author: shuyu.wang
+     * @date: 2019-08-05 13:25
+     * @param flag 1:时间排序 2：阅读量排序  3：点赞数  4：评论数
+     * @param userName
+     * @return null
+     */
+    List<ArticlesDTO> listArticleOrderBy(@Param("flag")Integer flag,@Param("userName")String userName);
+
+
+    /**
+     * @Description: 文章归档
+     * @author: shuyu.wang
+     * @date: 2019-08-13 13:25
+     * @param userName
+     * @return null
+    */
+    List<ArticlesDTO> listArticleArchive(@Param("userName")String userName);
+
 
 }

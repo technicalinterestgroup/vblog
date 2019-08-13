@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 		if (Objects.isNull(user1)) {
 			return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
 		}
-		if (user1.getState()==0){
+		if (user1.getState() == 0) {
 			return ReturnClass.fail(UserConstant.NO_ACTIVATION);
 		}
 		//生成token
@@ -108,7 +108,8 @@ public class UserServiceImpl implements UserService {
 			redisUtil.set(key, String.valueOf(user.getId()), activation_time);
 			//发送邮件
 			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
-			mailService.sendHtmlMail(newUserDTO.getEmail(),UserConstant.MAIL_TITLE,"<a href=\""+UserConstant.ACTIVATION_URL+key+"\">"+UserConstant.ACTIVATION_URL+key+"</a>");
+			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
+					"<a href=\"" + UserConstant.ACTIVATION_URL + key + "\">" + UserConstant.ACTIVATION_URL + key + "</a>");
 			return ReturnClass.success(UserConstant.ADD_EMAIL_SEND);
 		}
 	}
@@ -121,7 +122,7 @@ public class UserServiceImpl implements UserService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass updateUser(EditUserDTO editUserDTO) {
+	public ReturnClass updateUser(Boolean authCheck, EditUserDTO editUserDTO) {
 		User user = new User();
 		ReturnClass userByToken = getUserByToken();
 		if (!userByToken.isSuccess()) {
@@ -163,20 +164,21 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public ReturnClass activationUser(String key) {
-		String id=(String)redisUtil.get(key);
-		if (!StringUtils.isEmpty(id)){
-			User user =new User();
+		String id = (String) redisUtil.get(key);
+		if (!StringUtils.isEmpty(id)) {
+			User user = new User();
 			user.setId(Long.parseLong(id));
-			user.setState((short)1);
+			user.setState((short) 1);
 			int update = userMapper.update(user);
-			if (update<1){
+			if (update < 1) {
 				throw new VLogException(ResultEnum.USERINFO_ERROR);
 			}
 			return ReturnClass.success(UserConstant.ACTIVATION_SUC);
-		}else {
-			return  ReturnClass.fail(UserConstant.MAIL_OUTTIME);
+		} else {
+			return ReturnClass.fail(UserConstant.MAIL_OUTTIME);
 		}
 	}
+
 	/**
 	 * @Description: 根据toke获取用户信息
 	 * @author: shuyu.wang
@@ -187,7 +189,7 @@ public class UserServiceImpl implements UserService {
 	public ReturnClass getUserByToken() {
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
 		String userName = (String) redisUtil.get(accessToken);
-		if(Objects.isNull(userName)){
+		if (Objects.isNull(userName)) {
 			throw new VLogException(ResultEnum.TIME_OUT);
 		}
 		User user = User.builder().userName(userName).build();
@@ -200,8 +202,6 @@ public class UserServiceImpl implements UserService {
 		return ReturnClass.fail();
 	}
 
-
-
 	/**
 	 * @Description:根据用户名查询用户信息
 	 * @author: shuyu.wang
@@ -210,12 +210,19 @@ public class UserServiceImpl implements UserService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass getUserByuserName(String userName) {
-		User user=User.builder().userName(userName).build();
+	public ReturnClass getUserByuserName(Boolean authCheck, String userName) {
+		//获取数据是否是当前用户校验
+		if (authCheck) {
+			ReturnClass returnClass = userNameIsLoginUser(userName);
+			if (!returnClass.isSuccess()) {
+				throw new VLogException(ResultEnum.NO_AUTH);
+			}
+		}
+		User user = User.builder().userName(userName).build();
 		User userByUser = userMapper.getUserByUser(user);
-		if (Objects.nonNull(userByUser)){
-			UserDTO userDTO=new UserDTO();
-			BeanUtils.copyProperties(userByUser,userDTO);
+		if (Objects.nonNull(userByUser)) {
+			UserDTO userDTO = new UserDTO();
+			BeanUtils.copyProperties(userByUser, userDTO);
 			return ReturnClass.success(userDTO);
 		}
 		return ReturnClass.fail();
@@ -232,14 +239,13 @@ public class UserServiceImpl implements UserService {
 	public ReturnClass userNameIsLoginUser(String userName) {
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
 		String userNameLogin = (String) redisUtil.get(accessToken);
-		if(Objects.isNull(userNameLogin)){
+		if (Objects.isNull(userNameLogin)) {
 			throw new VLogException(ResultEnum.TIME_OUT);
 		}
-		if (StringUtils.equals(userName,userNameLogin)){
+		if (StringUtils.equals(userName, userNameLogin)) {
 			return ReturnClass.success();
 		}
 		return ReturnClass.fail();
 	}
-
 
 }

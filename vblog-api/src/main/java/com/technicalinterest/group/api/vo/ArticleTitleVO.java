@@ -1,0 +1,33 @@
+package com.technicalinterest.group.api.vo;
+
+import com.alibaba.fastjson.annotation.JSONField;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import java.util.Date;
+
+/**
+ * @package: com.technicalinterest.group.dao
+ * @className: ArticleContentDTO
+ * @description: 文章名称列表
+ * @author: Shuyu.Wang
+ * @date: 2019-08-05 13:10
+ * @since: 0.1
+ **/
+@Data
+@ApiModel(description = "文章名列表")
+public class ArticleTitleVO {
+	@ApiModelProperty(value = "文章id")
+	private Long id;
+	@ApiModelProperty(value = "标题")
+	private String title;
+
+	@ApiModelProperty(value = "文章作者")
+	private String userName;
+
+	@ApiModelProperty(value = "发布时间")
+	@JSONField(format = "yyyy-MM-dd")
+	private Date updateTime;
+
+}

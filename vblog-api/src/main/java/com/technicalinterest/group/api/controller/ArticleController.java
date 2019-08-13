@@ -39,6 +39,8 @@ public class ArticleController {
 	@Autowired
 	private UserService userService;
 
+	private static final Boolean authCheck=true;
+
 	@ApiOperation(value = "文章发布", notes = "文章发布")
 	@PostMapping(value = "/new")
 	public ApiResult<String> saveArticle(@Valid @RequestBody ArticleContentParam articleContentParam) {
@@ -73,14 +75,11 @@ public class ArticleController {
 	@GetMapping(value = "/list/{userName}")
 	public ApiResult<PageBean<ArticlesVO>> listArticle(@PathVariable("userName") String userName, @Valid QueryArticleParam queryArticleParam) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass returnClass = userService.getUserByuserName(userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
+
 		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
 		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
 		queryArticleDTO.setUserName(userName);
-		ReturnClass listArticle = articleService.listArticle(userName, queryArticleDTO);
+		ReturnClass listArticle = articleService.listArticle(authCheck,userName, queryArticleDTO);
 		if (listArticle.isSuccess()) {
 			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();
 			BeanUtils.copyProperties(listArticle.getData(), pageInfo);
@@ -96,8 +95,7 @@ public class ArticleController {
 	@GetMapping(value = "/detail/{id}")
 	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass articleDetail = articleService.articleDetail(id);
-
+		ReturnClass articleDetail = articleService.articleDetail(authCheck,id);
 		ArticleContentVO articleContentVO = new ArticleContentVO();
 		if (articleDetail.isSuccess()) {
 			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();

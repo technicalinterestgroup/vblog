@@ -15,6 +15,7 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
         <result column="state" property="state"/>
+        <result column="read_count" property="readCount"/>
     </resultMap>
 
     <!--auto generated Code-->
@@ -138,17 +139,19 @@
             <if test="pojo.createTime != null">`create_time` = #{pojo.createTime},</if>
             <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime},</if>
             <if test="pojo.state != null">`state` = #{pojo.state}</if>
+            <if test="pojo.readCount != null">`read_count` = #{pojo.readCount}</if>
+
         </set>
         WHERE id = #{pojo.id}
     </update>
 
     <select id="listArticle" resultType="com.technicalinterest.group.dto.ArticlesDTO" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
-        select * from article
+        select id,title,user_name,submit,update_time from article
         <where>
-            <if test="pojo.userName != null">user_name=#{pojo.userName}</if>
-            <if test="pojo.state != null">state=#{pojo.state}</if>
-            <if test="pojo.condition != null">title like CONCAT('%',#{pojo.condition},'%')</if>
-            <if test="pojo.condition != null">submit like CONCAT('%',#{pojo.condition},'%')</if>
+            <if test="pojo.userName != null">and user_name=#{pojo.userName}</if>
+            <if test="pojo.state != null">and state=#{pojo.state}</if>
+            <if test="pojo.condition != null">and title like CONCAT('%',#{pojo.condition},'%')</if>
+            <if test="pojo.condition != null">and submit like CONCAT('%',#{pojo.condition},'%')</if>
         </where>
         order by id desc
 
@@ -157,10 +160,10 @@
     <select id="listArticleCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
         select count(1) from article
         <where>
-            <if test="pojo.userName != null">user_name=#{pojo.userName}</if>
-            <if test="pojo.state != null">state=#{pojo.state}</if>
-            <if test="pojo.condition != null">title like CONCAT('%',#{pojo.condition},'%')</if>
-            <if test="pojo.condition != null">submit like CONCAT('%',#{pojo.condition},'%')</if>
+            <if test="pojo.userName != null">and user_name=#{pojo.userName}</if>
+            <if test="pojo.state != null">and state=#{pojo.state}</if>
+            <if test="pojo.condition != null">and title like CONCAT('%',#{pojo.condition},'%')</if>
+            <if test="pojo.condition != null">and submit like CONCAT('%',#{pojo.condition},'%')</if>
         </where>
     </select>
 
@@ -168,6 +171,24 @@
         select
         <include refid="all_column"/>
         from article where id=#{id}
+    </select>
+
+    <select id="listArticleOrderBy" resultType="com.technicalinterest.group.dto.ArticlesDTO">
+        select id,title,user_name,update_time from article where state=1
+        <if test="userName!=null">and user_name=#{userName} </if>
+        <if test="flag==1">
+            order by update_time desc
+        </if>
+        <if test="flag==2">
+            order by read_count desc
+        </if>
+        limit 0,10
+    </select>
+
+    <select id="listArticleArchive" resultType="com.technicalinterest.group.dto.ArticlesDTO">
+        select id,title,user_name,update_time from article where state=1
+        <if test="userName!=null">and user_name=#{userName} </if>
+         group by update_time
     </select>
 </mapper>
 
