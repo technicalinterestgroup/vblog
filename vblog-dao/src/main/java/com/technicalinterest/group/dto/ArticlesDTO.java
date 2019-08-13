@@ -62,5 +62,14 @@ public class ArticlesDTO {
 	 * 文章状态阅量
 	 */
 	private Long readCount;
+	/**
+	 * 归档时间
+	 */
+	private String time;
+
+	/**
+	 * 归档条数
+	 */
+	private Integer sum;
 
 }

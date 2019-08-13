@@ -31,7 +31,8 @@
         `is_del`,
         `create_time`,
         `update_time`,
-        `state`
+        `state`,
+         `state`
 </sql>
 
     <!--auto generated Code-->
@@ -146,7 +147,7 @@
     </update>
 
     <select id="listArticle" resultType="com.technicalinterest.group.dto.ArticlesDTO" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
-        select id,title,user_name,submit,update_time from article
+        select id,title,user_name as userName,submit,update_time as updateTime from article
         <where>
             <if test="pojo.userName != null">and user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">and state=#{pojo.state}</if>
@@ -174,7 +175,7 @@
     </select>
 
     <select id="listArticleOrderBy" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select id,title,user_name,update_time from article where state=1
+        select id,title,user_name as userName,update_time as updateTime from article where state=1
         <if test="userName!=null">and user_name=#{userName} </if>
         <if test="flag==1">
             order by update_time desc
@@ -186,9 +187,9 @@
     </select>
 
     <select id="listArticleArchive" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select id,title,user_name,update_time from article where state=1
+        select date_format(update_time,'%Y年%m月' ) as time,count(id)as sum,user_name as userName from article where state=1
         <if test="userName!=null">and user_name=#{userName} </if>
-         group by update_time
+        group by date_format(update_time,'%Y-%m')
     </select>
 </mapper>
 
