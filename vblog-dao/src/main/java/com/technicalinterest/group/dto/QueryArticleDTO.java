@@ -39,4 +39,8 @@ public class QueryArticleDTO extends PageBase {
 	 * 文章状态 0：草稿，1：发布
 	 */
 	private Short state;
+	/**
+	 * 文章状态归档时间
+	 */
+	private String archiveTime;
 }

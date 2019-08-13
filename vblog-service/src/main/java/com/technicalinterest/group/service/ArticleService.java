@@ -1,8 +1,11 @@
 package com.technicalinterest.group.service;
 
+import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
+
+import java.util.List;
 
 /**
  * @package: com.technicalinterest.group.service
@@ -71,6 +74,15 @@ public interface ArticleService {
 	 * @return ReturnClass
 	 */
 	ReturnClass listArticleOrderBy(Boolean authCheck,String userName,Integer flag);
+
+	/**
+	 * @Description:博客文章归档
+	 * @author: shuyu.wang
+	 * @date: 2019/8/13 22:37
+	 * @param userName
+	 * @return null
+	*/
+	ReturnClass  listArticleArchive(String userName);
 
 
 }

@@ -199,4 +199,21 @@ public class ArticleServiceImpl implements ArticleService {
 		List<ArticlesDTO> articlesDTOS = articleMapper.listArticleOrderBy(flag, userName);
 		return ReturnClass.success(articlesDTOS);
 	}
+
+	/**
+	 * @Description:博客文章归档
+	 * @author: shuyu.wang
+	 * @date: 2019/8/13 22:37
+	 * @param userName
+	 * @return null
+	 */
+	@Override
+	public ReturnClass listArticleArchive(String userName) {
+		ReturnClass returnClass = userService.getUserByuserName(false, userName);
+		if (!returnClass.isSuccess()) {
+			throw new VLogException(ResultEnum.NO_URL);
+		}
+		List<ArticlesDTO> articlesDTOS = articleMapper.listArticleArchive(userName);
+		return ReturnClass.success(articlesDTOS);
+	}
 }

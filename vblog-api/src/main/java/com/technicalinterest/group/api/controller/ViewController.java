@@ -163,7 +163,7 @@ public class ViewController {
 	 * @return null
 	 */
 	@ApiOperation(value = "会员最新文章列表", notes = "文章列表")
-	@GetMapping(value = "/article/hot/{userName}")
+	@GetMapping(value = "/article/new/{userName}")
 	public ApiResult<ArticleTitleVO> listArticleHotByUser(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, userName, 1);
@@ -181,8 +181,6 @@ public class ViewController {
 		}
 		return apiResult;
 	}
-	//最新发布
-
 	/**
 	 * @Description: 会员热门文章
 	 * @author: shuyu.wang
@@ -191,7 +189,7 @@ public class ViewController {
 	 * @return null
 	 */
 	@ApiOperation(value = "会员热门文章列表", notes = "文章列表")
-	@GetMapping(value = "/article/new/{userName}")
+	@GetMapping(value = "/article/hot/{userName}")
 	public ApiResult<ArticleTitleVO> listArticleNewByUser(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, userName, 2);
@@ -209,6 +207,34 @@ public class ViewController {
 		}
 		return apiResult;
 	}
+	/**
+	 * @Description: 文章归档
+	 * @author: shuyu.wang
+	 * @date: 2019-08-13 12:37
+	 * @param
+	 * @return null
+	 */
+	@ApiOperation(value = "会员文章归档", notes = "文章归档")
+	@GetMapping(value = "/article/archive/{userName}")
+	public ApiResult<ArticleTitleVO> listArticleArchive(@PathVariable("userName") String userName) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass listArticleArchive = articleService.listArticleArchive(userName);
+		if (listArticleArchive.isSuccess()) {
+			List<ArticleArchiveVO> list = new ArrayList<ArticleArchiveVO>();
+			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticleArchive.getData();
+			for (ArticlesDTO entity : articlesDTOS) {
+				ArticleArchiveVO articleArchiveVO = new ArticleArchiveVO();
+				BeanUtils.copyProperties(entity, articleArchiveVO);
+				list.add(articleArchiveVO);
+			}
+			apiResult.success(list);
+		} else {
+			apiResult.setMsg(listArticleArchive.getMsg());
+		}
+		return apiResult;
+	}
+
+
 
 	/**
 	 * @Description: 文章详情
@@ -224,7 +250,6 @@ public class ViewController {
 		ReturnClass articleDetail = articleService.articleDetail(authCheck, id);
 		ArticleContentVO articleContentVO = new ArticleContentVO();
 		if (articleDetail.isSuccess()) {
-			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();
 			BeanUtils.copyProperties(articleDetail.getData(), articleContentVO);
 			apiResult.success(articleContentVO);
 
@@ -313,8 +338,6 @@ public class ViewController {
 		}
 		return apiResult;
 	}
-
-	//归档
 
 	//站点统计
 

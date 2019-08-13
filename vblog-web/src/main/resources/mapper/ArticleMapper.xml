@@ -153,8 +153,11 @@
             <if test="pojo.state != null">and state=#{pojo.state}</if>
             <if test="pojo.condition != null">and title like CONCAT('%',#{pojo.condition},'%')</if>
             <if test="pojo.condition != null">and submit like CONCAT('%',#{pojo.condition},'%')</if>
+            <if test="pojo.archiveTime != null">and date_format(update_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
         </where>
-        order by id desc
+        order by
+        <if test="pojo.userName != null">is_top,</if>
+        id desc
 
     </select>
 
@@ -165,6 +168,7 @@
             <if test="pojo.state != null">and state=#{pojo.state}</if>
             <if test="pojo.condition != null">and title like CONCAT('%',#{pojo.condition},'%')</if>
             <if test="pojo.condition != null">and submit like CONCAT('%',#{pojo.condition},'%')</if>
+            <if test="pojo.archiveTime != null">and date_format(update_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
         </where>
     </select>
 
@@ -176,7 +180,7 @@
 
     <select id="listArticleOrderBy" resultType="com.technicalinterest.group.dto.ArticlesDTO">
         select id,title,user_name as userName,update_time as updateTime from article where state=1
-        <if test="userName!=null">and user_name=#{userName} </if>
+        <if test="userName!=null">and user_name=#{userName}</if>
         <if test="flag==1">
             order by update_time desc
         </if>
@@ -188,7 +192,7 @@
 
     <select id="listArticleArchive" resultType="com.technicalinterest.group.dto.ArticlesDTO">
         select date_format(update_time,'%Y年%m月' ) as time,count(id)as sum,user_name as userName from article where state=1
-        <if test="userName!=null">and user_name=#{userName} </if>
+        <if test="userName!=null">and user_name=#{userName}</if>
         group by date_format(update_time,'%Y-%m')
     </select>
 </mapper>
