@@ -8,6 +8,7 @@ import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
+import com.technicalinterest.group.service.VSystemService;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.PageBean;
@@ -39,6 +40,8 @@ public class ViewController {
 	private ArticleService articleService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private VSystemService vSystemService;
 
 	private static final Boolean authCheck = false;
 
@@ -339,6 +342,27 @@ public class ViewController {
 		return apiResult;
 	}
 
+	/**
+	 * 查询参数详情
+	 * @return null
+	 * @author: shuyu.wang
+	 * @date: 2019-07-14 19:24
+	 */
+	@ApiOperation(value = "博客主题渲染查询接口", notes = "详情")
+	@GetMapping(value = "/detail/{userName}")
+	public ApiResult<VSystemVO> systemDetail(@PathVariable("userName") String userName) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass getSystemByUser = vSystemService.getSystemByUser(authCheck, userName);
+		if (getSystemByUser.isSuccess()) {
+			VSystemVO vSystemVO = new VSystemVO();
+			BeanUtils.copyProperties(getSystemByUser.getData(), vSystemVO);
+			apiResult.success(vSystemVO);
+
+		} else {
+			apiResult.fail(getSystemByUser.getMsg());
+		}
+		return apiResult;
+	}
 	//站点统计
 
 }

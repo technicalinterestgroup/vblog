@@ -14,7 +14,7 @@ import java.util.Date;
  * @since: 0.1
  **/
 @Data
-public class VSystemDTO extends BaseDao{
+public class VSystemDTO{
 	/**
 	 * 用户名
 	 */

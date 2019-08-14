@@ -17,6 +17,7 @@
         <result column="is_del" property="isDel"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
+        <result column="theme" property="theme"/>
     </resultMap>
 
     <!--auto generated Code-->
@@ -34,8 +35,9 @@
         `id`,
         `is_del`,
         `create_time`,
-        `update_time`
-    </sql>
+        `update_time`,
+        `theme`
+</sql>
 
 
     <!--auto generated Code-->
@@ -56,6 +58,7 @@
             <if test="pojo.isDel!=null"> `is_del`,</if>
             <if test="pojo.createTime!=null"> `create_time`,</if>
             <if test="pojo.updateTime!=null"> `update_time`,</if>
+            <if test="pojo.theme!=null">`theme`,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -73,6 +76,7 @@
             <if test="pojo.isDel!=null">#{pojo.isDel},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
             <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+            <if test="pojo.theme!=null">#{pojo.theme},</if>
         </trim>
     </insert>
 
@@ -81,7 +85,6 @@
     <update id="update">
         UPDATE v_system
         <set>
-            <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
             <if test="pojo.vTitle != null"> `v_title` = #{pojo.vTitle}, </if>
             <if test="pojo.vIcon != null"> `v_icon` = #{pojo.vIcon}, </if>
             <if test="pojo.vStart != null"> `v_start` = #{pojo.vStart}, </if>
@@ -91,12 +94,13 @@
             <if test="pojo.module != null"> `module` = #{pojo.module}, </if>
             <if test="pojo.noticeSwitch != null"> `notice_switch` = #{pojo.noticeSwitch}, </if>
             <if test="pojo.commentSwitch != null"> `comment_switch` = #{pojo.commentSwitch}, </if>
+            <if test="pojo.theme != null"> `theme` = #{pojo.theme}, </if>
             <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
             <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
             <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
             <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
         </set>
-        WHERE id = #{pojo.id}
+        WHERE user_name = #{pojo.userName}
     </update>
 
     <select id="getSystemByUser" resultMap="AllColumnMap">

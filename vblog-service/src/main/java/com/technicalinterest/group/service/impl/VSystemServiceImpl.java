@@ -35,6 +35,10 @@ public class VSystemServiceImpl implements VSystemService {
 
 	@Override
 	public ReturnClass update(VSystemDTO pojo) {
+		ReturnClass returnClass = userService.userNameIsLoginUser(pojo.getUserName());
+		if (!returnClass.isSuccess()){
+			throw new VLogException(ResultEnum.NO_AUTH);
+		}
 		VSystem vSystem = new VSystem();
 		BeanUtils.copyProperties(pojo, vSystem);
 		Integer integer = vSystemMapper.update(vSystem);

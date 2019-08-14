@@ -5,6 +5,7 @@ import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.UserParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.UserVO;
+import com.technicalinterest.group.api.vo.VSystemVO;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -33,8 +34,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	private static final Boolean authCheck=true;
-
+	private static final Boolean authCheck = true;
 
 	/**
 	 * 修改信息设置
@@ -49,7 +49,7 @@ public class UserController {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(editUserParam, editUserDTO);
-		ReturnClass addUser = userService.updateUser(authCheck,editUserDTO);
+		ReturnClass addUser = userService.updateUser(authCheck, editUserDTO);
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getData());
 		} else {
@@ -68,14 +68,13 @@ public class UserController {
 	@GetMapping(value = "/detail/{userName}")
 	public ApiResult<UserVO> detail(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass getUserByuserName = userService.getUserByuserName(authCheck,userName);
+		ReturnClass getUserByuserName = userService.getUserByuserName(authCheck, userName);
 		if (getUserByuserName.isSuccess()) {
 			UserVO userVO = new UserVO();
 			BeanUtils.copyProperties(getUserByuserName.getData(), userVO);
 			apiResult.success(userVO);
-
 		} else {
-			throw new VLogException(ResultEnum.NO_URL);
+			apiResult.fail(getUserByuserName.getMsg());
 		}
 		return apiResult;
 	}
