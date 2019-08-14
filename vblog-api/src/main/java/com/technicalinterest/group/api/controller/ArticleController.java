@@ -6,6 +6,7 @@ import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleContentVO;
 import com.technicalinterest.group.api.vo.ArticlesVO;
+import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
@@ -21,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @package: com.technicalinterest.group.api.controller
@@ -81,8 +84,16 @@ public class ArticleController {
 		queryArticleDTO.setUserName(userName);
 		ReturnClass listArticle = articleService.listArticle(authCheck,userName, queryArticleDTO);
 		if (listArticle.isSuccess()) {
+			PageBean<ArticlesDTO> pageBean = (PageBean<ArticlesDTO>) listArticle.getData();
+			List<ArticlesVO> list = new ArrayList<>();
+			for (ArticlesDTO entity : pageBean.getPageData()) {
+				ArticlesVO articlesVO = new ArticlesVO();
+				BeanUtils.copyProperties(entity, articlesVO);
+				list.add(articlesVO);
+			}
 			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();
 			BeanUtils.copyProperties(listArticle.getData(), pageInfo);
+			pageInfo.setPageData(list);
 			apiResult.success(pageInfo);
 
 		} else {

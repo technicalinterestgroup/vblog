@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.technicalinterest.group.dao.BaseDao;
 import io.swagger.annotations.ApiModel;
@@ -25,7 +26,8 @@ public class VSystemVO{
 	/**
 	 * 博客开始时间
 	 */
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	@JsonProperty("vStart")
 	private Date vStart;
 	/**
 	 * 用户名

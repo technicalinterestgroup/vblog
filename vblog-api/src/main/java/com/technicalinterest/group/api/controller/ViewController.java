@@ -148,8 +148,16 @@ public class ViewController {
 		queryArticleDTO.setState((short) 1);
 		ReturnClass listArticle = articleService.listArticle(authCheck, userName, queryArticleDTO);
 		if (listArticle.isSuccess()) {
+			PageBean<ArticlesDTO> pageBean = (PageBean<ArticlesDTO>) listArticle.getData();
+			List<ArticlesVO> list = new ArrayList<>();
+			for (ArticlesDTO entity : pageBean.getPageData()) {
+				ArticlesVO articlesVO = new ArticlesVO();
+				BeanUtils.copyProperties(entity, articlesVO);
+				list.add(articlesVO);
+			}
 			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();
 			BeanUtils.copyProperties(listArticle.getData(), pageInfo);
+			pageInfo.setPageData(list);
 			apiResult.success(pageInfo);
 
 		} else {
@@ -184,6 +192,7 @@ public class ViewController {
 		}
 		return apiResult;
 	}
+
 	/**
 	 * @Description: 会员热门文章
 	 * @author: shuyu.wang
@@ -210,6 +219,7 @@ public class ViewController {
 		}
 		return apiResult;
 	}
+
 	/**
 	 * @Description: 文章归档
 	 * @author: shuyu.wang
@@ -236,8 +246,6 @@ public class ViewController {
 		}
 		return apiResult;
 	}
-
-
 
 	/**
 	 * @Description: 文章详情
@@ -277,8 +285,16 @@ public class ViewController {
 		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
 		ReturnClass listArticle = articleService.allListArticle(queryArticleDTO);
 		if (listArticle.isSuccess()) {
+			PageBean<ArticlesDTO> pageBean = (PageBean<ArticlesDTO>) listArticle.getData();
+			List<ArticlesVO> list = new ArrayList<>();
+			for (ArticlesDTO entity : pageBean.getPageData()) {
+				ArticlesVO articlesVO = new ArticlesVO();
+				BeanUtils.copyProperties(entity, articlesVO);
+				list.add(articlesVO);
+			}
 			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();
 			BeanUtils.copyProperties(listArticle.getData(), pageInfo);
+			pageInfo.setPageData(list);
 			apiResult.success(pageInfo);
 
 		} else {

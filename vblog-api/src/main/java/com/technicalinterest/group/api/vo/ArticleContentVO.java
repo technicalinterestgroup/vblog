@@ -1,6 +1,7 @@
 package com.technicalinterest.group.api.vo;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -41,5 +42,9 @@ public class ArticleContentVO {
 	private String tagCN;
 	@ApiModelProperty(value = "文章详情")
 	private String content;
+
+	@ApiModelProperty(value = "发布时间")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date updateTime;
 
 }
