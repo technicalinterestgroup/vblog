@@ -8,11 +8,11 @@ import com.technicalinterest.group.dao.Category;
 
 @Mapper
 public interface CategoryMapper {
-    int insert(@Param("pojo") Category pojo);
+    Integer insert(@Param("pojo") Category pojo);
 
-    int insertSelective(@Param("pojo") Category pojo);
+    Integer insertSelective(@Param("pojo") Category pojo);
 
-    int insertList(@Param("pojos") List<Category> pojo);
+    Integer insertList(@Param("pojos") List<Category> pojo);
 
-    int update(@Param("pojo") Category pojo);
+    Integer update(@Param("pojo") Category pojo);
 }

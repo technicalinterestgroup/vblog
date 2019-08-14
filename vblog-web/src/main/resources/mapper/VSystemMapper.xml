@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.VSystemMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.VSystem">
+        <result column="user_name" property="userName"/>
+        <result column="v_title" property="vTitle"/>
+        <result column="v_icon" property="vIcon"/>
+        <result column="v_start" property="vStart"/>
+        <result column="seo_key_words" property="seoKeyWords"/>
+        <result column="v_footer_info" property="vFooterInfo"/>
+        <result column="v_introduct" property="vIntroduct"/>
+        <result column="module" property="module"/>
+        <result column="notice_switch" property="noticeSwitch"/>
+        <result column="comment_switch" property="commentSwitch"/>
+        <result column="id" property="id"/>
+        <result column="is_del" property="isDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `user_name`,
+        `v_title`,
+        `v_icon`,
+        `v_start`,
+        `seo_key_words`,
+        `v_footer_info`,
+        `v_introduct`,
+        `module`,
+        `notice_switch`,
+        `comment_switch`,
+        `id`,
+        `is_del`,
+        `create_time`,
+        `update_time`
+    </sql>
+
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_system
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.userName!=null"> `user_name`,</if>
+            <if test="pojo.vTitle!=null"> `v_title`,</if>
+            <if test="pojo.vIcon!=null"> `v_icon`,</if>
+            <if test="pojo.vStart!=null"> `v_start`,</if>
+            <if test="pojo.seoKeyWords!=null"> `seo_key_words`,</if>
+            <if test="pojo.vFooterInfo!=null"> `v_footer_info`,</if>
+            <if test="pojo.vIntroduct!=null"> `v_introduct`,</if>
+            <if test="pojo.module!=null"> `module`,</if>
+            <if test="pojo.noticeSwitch!=null"> `notice_switch`,</if>
+            <if test="pojo.commentSwitch!=null"> `comment_switch`,</if>
+            <if test="pojo.id!=null"> `id`,</if>
+            <if test="pojo.isDel!=null"> `is_del`,</if>
+            <if test="pojo.createTime!=null"> `create_time`,</if>
+            <if test="pojo.updateTime!=null"> `update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.userName!=null">#{pojo.userName},</if>
+            <if test="pojo.vTitle!=null">#{pojo.vTitle},</if>
+            <if test="pojo.vIcon!=null">#{pojo.vIcon},</if>
+            <if test="pojo.vStart!=null">#{pojo.vStart},</if>
+            <if test="pojo.seoKeyWords!=null">#{pojo.seoKeyWords},</if>
+            <if test="pojo.vFooterInfo!=null">#{pojo.vFooterInfo},</if>
+            <if test="pojo.vIntroduct!=null">#{pojo.vIntroduct},</if>
+            <if test="pojo.module!=null">#{pojo.module},</if>
+            <if test="pojo.noticeSwitch!=null">#{pojo.noticeSwitch},</if>
+            <if test="pojo.commentSwitch!=null">#{pojo.commentSwitch},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE v_system
+        <set>
+            <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
+            <if test="pojo.vTitle != null"> `v_title` = #{pojo.vTitle}, </if>
+            <if test="pojo.vIcon != null"> `v_icon` = #{pojo.vIcon}, </if>
+            <if test="pojo.vStart != null"> `v_start` = #{pojo.vStart}, </if>
+            <if test="pojo.seoKeyWords != null"> `seo_key_words` = #{pojo.seoKeyWords}, </if>
+            <if test="pojo.vFooterInfo != null"> `v_footer_info` = #{pojo.vFooterInfo}, </if>
+            <if test="pojo.vIntroduct != null"> `v_introduct` = #{pojo.vIntroduct}, </if>
+            <if test="pojo.module != null"> `module` = #{pojo.module}, </if>
+            <if test="pojo.noticeSwitch != null"> `notice_switch` = #{pojo.noticeSwitch}, </if>
+            <if test="pojo.commentSwitch != null"> `comment_switch` = #{pojo.commentSwitch}, </if>
+            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
+            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
+            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="getSystemByUser" resultMap="AllColumnMap">
+        select <include refid="all_column"/>
+        from  v_system where user_name=#{userName}
+    </select>
+</mapper>
+

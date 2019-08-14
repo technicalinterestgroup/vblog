@@ -10,13 +10,13 @@ import com.technicalinterest.group.dao.Article;
 
 @Mapper
 public interface ArticleMapper {
-    int insert(@Param("pojo") Article pojo);
+    Integer insert(@Param("pojo") Article pojo);
 
-    int insertSelective(@Param("pojo") Article pojo);
+    Integer insertSelective(@Param("pojo") Article pojo);
 
-    int insertList(@Param("pojos") List<Article> pojo);
+    Integer insertList(@Param("pojos") List<Article> pojo);
 
-    int update(@Param("pojo") Article pojo);
+    Integer update(@Param("pojo") Article pojo);
 
     
     /**

@@ -8,11 +8,11 @@ import com.technicalinterest.group.dao.Tag;
 
 @Mapper
 public interface TagMapper {
-    int insert(@Param("pojo") Tag pojo);
+    Integer insert(@Param("pojo") Tag pojo);
 
-    int insertSelective(@Param("pojo") Tag pojo);
+    Integer insertSelective(@Param("pojo") Tag pojo);
 
-    int insertList(@Param("pojos") List<Tag> pojo);
+    Integer insertList(@Param("pojos") List<Tag> pojo);
 
-    int update(@Param("pojo") Tag pojo);
+    Integer update(@Param("pojo") Tag pojo);
 }
