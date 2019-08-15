@@ -146,9 +146,10 @@
         WHERE id = #{pojo.id}
     </update>
 
-    <select id="listArticle" resultType="com.technicalinterest.group.dto.ArticlesDTO" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
+    <select id="queryArticleList" resultType="com.technicalinterest.group.dto.ArticlesDTO" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
         select id,title,user_name as userName,submit,update_time as updateTime from article
         <where>
+            and is_del=0
             <if test="pojo.userName != null">and user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">and state=#{pojo.state}</if>
             <if test="pojo.condition != null">and title like CONCAT('%',#{pojo.condition},'%')</if>
@@ -161,9 +162,10 @@
 
     </select>
 
-    <select id="listArticleCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
+    <select id="queryArticleListCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
         select count(1) from article
         <where>
+            and is_del=0
             <if test="pojo.userName != null">and user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">and state=#{pojo.state}</if>
             <if test="pojo.condition != null">and title like CONCAT('%',#{pojo.condition},'%')</if>
@@ -178,8 +180,8 @@
         from article where id=#{id}
     </select>
 
-    <select id="listArticleOrderBy" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select id,title,user_name as userName,update_time as updateTime from article where state=1
+    <select id="queryArticleListOrderBy" resultType="com.technicalinterest.group.dto.ArticlesDTO">
+        select id,title,user_name as userName,update_time as updateTime from article where state=1 and is_del=0
         <if test="userName!=null">and user_name=#{userName}</if>
         <if test="flag==1">
             order by update_time desc
@@ -190,8 +192,8 @@
         limit 0,10
     </select>
 
-    <select id="listArticleArchive" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select date_format(update_time,'%Y年%m月' ) as time,count(id)as sum,user_name as userName from article where state=1
+    <select id="queryArticleListArchive" resultType="com.technicalinterest.group.dto.ArticlesDTO">
+        select date_format(update_time,'%Y年%m月' ) as time,count(id)as sum,user_name as userName from article where state=1 and is_del=0
         <if test="userName!=null">and user_name=#{userName}</if>
         group by date_format(update_time,'%Y-%m')
     </select>

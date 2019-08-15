@@ -26,7 +26,7 @@ public interface ArticleMapper {
      * @param queryArticleDTO
      * @return null
     */
-    List<ArticlesDTO> listArticle(@Param("pojo")QueryArticleDTO queryArticleDTO);
+    List<ArticlesDTO> queryArticleList(@Param("pojo")QueryArticleDTO queryArticleDTO);
 
 
     /**
@@ -36,7 +36,7 @@ public interface ArticleMapper {
      * @param queryArticleDTO
      * @return null
      */
-    Integer listArticleCount(@Param("pojo")QueryArticleDTO queryArticleDTO);
+    Integer queryArticleListCount(@Param("pojo")QueryArticleDTO queryArticleDTO);
 
 
     /**
@@ -56,7 +56,7 @@ public interface ArticleMapper {
      * @param userName
      * @return null
      */
-    List<ArticlesDTO> listArticleOrderBy(@Param("flag")Integer flag,@Param("userName")String userName);
+    List<ArticlesDTO> queryArticleListOrderBy(@Param("flag")Integer flag,@Param("userName")String userName);
 
 
     /**
@@ -66,7 +66,7 @@ public interface ArticleMapper {
      * @param userName
      * @return null
     */
-    List<ArticlesDTO> listArticleArchive(@Param("userName")String userName);
+    List<ArticlesDTO> queryArticleListArchive(@Param("userName")String userName);
 
 
 }

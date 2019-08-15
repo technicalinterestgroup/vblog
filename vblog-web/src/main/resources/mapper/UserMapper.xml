@@ -76,6 +76,7 @@
         <include refid="all_column"></include>
         from user
         <where>
+            and is_del=0
             <if test="user.userName!=null">and user_name=#{user.userName}</if>
             <if test="user.passWord!=null">and pass_word=MD5(#{user.passWord})</if>
         </where>

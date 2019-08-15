@@ -13,5 +13,5 @@ public interface VSystemMapper {
 
     Integer update(@Param("pojo") VSystem pojo);
 
-    VSystem getSystemByUser(@Param("userName")String userName);
+    VSystem querySystemByUser(@Param("userName")String userName);
 }

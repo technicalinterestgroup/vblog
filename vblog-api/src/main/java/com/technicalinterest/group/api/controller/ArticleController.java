@@ -1,7 +1,7 @@
 package com.technicalinterest.group.api.controller;
 
-import com.technicalinterest.group.api.param.ArticleContentParam;
 import com.technicalinterest.group.api.param.EditArticleContentParam;
+import com.technicalinterest.group.api.param.NewArticleContentParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleContentVO;
@@ -10,11 +10,9 @@ import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
-import com.technicalinterest.group.service.exception.VLogException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -46,7 +44,7 @@ public class ArticleController {
 
 	@ApiOperation(value = "文章发布", notes = "文章发布")
 	@PostMapping(value = "/new")
-	public ApiResult<String> saveArticle(@Valid @RequestBody ArticleContentParam articleContentParam) {
+	public ApiResult<String> saveArticle(@Valid @RequestBody NewArticleContentParam articleContentParam) {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
 		BeanUtils.copyProperties(articleContentParam, articleContentDTO);

@@ -5,10 +5,9 @@ import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.param.UserParam;
 import com.technicalinterest.group.api.vo.*;
 import com.technicalinterest.group.dto.ArticlesDTO;
+import com.technicalinterest.group.dto.CategoryDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
-import com.technicalinterest.group.service.ArticleService;
-import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.VSystemService;
+import com.technicalinterest.group.service.*;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.PageBean;
@@ -42,6 +41,8 @@ public class ViewController {
 	private UserService userService;
 	@Autowired
 	private VSystemService vSystemService;
+	@Autowired
+	private CategoryService categoryService;
 
 	private static final Boolean authCheck = false;
 
@@ -246,6 +247,29 @@ public class ViewController {
 		}
 		return apiResult;
 	}
+
+
+	@ApiOperation(value = "会员文章分类", notes = "文章分类")
+	@GetMapping(value = "/category/{userName}")
+	public ApiResult<ArticleTitleVO> listArticleCategory(@PathVariable("userName") String userName) {
+		ApiResult apiResult = new ApiResult();
+
+		ReturnClass listCategory = categoryService.listCategoryByUser(authCheck,userName);
+		if (listCategory.isSuccess()) {
+			List<CategoryVO> list = new ArrayList<CategoryVO>();
+			List<CategoryDTO> categoryDTOList = (List<CategoryDTO>) listCategory.getData();
+			for (CategoryDTO entity : categoryDTOList) {
+				CategoryVO categoryVO = new CategoryVO();
+				BeanUtils.copyProperties(entity, categoryVO);
+				list.add(categoryVO);
+			}
+			apiResult.success(list);
+		} else {
+			apiResult.setMsg(listCategory.getMsg());
+		}
+		return apiResult;
+	}
+
 
 	/**
 	 * @Description: 文章详情

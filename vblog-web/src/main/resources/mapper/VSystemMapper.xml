@@ -103,7 +103,7 @@
         WHERE user_name = #{pojo.userName}
     </update>
 
-    <select id="getSystemByUser" resultMap="AllColumnMap">
+    <select id="querySystemByUser" resultMap="AllColumnMap">
         select <include refid="all_column"/>
         from  v_system where user_name=#{userName}
     </select>

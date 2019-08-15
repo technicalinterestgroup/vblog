@@ -1,6 +1,9 @@
 package com.technicalinterest.group.dao;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @package: com.technicalinterest.group.dao
@@ -11,6 +14,9 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Tag extends BaseDao {
 
 	private String name;

@@ -11,13 +11,13 @@ import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.ArticleConstant;
 import com.technicalinterest.group.service.constant.ResultEnum;
-import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.RedisUtil;
+import io.swagger.models.auth.In;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +46,8 @@ public class ArticleServiceImpl implements ArticleService {
 	@Autowired
 	private RedisUtil redisUtil;
 
+	public static final Integer ARTICLE_LENGTH=50;
+
 	/**
 	 * @Description: 新增文章
 	 * @author: shuyu.wang
@@ -65,7 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		article.setSubmit(articleContentDTO.getContent().length() > 50 ? articleContentDTO.getContent().substring(0, 49) : articleContentDTO.getContent());
+		article.setSubmit(articleContentDTO.getContent().length() > ARTICLE_LENGTH ? articleContentDTO.getContent().substring(0, ARTICLE_LENGTH-1) : articleContentDTO.getContent());
 		articleMapper.insertSelective(article);
 		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
 			Content content = new Content();
@@ -95,14 +97,18 @@ public class ArticleServiceImpl implements ArticleService {
 		if (!userByToken.isSuccess()) {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		//判断是否是本人操作
+		//数据是否存在
 		Article articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId());
+		if (Objects.isNull(articleInfo)){
+			throw new VLogException(ResultEnum.NO_DATA);
+		}
+		//判断是否是本人操作
 		UserDTO userDTO = (UserDTO) userByToken.getData();
 		if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
 
-		article.setSubmit(articleContentDTO.getContent().length() > 50 ? articleContentDTO.getContent().substring(0, 49) : articleContentDTO.getContent());
+		article.setSubmit(articleContentDTO.getContent().length() > ARTICLE_LENGTH ? articleContentDTO.getContent().substring(0, ARTICLE_LENGTH-1) : articleContentDTO.getContent());
 		articleMapper.update(article);
 		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
 			Content content = new Content();
@@ -130,9 +136,12 @@ public class ArticleServiceImpl implements ArticleService {
 		if (!returnClass.isSuccess()) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		Integer integer = articleMapper.listArticleCount(queryArticleDTO);
+		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
+		if (integer < 1) {
+			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+		}
 		PageHelper.startPage(queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize());
-		List<ArticlesDTO> articlesDTOS = articleMapper.listArticle(queryArticleDTO);
+		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
 		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
@@ -175,8 +184,11 @@ public class ArticleServiceImpl implements ArticleService {
 	public ReturnClass allListArticle(QueryArticleDTO queryArticleDTO) {
 		PageHelper.startPage(queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize());
 		queryArticleDTO.setState((short) 1);
-		Integer integer = articleMapper.listArticleCount(queryArticleDTO);
-		List<ArticlesDTO> articlesDTOS = articleMapper.listArticle(queryArticleDTO);
+		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
+		if (integer < 1) {
+			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+		}
+		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
 		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
@@ -196,7 +208,10 @@ public class ArticleServiceImpl implements ArticleService {
 				throw new VLogException(ResultEnum.NO_URL);
 			}
 		}
-		List<ArticlesDTO> articlesDTOS = articleMapper.listArticleOrderBy(flag, userName);
+		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName);
+		if (articlesDTOS.isEmpty()) {
+			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+		}
 		return ReturnClass.success(articlesDTOS);
 	}
 
@@ -213,7 +228,10 @@ public class ArticleServiceImpl implements ArticleService {
 		if (!returnClass.isSuccess()) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		List<ArticlesDTO> articlesDTOS = articleMapper.listArticleArchive(userName);
+		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListArchive(userName);
+		if (articlesDTOS.isEmpty()) {
+			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+		}
 		return ReturnClass.success(articlesDTOS);
 	}
 }

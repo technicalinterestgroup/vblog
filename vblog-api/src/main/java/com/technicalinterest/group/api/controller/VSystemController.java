@@ -29,7 +29,7 @@ import javax.validation.Valid;
 @Api(tags = "博客自定义设置")
 @RestController
 @RequestMapping("system")
-public class SystemController {
+public class VSystemController {
 
 	@Autowired
 	private VSystemService vSystemService;

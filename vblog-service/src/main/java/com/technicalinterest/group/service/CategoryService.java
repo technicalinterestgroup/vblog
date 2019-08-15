@@ -1,17 +1,17 @@
 package com.technicalinterest.group.service;
 
-import com.technicalinterest.group.dao.Category;
-import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import java.util.List;
+import com.technicalinterest.group.service.dto.EditCategoryDTO;
+import com.technicalinterest.group.service.dto.ReturnClass;
 
-import com.technicalinterest.group.mapper.CategoryMapper;
 
 public interface CategoryService{
 
 
 
-     Integer insertSelective(Category pojo);
+     ReturnClass insertSelective(EditCategoryDTO pojo);
 
-     Integer update(Category pojo);
+     ReturnClass update(EditCategoryDTO pojo);
+
+
+     ReturnClass listCategoryByUser(Boolean authCheck,String userName);
 }

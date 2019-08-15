@@ -1,17 +1,15 @@
 package com.technicalinterest.group.service;
 
-import com.technicalinterest.group.dao.Tag;
-import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import java.util.List;
-
-import com.technicalinterest.group.mapper.TagMapper;
+import com.technicalinterest.group.service.dto.EditTagDTO;
+import com.technicalinterest.group.service.dto.ReturnClass;
 
 public interface TagService{
 
 
-    Integer insertSelective(Tag pojo);
+    ReturnClass insertSelective(EditTagDTO pojo);
 
 
-    Integer update(Tag pojo);
+    ReturnClass update(EditTagDTO pojo);
+
+    ReturnClass listTagByUser(Boolean authCheck,String userName);
 }

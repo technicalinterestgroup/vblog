@@ -21,35 +21,17 @@
         `update_time`
     </sql>
 
-    <!--auto generated Code-->
-    <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
-        INSERT INTO tag (
-            `name`,
-            `user_name`,
-            `id`,
-            `is_del`,
-            `create_time`,
-            `update_time`
-        ) VALUES (
-            #{pojo.name},
-            #{pojo.userName},
-            #{pojo.id},
-            #{pojo.isDel},
-            #{pojo.createTime},
-            #{pojo.updateTime}
-        )
-    </insert>
 
     <!--auto generated Code-->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
         INSERT INTO tag
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="pojo.name!=null"> `name`,</if>
-            <if test="pojo.userName!=null"> `user_name`,</if>
-            <if test="pojo.id!=null"> `id`,</if>
-            <if test="pojo.isDel!=null"> `is_del`,</if>
-            <if test="pojo.createTime!=null"> `create_time`,</if>
-            <if test="pojo.updateTime!=null"> `update_time`,</if>
+            <if test="pojo.name!=null">`name`,</if>
+            <if test="pojo.userName!=null">`user_name`,</if>
+            <if test="pojo.id!=null">`id`,</if>
+            <if test="pojo.isDel!=null">`is_del`,</if>
+            <if test="pojo.createTime!=null">`create_time`,</if>
+            <if test="pojo.updateTime!=null">`update_time`,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -63,34 +45,32 @@
     </insert>
 
     <!--auto generated Code-->
-    <insert id="insertList">
-        INSERT INTO tag (
-        <include refid="all_column"/>
-        )VALUES
-        <foreach collection="pojos" item="pojo" index="index" separator=",">
-            (
-            #{pojo.name},
-            #{pojo.userName},
-            #{pojo.id},
-            #{pojo.isDel},
-            #{pojo.createTime},
-            #{pojo.updateTime}
-            )
-        </foreach>
-    </insert>
-
-    <!--auto generated Code-->
     <update id="update">
         UPDATE tag
         <set>
-            <if test="pojo.name != null"> `name` = #{pojo.name}, </if>
-            <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
-            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
-            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
-            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
-            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+            <if test="pojo.name != null">`name` = #{pojo.name},</if>
+            <if test="pojo.userName != null">`user_name` = #{pojo.userName},</if>
+            <if test="pojo.id != null">`id` = #{pojo.id},</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
+            <if test="pojo.createTime != null">`create_time` = #{pojo.createTime},</if>
+            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime}</if>
         </set>
         WHERE id = #{pojo.id}
     </update>
+
+
+    <select id="queryTagListByUser" resultType="com.technicalinterest.group.dto.TagDTO">
+       SELECT t1.id,t1.name,COUNT(t2.id) as articleNum FROM tag t1 LEFT JOIN article t2 on t1.id=t2.category_id
+       WHERE t1.user_name=#{userName} and t1.is_del=0 GROUP BY t1.id
+    </select>
+
+    <select id="queryTag" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Tag">
+        select
+        <include refid="all_column"/>
+        from tag where is_del=0
+        <if test="id!=null">and id=#{id}</if>
+        <if test="userName!=null">and user_name=#{userName}</if>
+        <if test="name!=null">and name=#{name}</if>
+    </select>
 </mapper>
 

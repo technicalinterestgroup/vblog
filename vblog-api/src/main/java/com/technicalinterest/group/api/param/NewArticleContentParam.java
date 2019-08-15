@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
  **/
 @Data
 @ApiModel(description = "新增文章参数")
-public class ArticleContentParam {
+public class NewArticleContentParam {
 
 	/**
 	 * 标题
