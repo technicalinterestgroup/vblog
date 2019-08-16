@@ -36,7 +36,7 @@ public class ArticlesDTO {
 	/**
 	 * 分类
 	 */
-	private Long categoryCN;
+	private String categoryCN;
 
 	/**
 	 * 标签id
@@ -44,9 +44,9 @@ public class ArticlesDTO {
 	private Long  tagId;
 
 	/**
-	 * 标签id
+	 * 标签
 	 */
-	private Long  tagCN;
+	private String  tagCN;
 
 	/**
 	 * 文章作者

@@ -1,6 +1,9 @@
 package com.technicalinterest.group.service.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -13,6 +16,9 @@ import java.util.Date;
  * @since: 0.1
  **/
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ArticleContentDTO {
 
 	private Long id;
@@ -33,6 +39,12 @@ public class ArticleContentDTO {
 	 * 分类id
 	 */
 	private Long categoryId;
+
+	/**
+	 * 分类
+	 */
+	private String categoryCN;
+
 	/**
 	 * 是否审核
 	 */
@@ -41,6 +53,11 @@ public class ArticleContentDTO {
 	 * 标签id
 	 */
 	private Long  tagId;
+
+	/**
+	 * 标签
+	 */
+	private String  tagCN;
 
 	/**
 	 * 文章作者
@@ -55,4 +72,6 @@ public class ArticleContentDTO {
 	 * 文章状态 0：草稿，1：发布
 	 */
 	private Short state;
+
+	private Date updateTime;
 }

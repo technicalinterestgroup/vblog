@@ -32,8 +32,8 @@ public class TagServiceImpl implements TagService {
 
 	@Override
 	public ReturnClass insertSelective(EditTagDTO pojo) {
-		Tag tag=new Tag();
-		BeanUtils.copyProperties(pojo,tag);
+		Tag tag = new Tag();
+		BeanUtils.copyProperties(pojo, tag);
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
 			UserDTO userDTO = (UserDTO) userByToken.getData();
@@ -46,8 +46,8 @@ public class TagServiceImpl implements TagService {
 		if (Objects.nonNull(tag1)) {
 			return ReturnClass.fail(Constant.TAG_REPEAT);
 		}
-		Integer flag=tagMapper.insertSelective(tag);
-		if (flag>0){
+		Integer flag = tagMapper.insertSelective(tag);
+		if (flag > 0) {
 			return ReturnClass.success();
 		}
 		return ReturnClass.fail();
@@ -55,7 +55,7 @@ public class TagServiceImpl implements TagService {
 
 	@Override
 	public ReturnClass update(EditTagDTO pojo) {
-		Tag tag=new Tag();
+		Tag tag = new Tag();
 		tag.setId(pojo.getId());
 		//数据是否存在
 		Tag tag1 = tagMapper.queryTag(tag);
@@ -63,10 +63,10 @@ public class TagServiceImpl implements TagService {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
 		//名称是否重复
-		BeanUtils.copyProperties(pojo,tag);
+		BeanUtils.copyProperties(pojo, tag);
 		Tag tag2 = tagMapper.queryTag(Tag.builder().name(tag.getName()).userName(tag.getUserName()).build());
 		if (Objects.nonNull(tag2)) {
-			if (!StringUtils.equals(tag2.getName(),pojo.getName())){
+			if (!StringUtils.equals(tag2.getName(), pojo.getName())) {
 				return ReturnClass.fail(Constant.TAG_REPEAT);
 			}
 		}
@@ -83,12 +83,13 @@ public class TagServiceImpl implements TagService {
 		if (!StringUtils.equals(tag1.getUserName(), tag.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
-		Integer flag=tagMapper.update(tag);
-		if (flag>0){
+		Integer flag = tagMapper.update(tag);
+		if (flag > 0) {
 			return ReturnClass.success();
 		}
 		return ReturnClass.fail();
 	}
+
 	/**
 	 * @Description:文章标签
 	 * @author: shuyu.wang
@@ -98,15 +99,44 @@ public class TagServiceImpl implements TagService {
 	 * @return com.technicalinterest.group.service.dto.ReturnClass
 	 */
 	@Override
-	public ReturnClass listTagByUser(Boolean authCheck,String userName) {
+	public ReturnClass listTagByUser(Boolean authCheck, String userName) {
 		ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
 		if (!returnClass.isSuccess()) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
 		List<TagDTO> tagDTOS = tagMapper.queryTagListByUser(userName);
-		if (tagDTOS.isEmpty()){
+		if (tagDTOS.isEmpty()) {
 			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
 		}
 		return ReturnClass.success(tagDTOS);
+	}
+
+	@Override
+	public ReturnClass delTag(Long id) {
+		Tag tag = new Tag();
+		tag.setId(id);
+		//数据是否存在
+		Tag tag1 = tagMapper.queryTag(tag);
+		if (Objects.isNull(tag1)) {
+			throw new VLogException(ResultEnum.NO_DATA);
+		}
+
+		ReturnClass userByToken = userService.getUserByToken();
+		if (userByToken.isSuccess()) {
+			UserDTO userDTO = (UserDTO) userByToken.getData();
+			tag.setUserName(userDTO.getUserName());
+		} else {
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
+		}
+
+		//是否是本人操作
+		if (!StringUtils.equals(tag1.getUserName(), tag.getUserName())) {
+			throw new VLogException(ResultEnum.NO_AUTH);
+		}
+		Integer integer = tagMapper.delTag(id);
+		if (integer > 0) {
+			return ReturnClass.success();
+		}
+		return ReturnClass.fail();
 	}
 }

@@ -98,5 +98,9 @@
         <include refid="all_column"/>
         from content WHERE article_id = #{articleId}
     </select>
+
+    <delete id="delContent">
+        delete from content WHERE article_id = #{articleId}
+    </delete>
 </mapper>
 

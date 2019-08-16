@@ -40,7 +40,7 @@ public class ArticleController {
 	@Autowired
 	private UserService userService;
 
-	private static final Boolean authCheck=true;
+	private static final Boolean authCheck = true;
 
 	@ApiOperation(value = "文章发布", notes = "文章发布")
 	@PostMapping(value = "/new")
@@ -80,7 +80,7 @@ public class ArticleController {
 		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
 		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
 		queryArticleDTO.setUserName(userName);
-		ReturnClass listArticle = articleService.listArticle(authCheck,userName, queryArticleDTO);
+		ReturnClass listArticle = articleService.listArticle(authCheck, userName, queryArticleDTO);
 		if (listArticle.isSuccess()) {
 			PageBean<ArticlesDTO> pageBean = (PageBean<ArticlesDTO>) listArticle.getData();
 			List<ArticlesVO> list = new ArrayList<>();
@@ -104,7 +104,7 @@ public class ArticleController {
 	@GetMapping(value = "/detail/{id}")
 	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass articleDetail = articleService.articleDetail(authCheck,id);
+		ReturnClass articleDetail = articleService.articleDetail(authCheck, id);
 		ArticleContentVO articleContentVO = new ArticleContentVO();
 		if (articleDetail.isSuccess()) {
 			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();
@@ -113,6 +113,48 @@ public class ArticleController {
 
 		} else {
 			apiResult.setMsg(articleDetail.getMsg());
+		}
+		return apiResult;
+	}
+
+	@ApiOperation(value = "文章删除", notes = "删除")
+	@GetMapping(value = "/del/{id}")
+	public ApiResult<String> delArticle(@PathVariable("id") Long id) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass editArticle = articleService.delArticle(id);
+		if (editArticle.isSuccess()) {
+			apiResult.success(null, editArticle.getMsg());
+		} else {
+			apiResult.fail(editArticle.getMsg());
+		}
+		return apiResult;
+	}
+
+	@ApiOperation(value = "文章置顶", notes = "置顶")
+	@GetMapping(value = "/top/{id}")
+	public ApiResult<String> topArticle(@PathVariable("id") Long id) {
+		ApiResult apiResult = new ApiResult();
+		ArticleContentDTO articleContentDTO = ArticleContentDTO.builder().id(id).isTop((short) 1).build();
+		ReturnClass editArticle = articleService.updateArticleState(articleContentDTO);
+		if (editArticle.isSuccess()) {
+			apiResult.success(null, editArticle.getMsg());
+		} else {
+			apiResult.fail(editArticle.getMsg());
+		}
+		return apiResult;
+	}
+
+
+	@ApiOperation(value = "文章置顶", notes = "置顶")
+	@GetMapping(value = "/canceltop/{id}")
+	public ApiResult<String> cancelTopArticle(@PathVariable("id") Long id) {
+		ApiResult apiResult = new ApiResult();
+		ArticleContentDTO articleContentDTO = ArticleContentDTO.builder().id(id).isTop((short) 0).build();
+		ReturnClass editArticle = articleService.updateArticleState(articleContentDTO);
+		if (editArticle.isSuccess()) {
+			apiResult.success(null, editArticle.getMsg());
+		} else {
+			apiResult.fail(editArticle.getMsg());
 		}
 		return apiResult;
 	}

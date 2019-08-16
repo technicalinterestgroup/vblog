@@ -17,4 +17,6 @@ public interface ContentMapper {
     Integer update(@Param("pojo") Content pojo);
 
     Content getContent(@Param("articleId")Long articleId);
+
+    Integer delContent(@Param("articleId")Long articleId);
 }

@@ -18,4 +18,6 @@ public interface CategoryMapper {
     List<CategoryDTO> queryCategoryListByUser(String userName);
 
     Category queryCategory(Category pojo);
+
+    Integer delCategory(@Param("id")Long id);
 }

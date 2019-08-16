@@ -60,16 +60,23 @@
 
     <select id="queryCategoryListByUser" resultType="com.technicalinterest.group.dto.CategoryDTO">
      SELECT t1.id,t1.name,COUNT(t2.id) as articleNum FROM category t1 LEFT JOIN article t2 on t1.id=t2.category_id
-       WHERE t1.user_name=#{userName} and t1.is_del=0 GROUP BY t1.id
+       WHERE t1.user_name=#{userName}  GROUP BY t1.id
     </select>
 
     <select id="queryCategory" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Category">
         select
         <include refid="all_column"/>
-        from category where is_del=0
-        <if test="id!=null">and id=#{id}</if>
-        <if test="userName!=null">and user_name=#{userName}</if>
-        <if test="name!=null">and name=#{name}</if>
+        from category
+        <where>
+            <if test="id!=null">and id=#{id}</if>
+            <if test="userName!=null">and user_name=#{userName}</if>
+            <if test="name!=null">and name=#{name}</if>
+        </where>
+
     </select>
+
+    <delete id="delCategory">
+        delete from category  WHERE id = #{id}
+    </delete>
 </mapper>
 

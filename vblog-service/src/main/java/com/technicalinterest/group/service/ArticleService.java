@@ -84,5 +84,23 @@ public interface ArticleService {
 	*/
 	ReturnClass  listArticleArchive(String userName);
 
+    /**
+     * @Description:删除文章
+     * @author: shuyu.wang
+     * @date: 2019-08-16 18:45
+     * @param id
+     * @return null
+    */
+	ReturnClass delArticle(Long id);
+
+	/**
+	 * @Description:更新文章的一些状态
+	 * @author: shuyu.wang
+	 * @date: 2019-08-16 18:45
+	 * @param articleContentDTO
+	 * @return null
+	 */
+	ReturnClass updateArticleState(ArticleContentDTO articleContentDTO);
+
 
 }

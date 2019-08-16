@@ -18,4 +18,6 @@ public interface TagMapper {
 
     Tag queryTag(Tag pojo);
 
+    Integer delTag(@Param("id")Long id);
+
 }
