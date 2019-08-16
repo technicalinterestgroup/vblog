@@ -12,6 +12,7 @@ public interface CategoryService{
 
      ReturnClass update(EditCategoryDTO pojo);
 
-
      ReturnClass listCategoryByUser(Boolean authCheck,String userName);
+
+     ReturnClass delCategory(Long id);
 }

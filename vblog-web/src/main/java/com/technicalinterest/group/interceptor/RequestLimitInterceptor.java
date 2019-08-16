@@ -13,10 +13,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+/**
+ * @description: 自定义拦截器
+ * @author: Shuyu.Wang
+ * @date: 2018-11-30 18:13
+ * @version: V1.0
+ **/
 public class RequestLimitInterceptor implements HandlerInterceptor {
 
-    private static final RateLimiter LIMITER = RateLimiter.create(20); //20次/秒
+    private static final RateLimiter LIMITER = RateLimiter.create(20);
 
     private static Logger logger = LoggerFactory.getLogger(RequestLimitInterceptor.class);
 

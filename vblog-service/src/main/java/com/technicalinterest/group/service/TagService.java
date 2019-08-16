@@ -12,4 +12,6 @@ public interface TagService{
     ReturnClass update(EditTagDTO pojo);
 
     ReturnClass listTagByUser(Boolean authCheck,String userName);
+
+    ReturnClass delTag(Long id);
 }

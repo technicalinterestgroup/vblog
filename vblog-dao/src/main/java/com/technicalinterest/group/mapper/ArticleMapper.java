@@ -46,7 +46,7 @@ public interface ArticleMapper {
      * @param id
      * @return null
     */
-    Article getArticleInfo(@Param("id")Long id);
+    ArticlesDTO getArticleInfo(@Param("id")Long id);
 
     /**
      * @Description: 文章名列表
@@ -67,6 +67,16 @@ public interface ArticleMapper {
      * @return null
     */
     List<ArticlesDTO> queryArticleListArchive(@Param("userName")String userName);
+
+
+    /**
+     * @Description:删除文章
+     * @author: shuyu.wang
+     * @date: 2019-08-16 18:41
+     * @param id
+     * @return null
+    */
+    Integer delArticle(@Param("id")Long id);
 
 
 }

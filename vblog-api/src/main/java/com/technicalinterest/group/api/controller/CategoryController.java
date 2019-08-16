@@ -86,7 +86,7 @@ public class CategoryController {
 	}
 
 	/**
-	 * @Description: 编辑文章分类
+	 * @Description: 新增文章分类
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
 	 * @param newCategoryParam
@@ -103,6 +103,26 @@ public class CategoryController {
 			apiResult.success();
 		} else {
 			apiResult.setMsg(update.getMsg());
+		}
+		return apiResult;
+	}
+
+	/**
+	 * @Description: 分类删除
+	 * @author: shuyu.wang
+	 * @date: 2019-08-16 23:18
+	 * @param id
+	 * @return null
+	*/
+	@ApiOperation(value = "分类删除", notes = "删除")
+	@GetMapping(value = "/del/{id}")
+	public ApiResult<String> delCategory(@PathVariable("id") Long id) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass delCategory = categoryService.delCategory(id);
+		if (delCategory.isSuccess()) {
+			apiResult.success(null, delCategory.getMsg());
+		} else {
+			apiResult.fail(delCategory.getMsg());
 		}
 		return apiResult;
 	}

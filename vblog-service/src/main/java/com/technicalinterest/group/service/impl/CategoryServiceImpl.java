@@ -2,7 +2,6 @@ package com.technicalinterest.group.service.impl;
 
 import com.technicalinterest.group.dao.Category;
 import com.technicalinterest.group.dto.CategoryDTO;
-import com.technicalinterest.group.dto.TagDTO;
 import com.technicalinterest.group.mapper.CategoryMapper;
 import com.technicalinterest.group.service.CategoryService;
 import com.technicalinterest.group.service.UserService;
@@ -104,5 +103,32 @@ public class CategoryServiceImpl implements CategoryService {
 			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
 		}
 		return ReturnClass.success(categoryDTOList);
+	}
+
+	@Override
+	public ReturnClass delCategory(Long id) {
+		Category category = new Category();
+		category.setId(id);
+		//数据是否存在
+		Category category1 = categoryMapper.queryCategory(category);
+		if (Objects.isNull(category1)) {
+			throw new VLogException(ResultEnum.NO_DATA);
+		}
+		ReturnClass userByToken = userService.getUserByToken();
+		if (userByToken.isSuccess()) {
+			UserDTO userDTO = (UserDTO) userByToken.getData();
+			category.setUserName(userDTO.getUserName());
+		} else {
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
+		}
+		//是否是本人操作
+		if (!StringUtils.equals(category1.getUserName(), category.getUserName())) {
+			throw new VLogException(ResultEnum.NO_AUTH);
+		}
+		Integer integer = categoryMapper.delCategory(id);
+		if (integer > 0) {
+			return ReturnClass.success();
+		}
+		return ReturnClass.fail();
 	}
 }

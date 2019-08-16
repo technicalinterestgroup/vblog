@@ -112,4 +112,24 @@ public class TagController {
 		}
 		return apiResult;
 	}
+
+	/**
+	 * @Description: 标签删除
+	 * @author: shuyu.wang
+	 * @date: 2019-08-16 23:18
+	 * @param id
+	 * @return null
+	 */
+	@ApiOperation(value = "标签删除", notes = "删除")
+	@GetMapping(value = "/del/{id}")
+	public ApiResult<String> delTag(@PathVariable("id") Long id) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass delTag = tagService.delTag(id);
+		if (delTag.isSuccess()) {
+			apiResult.success(null, delTag.getMsg());
+		} else {
+			apiResult.fail(delTag.getMsg());
+		}
+		return apiResult;
+	}
 }

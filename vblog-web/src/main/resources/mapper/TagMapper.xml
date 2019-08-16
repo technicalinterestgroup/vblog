@@ -61,16 +61,23 @@
 
     <select id="queryTagListByUser" resultType="com.technicalinterest.group.dto.TagDTO">
        SELECT t1.id,t1.name,COUNT(t2.id) as articleNum FROM tag t1 LEFT JOIN article t2 on t1.id=t2.category_id
-       WHERE t1.user_name=#{userName} and t1.is_del=0 GROUP BY t1.id
+       WHERE t1.user_name=#{userName}  GROUP BY t1.id
     </select>
 
     <select id="queryTag" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Tag">
         select
         <include refid="all_column"/>
-        from tag where is_del=0
-        <if test="id!=null">and id=#{id}</if>
-        <if test="userName!=null">and user_name=#{userName}</if>
-        <if test="name!=null">and name=#{name}</if>
+        from tag
+        <where>
+            <if test="id!=null">and id=#{id}</if>
+            <if test="userName!=null">and user_name=#{userName}</if>
+            <if test="name!=null">and name=#{name}</if>
+        </where>
+
     </select>
+
+    <delete id="delTag">
+        delete from tag  WHERE id = #{id}
+    </delete>
 </mapper>
 
