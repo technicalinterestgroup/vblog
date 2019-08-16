@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.CategoryMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.Category">
+        <result column="name" property="name"/>
+        <result column="user_name" property="userName"/>
+        <result column="id" property="id"/>
+        <result column="is_del" property="isDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `name`,
+        `user_name`,
+        `id`,
+        `is_del`,
+        `create_time`,
+        `update_time`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.name!=null">`name`,</if>
+            <if test="pojo.userName!=null">`user_name`,</if>
+            <if test="pojo.id!=null">`id`,</if>
+            <if test="pojo.isDel!=null">`is_del`,</if>
+            <if test="pojo.createTime!=null">`create_time`,</if>
+            <if test="pojo.updateTime!=null">`update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.name!=null">#{pojo.name},</if>
+            <if test="pojo.userName!=null">#{pojo.userName},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE category
+        <set>
+            <if test="pojo.name != null">`name` = #{pojo.name},</if>
+            <if test="pojo.userName != null">`user_name` = #{pojo.userName},</if>
+            <if test="pojo.id != null">`id` = #{pojo.id},</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
+            <if test="pojo.createTime != null">`create_time` = #{pojo.createTime},</if>
+            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime}</if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="queryCategoryListByUser" resultType="com.technicalinterest.group.dto.CategoryDTO">
+     SELECT t1.id,t1.name,COUNT(t2.id) as articleNum FROM category t1 LEFT JOIN article t2 on t1.id=t2.category_id
+       WHERE t1.user_name=#{userName} and t1.is_del=0 GROUP BY t1.id
+    </select>
+
+    <select id="queryCategory" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Category">
+        select
+        <include refid="all_column"/>
+        from category where is_del=0
+        <if test="id!=null">and id=#{id}</if>
+        <if test="userName!=null">and user_name=#{userName}</if>
+        <if test="name!=null">and name=#{name}</if>
+    </select>
+</mapper>
+

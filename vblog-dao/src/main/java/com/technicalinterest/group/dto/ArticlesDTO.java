@@ -1,4 +1,4 @@
-package com.technicalinterest.group.dao;
+package com.technicalinterest.group.dto;
 
 import lombok.Data;
 
@@ -52,13 +52,24 @@ public class ArticlesDTO {
 	 * 文章作者
 	 */
 	private String userName;
-	/**
-	 * 能否操作
-	 */
-	private Short editFlag=0;
+
 	/**
 	 * 发布时间
 	 */
 	private Date updateTime;
+
+	/**
+	 * 文章状态阅量
+	 */
+	private Long readCount;
+	/**
+	 * 归档时间
+	 */
+	private String time;
+
+	/**
+	 * 归档条数
+	 */
+	private Integer sum;
 
 }

@@ -44,7 +44,7 @@ public interface UserService {
     * @param editUserDTO
     * @return null
    */
-    ReturnClass updateUser(EditUserDTO editUserDTO);
+    ReturnClass updateUser(Boolean authCheck,EditUserDTO editUserDTO);
 
     /**
      * @Description: 退出登录
@@ -80,7 +80,7 @@ public interface UserService {
      * @param userName
      * @return null
     */
-    ReturnClass getUserByuserName(String userName);
+    ReturnClass getUserByuserName(Boolean authCheck,String userName);
 
 
     

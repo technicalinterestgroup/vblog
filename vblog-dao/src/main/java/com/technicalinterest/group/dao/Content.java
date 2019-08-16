@@ -11,7 +11,7 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-public class Content extends Base{
+public class Content extends BaseDao {
 
 	private Long articleId;
 

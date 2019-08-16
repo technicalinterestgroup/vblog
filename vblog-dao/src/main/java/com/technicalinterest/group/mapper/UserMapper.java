@@ -7,10 +7,10 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface UserMapper {
 
-    int insertSelective(@Param("pojo") User pojo);
+    Integer insertSelective(@Param("pojo") User pojo);
 
 
-    int update(@Param("pojo") User pojo);
+    Integer update(@Param("pojo") User pojo);
 
     /**
      * @param user

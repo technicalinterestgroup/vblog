@@ -11,7 +11,7 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-public class Article extends Base{
+public class Article extends BaseDao {
 	/** 
 	* 标题
 	*/ 
@@ -45,6 +45,10 @@ public class Article extends Base{
 	 * 文章状态 0：草稿，1：发布
 	 */
 	private Short state=0;
+	/**
+	 * 文章状态阅量
+	 */
+	private Long readCount;
 
 
 	

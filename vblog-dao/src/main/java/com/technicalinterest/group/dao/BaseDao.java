@@ -14,7 +14,7 @@ import java.util.Date;
  * @since: 0.1
  **/
 @Data
-public class Base {
+public class BaseDao {
     private Long id;
 
     private Short isDel=0;

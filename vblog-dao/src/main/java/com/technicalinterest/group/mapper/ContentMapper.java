@@ -8,13 +8,13 @@ import com.technicalinterest.group.dao.Content;
 
 @Mapper
 public interface ContentMapper {
-    int insert(@Param("pojo") Content pojo);
+    Integer insert(@Param("pojo") Content pojo);
 
-    int insertSelective(@Param("pojo") Content pojo);
+    Integer insertSelective(@Param("pojo") Content pojo);
 
-    int insertList(@Param("pojos") List<Content> pojo);
+    Integer insertList(@Param("pojos") List<Content> pojo);
 
-    int update(@Param("pojo") Content pojo);
+    Integer update(@Param("pojo") Content pojo);
 
     Content getContent(@Param("articleId")Long articleId);
 }

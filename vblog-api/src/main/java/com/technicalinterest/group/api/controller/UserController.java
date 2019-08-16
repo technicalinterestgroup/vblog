@@ -5,6 +5,7 @@ import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.UserParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.UserVO;
+import com.technicalinterest.group.api.vo.VSystemVO;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -28,55 +29,12 @@ import javax.validation.Valid;
  **/
 @Api(tags = "用户管理")
 @RestController
-@RequestMapping("admin")
+@RequestMapping("user")
 public class UserController {
 	@Autowired
 	private UserService userService;
 
-	/**
-	 * 登录接口
-	 * @return null
-	 * @author: shuyu.wang
-	 * @date: 2019-07-14 19:24
-	 */
-	@ApiOperation(value = "登录", notes = "用户登录")
-	@GetMapping(value = "/user/login")
-	public ApiResult<UserVO> login(@Valid UserParam userParam) {
-		ApiResult apiResult = new ApiResult();
-		EditUserDTO userDTO = new EditUserDTO();
-		BeanUtils.copyProperties(userParam, userDTO);
-		ReturnClass login = userService.login(userDTO);
-		if (login.isSuccess()) {
-			UserVO userVO = new UserVO();
-			BeanUtils.copyProperties(login.getData(), userVO);
-			apiResult.success(userVO);
-		} else {
-			apiResult.fail(login.getMsg());
-		}
-		return apiResult;
-	}
-
-	/**
-	 * 注册新用户
-	 * @author: shuyu.wang
-	 * @date: 2019-07-21 21:50
-	 * @param newUserParam
-	 * @return com.technicalinterest.group.api.vo.ApiResult<com.technicalinterest.group.service.vo.UserVO>
-	 */
-	@ApiOperation(value = "注册", notes = "新用户注册")
-	@PostMapping(value = "/user/new")
-	public ApiResult<String> saveUser(@Valid @RequestBody NewUserParam newUserParam) {
-		ApiResult apiResult = new ApiResult();
-		EditUserDTO newUserDTO = new EditUserDTO();
-		BeanUtils.copyProperties(newUserParam, newUserDTO);
-		ReturnClass addUser = userService.addUser(newUserDTO);
-		if (addUser.isSuccess()) {
-			apiResult.success(addUser.getData());
-		} else {
-			apiResult.fail(addUser.getMsg());
-		}
-		return apiResult;
-	}
+	private static final Boolean authCheck = true;
 
 	/**
 	 * 修改信息设置
@@ -86,12 +44,12 @@ public class UserController {
 	 * @return com.technicalinterest.group.api.vo.ApiResult<com.technicalinterest.group.service.vo.UserVO>
 	 */
 	@ApiOperation(value = "修改信息", notes = "用户模块")
-	@PostMapping(value = "/user/edit")
+	@PostMapping(value = "/edit")
 	public ApiResult<String> editUser(@Valid @RequestBody EditUserParam editUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(editUserParam, editUserDTO);
-		ReturnClass addUser = userService.updateUser(editUserDTO);
+		ReturnClass addUser = userService.updateUser(authCheck, editUserDTO);
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getData());
 		} else {
@@ -107,17 +65,16 @@ public class UserController {
 	 * @date: 2019-07-14 19:24
 	 */
 	@ApiOperation(value = "用户信息", notes = "用户信息")
-	@GetMapping(value = "/user/detail/{userName}")
+	@GetMapping(value = "/detail/{userName}")
 	public ApiResult<UserVO> detail(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass getUserByuserName = userService.getUserByuserName(userName);
+		ReturnClass getUserByuserName = userService.getUserByuserName(authCheck, userName);
 		if (getUserByuserName.isSuccess()) {
 			UserVO userVO = new UserVO();
 			BeanUtils.copyProperties(getUserByuserName.getData(), userVO);
 			apiResult.success(userVO);
-
 		} else {
-			throw new VLogException(ResultEnum.NO_URL);
+			apiResult.fail(getUserByuserName.getMsg());
 		}
 		return apiResult;
 	}
@@ -129,7 +86,7 @@ public class UserController {
 	 * @return null
 	 */
 	@ApiOperation(value = "注销登录", notes = "退出")
-	@GetMapping(value = "/user/logout")
+	@GetMapping(value = "/logout")
 	public ApiResult<String> logout() {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass addUser = userService.logout("");
@@ -141,23 +98,5 @@ public class UserController {
 		return apiResult;
 	}
 
-	/**
-	 * 账号激活
-	 * @author: shuyu.wang
-	 * @date: 2019-07-21 22:27
-	 * @return null
-	 */
-	@ApiOperation(value = "账号激活", notes = "激活")
-	@GetMapping(value = "/user/activation/{key}")
-	public ApiResult<String> activationUser(@PathVariable("key") String key) {
-		ApiResult apiResult = new ApiResult();
-		ReturnClass activationUser = userService.activationUser(key);
-		if (activationUser.isSuccess()) {
-			apiResult.success(activationUser.getMsg());
-		} else {
-			apiResult.fail(activationUser.getMsg());
-		}
-		return apiResult;
-	}
 
 }

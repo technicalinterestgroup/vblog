@@ -14,8 +14,8 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-@ApiModel(description = "新增文章参数")
-public class QueryArticleParam extends PageBase {
+@ApiModel(description = "查询文章参数")
+public class QueryArticleParam extends PageBaseParam {
 
 	@ApiModelProperty(value = "搜索条件")
 	private String condition;
@@ -23,8 +23,6 @@ public class QueryArticleParam extends PageBase {
 	private String categoryId;
 	@ApiModelProperty(value = "文章标签id")
 	private String  tagId;
-	@ApiModelProperty(value = "文章状态",allowableValues = " 0：草稿，1：发布")
-	private Short state=1;
-	@ApiModelProperty(hidden = true)
-	private String userName;
+	@ApiModelProperty(value = "归档时间")
+	private String archiveTime;
 }

@@ -1,19 +1,18 @@
 package com.technicalinterest.group.api.controller;
 
-import com.technicalinterest.group.api.param.ArticleContentParam;
 import com.technicalinterest.group.api.param.EditArticleContentParam;
+import com.technicalinterest.group.api.param.NewArticleContentParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleContentVO;
 import com.technicalinterest.group.api.vo.ArticlesVO;
-import com.technicalinterest.group.dao.QueryArticleDTO;
+import com.technicalinterest.group.dto.ArticlesDTO;
+import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
-import com.technicalinterest.group.service.exception.VLogException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -21,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @package: com.technicalinterest.group.api.controller
@@ -39,9 +40,11 @@ public class ArticleController {
 	@Autowired
 	private UserService userService;
 
+	private static final Boolean authCheck=true;
+
 	@ApiOperation(value = "文章发布", notes = "文章发布")
 	@PostMapping(value = "/new")
-	public ApiResult<String> saveArticle(@Valid @RequestBody ArticleContentParam articleContentParam) {
+	public ApiResult<String> saveArticle(@Valid @RequestBody NewArticleContentParam articleContentParam) {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
 		BeanUtils.copyProperties(articleContentParam, articleContentDTO);
@@ -73,17 +76,22 @@ public class ArticleController {
 	@GetMapping(value = "/list/{userName}")
 	public ApiResult<PageBean<ArticlesVO>> listArticle(@PathVariable("userName") String userName, @Valid QueryArticleParam queryArticleParam) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass returnClass = userService.getUserByuserName(userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
+
 		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
 		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
 		queryArticleDTO.setUserName(userName);
-		ReturnClass listArticle = articleService.listArticle(userName, queryArticleDTO);
+		ReturnClass listArticle = articleService.listArticle(authCheck,userName, queryArticleDTO);
 		if (listArticle.isSuccess()) {
+			PageBean<ArticlesDTO> pageBean = (PageBean<ArticlesDTO>) listArticle.getData();
+			List<ArticlesVO> list = new ArrayList<>();
+			for (ArticlesDTO entity : pageBean.getPageData()) {
+				ArticlesVO articlesVO = new ArticlesVO();
+				BeanUtils.copyProperties(entity, articlesVO);
+				list.add(articlesVO);
+			}
 			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();
 			BeanUtils.copyProperties(listArticle.getData(), pageInfo);
+			pageInfo.setPageData(list);
 			apiResult.success(pageInfo);
 
 		} else {
@@ -96,8 +104,7 @@ public class ArticleController {
 	@GetMapping(value = "/detail/{id}")
 	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass articleDetail = articleService.articleDetail(id);
-
+		ReturnClass articleDetail = articleService.articleDetail(authCheck,id);
 		ArticleContentVO articleContentVO = new ArticleContentVO();
 		if (articleDetail.isSuccess()) {
 			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();

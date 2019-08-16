@@ -74,9 +74,12 @@
     <select id="getUserByUser" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.User">
         select
         <include refid="all_column"></include>
-        from user where
-        <if test="user.userName!=null">user_name=#{user.userName}</if>
-        <if test="user.passWord!=null">pass_word=MD5(#{user.passWord})</if>
+        from user
+        <where>
+            and is_del=0
+            <if test="user.userName!=null">and user_name=#{user.userName}</if>
+            <if test="user.passWord!=null">and pass_word=MD5(#{user.passWord})</if>
+        </where>
 
     </select>
 </mapper>

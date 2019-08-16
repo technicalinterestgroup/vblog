@@ -1,9 +1,11 @@
 package com.technicalinterest.group.api.vo;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -44,7 +46,7 @@ public class ArticlesVO {
 	private String userName;
 
 	@ApiModelProperty(value = "发布时间")
-	@JSONField(format = "yyyy-MM-dd")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateTime;
 
 }
