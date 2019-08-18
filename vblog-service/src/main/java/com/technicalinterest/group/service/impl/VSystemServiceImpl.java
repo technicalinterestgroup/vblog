@@ -10,6 +10,7 @@ import com.technicalinterest.group.service.dto.VSystemDTO;
 import com.technicalinterest.group.service.exception.VLogException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,6 +24,7 @@ public class VSystemServiceImpl implements VSystemService {
 	private UserService userService;
 
 	@Override
+	@Async
 	public ReturnClass insertSelective(VSystemDTO pojo) {
 		VSystem vSystem = new VSystem();
 		BeanUtils.copyProperties(pojo, vSystem);

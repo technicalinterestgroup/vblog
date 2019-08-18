@@ -77,6 +77,14 @@ public interface ArticleMapper {
      * @return null
     */
     Integer delArticle(@Param("id")Long id);
+    /**
+     * @Description:更新文章阅读数量
+     * @author: shuyu.wang
+     * @date: 2019-08-16 18:41
+     * @param id
+     * @return null
+     */
+    Integer updateReadCount(@Param("id")Long id);
 
 
 }

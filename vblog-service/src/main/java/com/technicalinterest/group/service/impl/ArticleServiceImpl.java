@@ -17,11 +17,11 @@ import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.RedisUtil;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +49,7 @@ public class ArticleServiceImpl implements ArticleService {
 	private RedisUtil redisUtil;
 
 	public static final Integer ARTICLE_LENGTH = 50;
+
 
 	/**
 	 * @Description: 新增文章
@@ -309,5 +310,25 @@ public class ArticleServiceImpl implements ArticleService {
 			return ReturnClass.success();
 		}
 		return ReturnClass.fail();
+	}
+
+	/**
+	 * @Description:文章阅读数增加
+	 * @author: shuyu.wang
+	 * @date: 2019-08-17 19:17
+	 * @param id
+	 * @return null
+	 */
+	@Override
+	@Async
+	public ReturnClass addReadCount(Long id) {
+
+		Integer update = articleMapper.updateReadCount(id);
+		if (update > 0) {
+			log.info("文章阅读数累加成功！");
+		}else {
+			log.info("文章阅读数累加失败！");
+		}
+		return ReturnClass.success();
 	}
 }

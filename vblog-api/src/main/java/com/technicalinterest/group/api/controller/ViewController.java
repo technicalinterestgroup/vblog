@@ -8,6 +8,7 @@ import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.CategoryDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.*;
+import com.technicalinterest.group.service.annotation.VBlogReadCount;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.PageBean;
@@ -280,6 +281,7 @@ public class ViewController {
 	 */
 	@ApiOperation(value = "文章详情", notes = "文章详情")
 	@GetMapping(value = "/article/detail/{id}")
+	@VBlogReadCount
 	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass articleDetail = articleService.articleDetail(authCheck, id);

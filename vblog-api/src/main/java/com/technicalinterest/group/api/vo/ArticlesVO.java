@@ -42,8 +42,12 @@ public class ArticlesVO {
 	@ApiModelProperty(value = "标签名称")
 	private String tagCN;
 
+
 	@ApiModelProperty(value = "文章作者")
 	private String userName;
+
+	@ApiModelProperty(value = "文章阅读量")
+	private Long readCount;
 
 	@ApiModelProperty(value = "发布时间")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
