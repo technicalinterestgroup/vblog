@@ -4,6 +4,9 @@ package com.technicalinterest.group.config;
 import com.technicalinterest.group.interceptor.MyInterceptor;
 import com.technicalinterest.group.interceptor.RequestHeaderContextInterceptor;
 import com.technicalinterest.group.interceptor.RequestLimitInterceptor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -20,7 +23,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * @version:V1.0
  **/
 @Configuration
+@Slf4j
 public class MyWebAppConfig extends WebMvcConfigurerAdapter {
+
+	@Value("${spring.profiles.active}")
+	private String profile;
+
+	private static final String ENV="prod";
 
     @Bean
     MyInterceptor myInterceptor() {
@@ -40,10 +49,13 @@ public class MyWebAppConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+    	log.info("profile={}",profile);
         // 多个拦截器组成一个拦截器链
         // addPathPatterns 用于添加拦截规则
         // excludePathPatterns 用户排除拦截
-//        registry.addInterceptor(myInterceptor()).addPathPatterns("/**");
+		if (StringUtils.equals(ENV,profile)){
+			registry.addInterceptor(myInterceptor()).addPathPatterns("/**");
+		}
 		registry.addInterceptor(requestHeaderContextInterceptor()).addPathPatterns("/**");
 		registry.addInterceptor(getRequestLimitInterceptor()).addPathPatterns("/**");
         super.addInterceptors(registry);

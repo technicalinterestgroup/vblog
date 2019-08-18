@@ -80,6 +80,10 @@ public class UserServiceImpl implements UserService {
 
 	private String setToken(String userName) {
 		String token = UUID.randomUUID().toString().replaceAll("-", "");
+		if (redisUtil.hasKey(userName)){
+			String o = (String)redisUtil.get(userName);
+			redisUtil.del(o);
+		}
 		redisUtil.set(userName, token, 1800);
 		redisUtil.set(token, userName, 1800);
 		return token;

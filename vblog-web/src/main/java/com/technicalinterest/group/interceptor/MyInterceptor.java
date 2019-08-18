@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.constant.UrlConstant;
 import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,7 @@ public class MyInterceptor implements HandlerInterceptor {
 			if (!Objects.isNull(ACCESS_TOKEN_STRING)) {
 				String userName = (String) redisUtil.get(ACCESS_TOKEN_STRING);
 				if (Objects.isNull(userName)) {
+					log.error(">>>无效请求：登录超时;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request),request.getRequestURL().toString());
 					response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
 					ApiResult result = new ApiResult(ResultEnum.TIME_OUT);
 					PrintWriter out = response.getWriter();
@@ -67,6 +69,7 @@ public class MyInterceptor implements HandlerInterceptor {
 				redisUtil.expire(userName, ACTIVATION_TIME);
 				return true;
 			} else {
+				log.error(">>>非法请求：无token;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request),request.getRequestURL().toString());
 				response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
 				ApiResult result = new ApiResult(ResultEnum.ACCESTOKEN_NULL);
 				PrintWriter out = response.getWriter();
