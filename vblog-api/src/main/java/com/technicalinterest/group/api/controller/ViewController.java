@@ -1,5 +1,7 @@
 package com.technicalinterest.group.api.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.api.param.NewCommentParam;
 import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
@@ -19,6 +21,7 @@ import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.IpAdrressUtil;
+import com.technicalinterest.group.service.util.ListBeanUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -417,13 +420,17 @@ public class ViewController {
 		return apiResult;
 	}
 
+
 	@ApiOperation(value = "博客评论", notes = "评论")
 	@GetMapping(value = "/commet/list/{articleId}")
-	public ApiResult<List<CommentDTO>> saveArticle(@PathVariable("articleId") Long articleId) {
+	public ApiResult<List<CommentVO>> listCommet1(@PathVariable("articleId") Long articleId) {
 		ApiResult apiResult = new ApiResult();
+
 		ReturnClass returnClass = commentService.getArticleComment(articleId);
 		if (returnClass.isSuccess()) {
-			apiResult.success(returnClass.getData());
+
+			List list = ListBeanUtils.copyProperties(JSON.toJSONString(returnClass.getData()), CommentVO.class);
+			apiResult.success(list);
 		} else {
 			apiResult.fail(returnClass.getMsg());
 		}

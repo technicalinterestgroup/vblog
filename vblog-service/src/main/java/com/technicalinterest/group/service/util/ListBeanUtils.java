@@ -5,6 +5,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @package: com.technicalinterest.group.service.util
@@ -20,13 +21,13 @@ public class ListBeanUtils {
 	 * @Description:集合深度copay
 	 * @author: shuyu.wang
 	 * @date: 2019-08-18 20:12
-	 * @param list
+	 * @param source
 	 * @return java.util.List
 	 */
-	public static <T> List copyProperties(List<T> list) {
-		if (CollectionUtils.isEmpty(list)) {
+	public static <T> List copyProperties(String source, Class<T> clazz) {
+		if (Objects.isNull(source)) {
 			return new ArrayList();
 		}
-		return JSON.parseArray(JSON.toJSONString(list), list.get(0).getClass());
+		return JSON.parseArray(source, clazz);
 	}
 }
