@@ -1,7 +1,10 @@
 package com.technicalinterest.group.service.dto;
 
 import com.technicalinterest.group.dao.BaseDao;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -14,6 +17,9 @@ import java.util.Date;
  * @since: 0.1
  **/
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class VSystemDTO{
 	/**
 	 * 用户名

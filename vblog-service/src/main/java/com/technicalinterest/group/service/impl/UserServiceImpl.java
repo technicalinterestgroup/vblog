@@ -3,6 +3,7 @@ package com.technicalinterest.group.service.impl;
 import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.service.MailService;
+import com.technicalinterest.group.service.VSystemService;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
@@ -10,6 +11,7 @@ import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.UserService;
+import com.technicalinterest.group.service.dto.VSystemDTO;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -37,6 +40,8 @@ public class UserServiceImpl implements UserService {
 	private RedisUtil redisUtil;
 	@Autowired
 	private MailService mailService;
+	@Autowired
+	private VSystemService systemService;
 
 	private static final long activation_time = 60 * 60 * 24;
 
@@ -104,12 +109,15 @@ public class UserServiceImpl implements UserService {
 		if (i != 1) {
 			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
 		} else {
+			VSystemDTO vSystemDTO=VSystemDTO.builder().userName(newUserDTO.getUserName()).vStart(new Date()).build();
+			systemService.insertSelective(vSystemDTO);
 			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
 			redisUtil.set(key, String.valueOf(user.getId()), activation_time);
 			//发送邮件
 			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
 			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
 					"<a href=\"" + UserConstant.ACTIVATION_URL + key + "\">" + UserConstant.ACTIVATION_URL + key + "</a>");
+
 			return ReturnClass.success(UserConstant.ADD_EMAIL_SEND);
 		}
 	}

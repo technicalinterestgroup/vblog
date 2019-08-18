@@ -40,6 +40,10 @@ public class ArticleContentVO {
 
 	@ApiModelProperty(value = "标签名称")
 	private String tagCN;
+
+	@ApiModelProperty(value = "文章阅读量")
+	private Long readCount;
+
 	@ApiModelProperty(value = "文章详情")
 	private String content;
 

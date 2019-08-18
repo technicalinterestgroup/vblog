@@ -1,7 +1,6 @@
 package com.technicalinterest.group.mapper;
 
 import com.technicalinterest.group.dto.CategoryDTO;
-import com.technicalinterest.group.dto.TagDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

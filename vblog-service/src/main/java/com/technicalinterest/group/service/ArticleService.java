@@ -103,4 +103,13 @@ public interface ArticleService {
 	ReturnClass updateArticleState(ArticleContentDTO articleContentDTO);
 
 
+	/**
+	 * @Description:文章阅读数增加
+	 * @author: shuyu.wang
+	 * @date: 2019-08-17 19:17
+	 * @param id
+	 * @return null
+	*/
+	ReturnClass addReadCount(Long id);
+
 }
