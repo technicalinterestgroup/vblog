@@ -52,7 +52,7 @@ public class ArticleController {
 		BeanUtils.copyProperties(articleContentParam, articleContentDTO);
 		ReturnClass saveArticle = articleService.saveArticle(articleContentDTO);
 		if (saveArticle.isSuccess()) {
-			apiResult.success(null, saveArticle.getMsg());
+			apiResult.success(saveArticle.getMsg(), null);
 		} else {
 			apiResult.fail(saveArticle.getMsg());
 		}
@@ -68,7 +68,7 @@ public class ArticleController {
 		BeanUtils.copyProperties(editArticleContentParam, articleContentDTO);
 		ReturnClass editArticle = articleService.editArticle(articleContentDTO);
 		if (editArticle.isSuccess()) {
-			apiResult.success(null, editArticle.getMsg());
+			apiResult.success(editArticle.getMsg(), null);
 		} else {
 			apiResult.fail(editArticle.getMsg());
 		}
@@ -129,7 +129,7 @@ public class ArticleController {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass editArticle = articleService.delArticle(id);
 		if (editArticle.isSuccess()) {
-			apiResult.success(null, editArticle.getMsg());
+			apiResult.success(editArticle.getMsg(), null);
 		} else {
 			apiResult.fail(editArticle.getMsg());
 		}
@@ -144,13 +144,12 @@ public class ArticleController {
 		ArticleContentDTO articleContentDTO = ArticleContentDTO.builder().id(id).isTop((short) 1).build();
 		ReturnClass editArticle = articleService.updateArticleState(articleContentDTO);
 		if (editArticle.isSuccess()) {
-			apiResult.success(null, editArticle.getMsg());
+			apiResult.success(editArticle.getMsg(), null);
 		} else {
 			apiResult.fail(editArticle.getMsg());
 		}
 		return apiResult;
 	}
-
 
 	@ApiOperation(value = "博客取消置顶", notes = "取消置顶")
 	@GetMapping(value = "/canceltop/{id}")
@@ -160,7 +159,7 @@ public class ArticleController {
 		ArticleContentDTO articleContentDTO = ArticleContentDTO.builder().id(id).isTop((short) 0).build();
 		ReturnClass editArticle = articleService.updateArticleState(articleContentDTO);
 		if (editArticle.isSuccess()) {
-			apiResult.success(null, editArticle.getMsg());
+			apiResult.success(editArticle.getMsg(), null);
 		} else {
 			apiResult.fail(editArticle.getMsg());
 		}

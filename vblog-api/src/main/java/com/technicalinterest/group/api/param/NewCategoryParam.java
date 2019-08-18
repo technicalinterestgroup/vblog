@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.param;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,6 +15,7 @@ import javax.validation.constraints.NotBlank;
  * @since: 0.1
  **/
 @Data
+@ApiModel(description = "新增博客分类参数")
 public class NewCategoryParam {
 
 	@ApiModelProperty(value = "分类名称")

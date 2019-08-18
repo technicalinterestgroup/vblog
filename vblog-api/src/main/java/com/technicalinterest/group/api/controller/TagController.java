@@ -81,7 +81,7 @@ public class TagController {
 	@ApiOperation(value = "编辑博客标签", notes = "更新")
 	@PostMapping(value = "/edit")
 	@BlogOperation(value = "编辑博客标签")
-	public ApiResult<ArticleTitleVO> editCategory(@Valid @RequestBody EditTagParam editTagParam) {
+	public ApiResult<String> editCategory(@Valid @RequestBody EditTagParam editTagParam) {
 		ApiResult apiResult = new ApiResult();
 		EditTagDTO editTagDTO = new EditTagDTO();
 		BeanUtils.copyProperties(editTagParam, editTagDTO);
@@ -104,7 +104,7 @@ public class TagController {
 	@ApiOperation(value = "新增博客标签", notes = "新增")
 	@PostMapping(value = "/new")
 	@BlogOperation(value = "新增博客标签")
-	public ApiResult<ArticleTitleVO> newCategory(@Valid @RequestBody NewTagParam newTagParam) {
+	public ApiResult<String> newCategory(@Valid @RequestBody NewTagParam newTagParam) {
 		ApiResult apiResult = new ApiResult();
 		EditTagDTO editTagDTO = new EditTagDTO();
 		BeanUtils.copyProperties(newTagParam, editTagDTO);
@@ -131,7 +131,7 @@ public class TagController {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass delTag = tagService.delTag(id);
 		if (delTag.isSuccess()) {
-			apiResult.success(null, delTag.getMsg());
+			apiResult.success(delTag.getMsg(),null);
 		} else {
 			apiResult.fail(delTag.getMsg());
 		}
