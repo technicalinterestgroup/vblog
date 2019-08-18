@@ -78,6 +78,8 @@ public class ArticleContentDTO {
 	private Long readCount;
 
 	private Date updateTime;
+
+	private Date createTime;
 	/**
 	 * 访问者ip
 	 */

@@ -49,6 +49,6 @@ public class ArticleContentVO {
 
 	@ApiModelProperty(value = "发布时间")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date updateTime;
+	private Date createTime;
 
 }

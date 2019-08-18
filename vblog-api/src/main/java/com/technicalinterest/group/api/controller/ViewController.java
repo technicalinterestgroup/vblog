@@ -1,26 +1,36 @@
 package com.technicalinterest.group.api.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.technicalinterest.group.api.param.NewCommentParam;
 import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.param.UserParam;
 import com.technicalinterest.group.api.vo.*;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.CategoryDTO;
+import com.technicalinterest.group.dto.CommentDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.*;
 import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.annotation.VBlogReadCount;
 import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.dto.EditCommentDTO;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
+import com.technicalinterest.group.service.util.IpAdrressUtil;
+import com.technicalinterest.group.service.util.ListBeanUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +55,8 @@ public class ViewController {
 	private VSystemService vSystemService;
 	@Autowired
 	private CategoryService categoryService;
+	@Autowired
+	private CommentService commentService;
 
 	private static final Boolean authCheck = false;
 
@@ -253,13 +265,12 @@ public class ViewController {
 		return apiResult;
 	}
 
-
 	@ApiOperation(value = "会员文章分类", notes = "文章分类")
 	@GetMapping(value = "/category/{userName}")
 	public ApiResult<ArticleTitleVO> listArticleCategory(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 
-		ReturnClass listCategory = categoryService.listCategoryByUser(authCheck,userName);
+		ReturnClass listCategory = categoryService.listCategoryByUser(authCheck, userName);
 		if (listCategory.isSuccess()) {
 			List<CategoryVO> list = new ArrayList<CategoryVO>();
 			List<CategoryDTO> categoryDTOList = (List<CategoryDTO>) listCategory.getData();
@@ -274,7 +285,6 @@ public class ViewController {
 		}
 		return apiResult;
 	}
-
 
 	/**
 	 * @Description: 文章详情
@@ -406,6 +416,23 @@ public class ViewController {
 
 		} else {
 			apiResult.fail(getSystemByUser.getMsg());
+		}
+		return apiResult;
+	}
+
+
+	@ApiOperation(value = "博客评论", notes = "评论")
+	@GetMapping(value = "/commet/list/{articleId}")
+	public ApiResult<List<CommentVO>> listCommet1(@PathVariable("articleId") Long articleId) {
+		ApiResult apiResult = new ApiResult();
+
+		ReturnClass returnClass = commentService.getArticleComment(articleId);
+		if (returnClass.isSuccess()) {
+
+			List list = ListBeanUtils.copyProperties(JSON.toJSONString(returnClass.getData()), CommentVO.class);
+			apiResult.success(list);
+		} else {
+			apiResult.fail(returnClass.getMsg());
 		}
 		return apiResult;
 	}

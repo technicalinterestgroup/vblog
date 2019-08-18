@@ -125,7 +125,7 @@ public class CategoryController {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass delCategory = categoryService.delCategory(id);
 		if (delCategory.isSuccess()) {
-			apiResult.success(null, delCategory.getMsg());
+			apiResult.success(delCategory.getMsg(),null);
 		} else {
 			apiResult.fail(delCategory.getMsg());
 		}

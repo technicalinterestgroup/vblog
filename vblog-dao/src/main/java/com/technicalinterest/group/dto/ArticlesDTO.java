@@ -56,7 +56,7 @@ public class ArticlesDTO {
 	/**
 	 * 发布时间
 	 */
-	private Date updateTime;
+	private Date createTime;
 
 	/**
 	 * 文章状态阅量

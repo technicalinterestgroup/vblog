@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.param;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotNull;
  * @since: 0.1
  **/
 @Data
+@ApiModel(description = "编辑博客标签参数")
 public class EditTagParam {
 	@ApiModelProperty(value = "标签id")
 	@NotNull(message = "id不能为空")
