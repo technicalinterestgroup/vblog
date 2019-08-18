@@ -42,7 +42,7 @@
 
     <!--auto generated Code-->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
-        INSERT INTO content
+        INSERT INTO v_content
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.articleId!=null">`article_id`,</if>
             <if test="pojo.content!=null">`content`,</if>
@@ -64,7 +64,7 @@
 
     <!--auto generated Code-->
     <insert id="insertList">
-        INSERT INTO content (
+        INSERT INTO v_content (
         <include refid="all_column"/>
         )VALUES
         <foreach collection="pojos" item="pojo" index="index" separator=",">
@@ -81,7 +81,7 @@
 
     <!--auto generated Code-->
     <update id="update">
-        UPDATE content
+        UPDATE v_content
         <set>
             <if test="pojo.articleId != null">`article_id` = #{pojo.articleId},</if>
             <if test="pojo.content != null">`content` = #{pojo.content},</if>
@@ -96,11 +96,11 @@
     <select id="getContent" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Content">
         select
         <include refid="all_column"/>
-        from content WHERE article_id = #{articleId}
+        from v_content WHERE article_id = #{articleId}
     </select>
 
     <delete id="delContent">
-        delete from content WHERE article_id = #{articleId}
+        delete from v_content WHERE article_id = #{articleId}
     </delete>
 </mapper>
 

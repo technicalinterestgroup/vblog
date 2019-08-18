@@ -12,6 +12,7 @@ import com.technicalinterest.group.dto.CategoryDTO;
 import com.technicalinterest.group.dto.TagDTO;
 import com.technicalinterest.group.service.CategoryService;
 import com.technicalinterest.group.service.TagService;
+import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.dto.EditCategoryDTO;
 import com.technicalinterest.group.service.dto.EditTagDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -28,12 +29,12 @@ import java.util.List;
 /**
  * @package: com.technicalinterest.group.api.controller
  * @className: CategoryController
- * @description: 文章标签controller
+ * @description: 博客标签controller
  * @author: Shuyu.Wang
  * @date: 2019-08-15 17:15
  * @since: 0.1
  **/
-@Api(tags = "文章标签")
+@Api(tags = "博客标签")
 @RestController
 @RequestMapping("tag")
 public class TagController {
@@ -43,14 +44,15 @@ public class TagController {
 	private static final Boolean authCheck = true;
 
 	/**
-	 * @Description: 文章标签列表
+	 * @Description: 博客标签列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
 	 * @param userName
 	 * @return null
 	 */
-	@ApiOperation(value = "文章标签", notes = "文章标签")
+	@ApiOperation(value = "博客标签列表", notes = "博客标签")
 	@GetMapping(value = "/list/{userName}")
+	@BlogOperation(value = "博客标签列表")
 	public ApiResult<List<TagVO>> listCategory(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass listCategory = tagService.listTagByUser(authCheck, userName);
@@ -70,14 +72,15 @@ public class TagController {
 	}
 
 	/**
-	 * @Description: 编辑文章标签
+	 * @Description: 编辑博客标签
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
 	 * @param editTagParam
 	 * @return null
 	 */
-	@ApiOperation(value = "编辑文章标签", notes = "更新")
+	@ApiOperation(value = "编辑博客标签", notes = "更新")
 	@PostMapping(value = "/edit")
+	@BlogOperation(value = "编辑博客标签")
 	public ApiResult<ArticleTitleVO> editCategory(@Valid @RequestBody EditTagParam editTagParam) {
 		ApiResult apiResult = new ApiResult();
 		EditTagDTO editTagDTO = new EditTagDTO();
@@ -92,14 +95,15 @@ public class TagController {
 	}
 
 	/**
-	 * @Description: 编辑文章标签
+	 * @Description: 编辑博客标签
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
 	 * @param newTagParam
 	 * @return null
 	 */
-	@ApiOperation(value = "新增文章标签", notes = "新增")
+	@ApiOperation(value = "新增博客标签", notes = "新增")
 	@PostMapping(value = "/new")
+	@BlogOperation(value = "新增博客标签")
 	public ApiResult<ArticleTitleVO> newCategory(@Valid @RequestBody NewTagParam newTagParam) {
 		ApiResult apiResult = new ApiResult();
 		EditTagDTO editTagDTO = new EditTagDTO();
@@ -120,8 +124,9 @@ public class TagController {
 	 * @param id
 	 * @return null
 	 */
-	@ApiOperation(value = "标签删除", notes = "删除")
+	@ApiOperation(value = "博客标签删除", notes = "删除")
 	@GetMapping(value = "/del/{id}")
+	@BlogOperation(value = "博客标签删除")
 	public ApiResult<String> delTag(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass delTag = tagService.delTag(id);

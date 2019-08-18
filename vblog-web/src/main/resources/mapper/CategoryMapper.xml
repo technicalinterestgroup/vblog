@@ -23,7 +23,7 @@
 
     <!--auto generated Code-->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
-        INSERT INTO category
+        INSERT INTO v_category
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.name!=null">`name`,</if>
             <if test="pojo.userName!=null">`user_name`,</if>
@@ -46,7 +46,7 @@
 
     <!--auto generated Code-->
     <update id="update">
-        UPDATE category
+        UPDATE v_category
         <set>
             <if test="pojo.name != null">`name` = #{pojo.name},</if>
             <if test="pojo.userName != null">`user_name` = #{pojo.userName},</if>
@@ -59,14 +59,14 @@
     </update>
 
     <select id="queryCategoryListByUser" resultType="com.technicalinterest.group.dto.CategoryDTO">
-     SELECT t1.id,t1.name,COUNT(t2.id) as articleNum FROM category t1 LEFT JOIN article t2 on t1.id=t2.category_id
+     SELECT t1.id,t1.name,COUNT(t2.id) as articleNum FROM v_category t1 LEFT JOIN v_article t2 on t1.id=t2.category_id
        WHERE t1.user_name=#{userName}  GROUP BY t1.id
     </select>
 
     <select id="queryCategory" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Category">
         select
         <include refid="all_column"/>
-        from category
+        from v_category
         <where>
             <if test="id!=null">and id=#{id}</if>
             <if test="userName!=null">and user_name=#{userName}</if>
@@ -76,7 +76,7 @@
     </select>
 
     <delete id="delCategory">
-        delete from category  WHERE id = #{id}
+        delete from v_category  WHERE id = #{id}
     </delete>
 </mapper>
 

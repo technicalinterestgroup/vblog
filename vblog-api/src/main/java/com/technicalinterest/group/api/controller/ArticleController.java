@@ -10,6 +10,7 @@ import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
+import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -26,12 +27,12 @@ import java.util.List;
 /**
  * @package: com.technicalinterest.group.api.controller
  * @className: ArticleController
- * @description: 文章管理
+ * @description: 博客管理
  * @author: Shuyu.Wang
  * @date: 2019-08-04 15:27
  * @since: 0.1
  **/
-@Api(tags = "文章管理")
+@Api(tags = "博客管理")
 @RestController
 @RequestMapping("article")
 public class ArticleController {
@@ -42,8 +43,9 @@ public class ArticleController {
 
 	private static final Boolean authCheck = true;
 
-	@ApiOperation(value = "文章发布", notes = "文章发布")
+	@ApiOperation(value = "博客发布", notes = "博客发布")
 	@PostMapping(value = "/new")
+	@BlogOperation(value = "博客发布")
 	public ApiResult<String> saveArticle(@Valid @RequestBody NewArticleContentParam articleContentParam) {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
@@ -57,8 +59,9 @@ public class ArticleController {
 		return apiResult;
 	}
 
-	@ApiOperation(value = "文章编辑", notes = "文章编辑")
+	@ApiOperation(value = "博客编辑", notes = "博客编辑")
 	@PostMapping(value = "/edit")
+	@BlogOperation(value = "博客编辑")
 	public ApiResult<String> editArticle(@Valid @RequestBody EditArticleContentParam editArticleContentParam) {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
@@ -72,8 +75,9 @@ public class ArticleController {
 		return apiResult;
 	}
 
-	@ApiOperation(value = "文章列表", notes = "文章列表")
+	@ApiOperation(value = "博客列表", notes = "博客列表")
 	@GetMapping(value = "/list/{userName}")
+	@BlogOperation(value = "博客列表")
 	public ApiResult<PageBean<ArticlesVO>> listArticle(@PathVariable("userName") String userName, @Valid QueryArticleParam queryArticleParam) {
 		ApiResult apiResult = new ApiResult();
 
@@ -100,8 +104,9 @@ public class ArticleController {
 		return apiResult;
 	}
 
-	@ApiOperation(value = "文章详情", notes = "文章详情")
+	@ApiOperation(value = "博客详情", notes = "博客详情")
 	@GetMapping(value = "/detail/{id}")
+	@BlogOperation(value = "博客列表")
 	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass articleDetail = articleService.articleDetail(authCheck, id);
@@ -117,8 +122,9 @@ public class ArticleController {
 		return apiResult;
 	}
 
-	@ApiOperation(value = "文章删除", notes = "删除")
+	@ApiOperation(value = "博客删除", notes = "删除")
 	@GetMapping(value = "/del/{id}")
+	@BlogOperation(value = "博客删除")
 	public ApiResult<String> delArticle(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass editArticle = articleService.delArticle(id);
@@ -130,8 +136,9 @@ public class ArticleController {
 		return apiResult;
 	}
 
-	@ApiOperation(value = "文章置顶", notes = "置顶")
+	@ApiOperation(value = "博客置顶", notes = "置顶")
 	@GetMapping(value = "/top/{id}")
+	@BlogOperation(value = "博客置顶")
 	public ApiResult<String> topArticle(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = ArticleContentDTO.builder().id(id).isTop((short) 1).build();
@@ -145,8 +152,9 @@ public class ArticleController {
 	}
 
 
-	@ApiOperation(value = "文章置顶", notes = "置顶")
+	@ApiOperation(value = "博客取消置顶", notes = "取消置顶")
 	@GetMapping(value = "/canceltop/{id}")
+	@BlogOperation(value = "博客取消置顶")
 	public ApiResult<String> cancelTopArticle(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = ArticleContentDTO.builder().id(id).isTop((short) 0).build();

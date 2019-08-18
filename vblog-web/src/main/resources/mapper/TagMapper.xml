@@ -24,7 +24,7 @@
 
     <!--auto generated Code-->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
-        INSERT INTO tag
+        INSERT INTO v_tag
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.name!=null">`name`,</if>
             <if test="pojo.userName!=null">`user_name`,</if>
@@ -46,7 +46,7 @@
 
     <!--auto generated Code-->
     <update id="update">
-        UPDATE tag
+        UPDATE v_tag
         <set>
             <if test="pojo.name != null">`name` = #{pojo.name},</if>
             <if test="pojo.userName != null">`user_name` = #{pojo.userName},</if>
@@ -60,14 +60,14 @@
 
 
     <select id="queryTagListByUser" resultType="com.technicalinterest.group.dto.TagDTO">
-       SELECT t1.id,t1.name,COUNT(t2.id) as articleNum FROM tag t1 LEFT JOIN article t2 on t1.id=t2.category_id
+       SELECT t1.id,t1.name,COUNT(t2.id) as articleNum FROM v_tag t1 LEFT JOIN v_article t2 on t1.id=t2.category_id
        WHERE t1.user_name=#{userName}  GROUP BY t1.id
     </select>
 
     <select id="queryTag" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Tag">
         select
         <include refid="all_column"/>
-        from tag
+        from v_tag
         <where>
             <if test="id!=null">and id=#{id}</if>
             <if test="userName!=null">and user_name=#{userName}</if>
@@ -77,7 +77,7 @@
     </select>
 
     <delete id="delTag">
-        delete from tag  WHERE id = #{id}
+        delete from v_tag  WHERE id = #{id}
     </delete>
 </mapper>
 

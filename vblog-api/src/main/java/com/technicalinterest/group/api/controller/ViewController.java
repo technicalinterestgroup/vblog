@@ -8,6 +8,7 @@ import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.CategoryDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.*;
+import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.annotation.VBlogReadCount;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.EditUserDTO;
@@ -55,6 +56,7 @@ public class ViewController {
 	 */
 	@ApiOperation(value = "登录", notes = "用户登录")
 	@GetMapping(value = "/user/login")
+	@BlogOperation(value = "登录")
 	public ApiResult<UserVO> login(@Valid UserParam userParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO userDTO = new EditUserDTO();
@@ -77,8 +79,9 @@ public class ViewController {
 	 * @param newUserParam
 	 * @return com.technicalinterest.group.api.vo.ApiResult<com.technicalinterest.group.service.vo.UserVO>
 	 */
-	@ApiOperation(value = "注册", notes = "新用户注册")
+	@ApiOperation(value = "新用户注册", notes = "新用户注册")
 	@PostMapping(value = "/user/new")
+	@BlogOperation(value = "新用户注册")
 	public ApiResult<String> saveUser(@Valid @RequestBody NewUserParam newUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO newUserDTO = new EditUserDTO();
@@ -100,6 +103,7 @@ public class ViewController {
 	 */
 	@ApiOperation(value = "账号激活", notes = "激活")
 	@GetMapping(value = "/user/activation/{key}")
+	@BlogOperation(value = "账号激活")
 	public ApiResult<String> activationUser(@PathVariable("key") String key) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass activationUser = userService.activationUser(key);

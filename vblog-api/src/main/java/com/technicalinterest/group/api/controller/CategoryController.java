@@ -7,6 +7,7 @@ import com.technicalinterest.group.api.vo.ArticleTitleVO;
 import com.technicalinterest.group.api.vo.CategoryVO;
 import com.technicalinterest.group.dto.CategoryDTO;
 import com.technicalinterest.group.service.CategoryService;
+import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.dto.EditCategoryDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import io.swagger.annotations.Api;
@@ -22,12 +23,12 @@ import java.util.List;
 /**
  * @package: com.technicalinterest.group.api.controller
  * @className: CategoryController
- * @description: 文章分类controller
+ * @description: 博客分类controller
  * @author: Shuyu.Wang
  * @date: 2019-08-15 17:15
  * @since: 0.1
  **/
-@Api(tags = "文章分类")
+@Api(tags = "博客分类")
 @RestController
 @RequestMapping("category")
 public class CategoryController {
@@ -37,14 +38,15 @@ public class CategoryController {
 	private static final Boolean authCheck = true;
 
 	/**
-	 * @Description: 文章分类列表
+	 * @Description: 博客分类列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
 	 * @param userName
 	 * @return null
 	 */
-	@ApiOperation(value = "文章分类", notes = "文章分类")
+	@ApiOperation(value = "博客分类", notes = "博客分类")
 	@GetMapping(value = "/list/{userName}")
+	@BlogOperation(value = "博客分类")
 	public ApiResult<List<CategoryVO>> listCategory(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass listCategory = categoryService.listCategoryByUser(authCheck, userName);
@@ -64,14 +66,15 @@ public class CategoryController {
 	}
 
 	/**
-	 * @Description: 编辑文章分类
+	 * @Description: 编辑博客分类
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
 	 * @param editCategoryParam
 	 * @return null
 	 */
-	@ApiOperation(value = "编辑文章分类", notes = "更新")
+	@ApiOperation(value = "编辑博客分类", notes = "更新")
 	@PostMapping(value = "/edit")
+	@BlogOperation(value = "编辑博客分类")
 	public ApiResult<String> editCategory(@Valid @RequestBody EditCategoryParam editCategoryParam) {
 		ApiResult apiResult = new ApiResult();
 		EditCategoryDTO editCategoryDTO = new EditCategoryDTO();
@@ -86,14 +89,15 @@ public class CategoryController {
 	}
 
 	/**
-	 * @Description: 新增文章分类
+	 * @Description: 新增博客分类
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
 	 * @param newCategoryParam
 	 * @return null
 	 */
-	@ApiOperation(value = "新增文章分类", notes = "新增")
+	@ApiOperation(value = "新增博客分类", notes = "新增")
 	@PostMapping(value = "/new")
+	@BlogOperation(value = "新增博客分类")
 	public ApiResult<String> newCategory(@Valid @RequestBody NewCategoryParam newCategoryParam) {
 		ApiResult apiResult = new ApiResult();
 		EditCategoryDTO editCategoryDTO = new EditCategoryDTO();
@@ -114,8 +118,9 @@ public class CategoryController {
 	 * @param id
 	 * @return null
 	*/
-	@ApiOperation(value = "分类删除", notes = "删除")
+	@ApiOperation(value = "博客分类删除", notes = "删除")
 	@GetMapping(value = "/del/{id}")
+	@BlogOperation(value = "博客分类删除")
 	public ApiResult<String> delCategory(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass delCategory = categoryService.delCategory(id);

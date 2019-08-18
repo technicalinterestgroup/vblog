@@ -19,7 +19,7 @@ public class BaseDao {
 
     private Short isDel;
 
-    private Date createTime;
+    private Date createTime=new Date();
 
     private Date updateTime;
 }

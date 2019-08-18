@@ -32,12 +32,11 @@
         `create_time`,
         `update_time`,
         `state`,
-         `state`
 </sql>
 
     <!--auto generated Code-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
-        INSERT INTO article (
+        INSERT INTO v_article (
             `title`,
             `submit`,
             `is_top`,
@@ -68,7 +67,7 @@
 
     <!--auto generated Code-->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
-        INSERT INTO article
+        INSERT INTO v_article
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.title!=null">`title`,</if>
             <if test="pojo.submit!=null">`submit`,</if>
@@ -102,7 +101,7 @@
 
     <!--auto generated Code-->
     <insert id="insertList">
-        INSERT INTO article(
+        INSERT INTO v_article(
         <include refid="all_column"/>
         )VALUES
         <foreach collection="pojos" item="pojo" index="index" separator=",">
@@ -126,7 +125,7 @@
     <!--auto generated Code-->
     <update id="update">
 
-        UPDATE article
+        UPDATE v_article
         <set>
             <if test="pojo.title != null">`title` = #{pojo.title},</if>
             <if test="pojo.submit != null">`submit` = #{pojo.submit},</if>
@@ -148,8 +147,8 @@
 
     <select id="queryArticleList" resultType="com.technicalinterest.group.dto.ArticlesDTO" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
         select t1.id,title,t1.user_name as userName,t1.submit,t1.update_time as updateTime,t1.category_id as categoryId,t2.name AS categoryCN,
-        t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount from article t1 left join category t2 on t1.category_id=t2.id
-        LEFT JOIN tag t3 on t1.tag_id=t3.id
+        t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount from v_article t1 left join v_category t2 on t1.category_id=t2.id
+        LEFT JOIN v_tag t3 on t1.tag_id=t3.id
         <where>
             <if test="pojo.userName != null and pojo.userName != ''">and t1.user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">and t1.state=#{pojo.state}</if>
@@ -164,7 +163,7 @@
     </select>
 
     <select id="queryArticleListCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
-        select count(1) from article
+        select count(1) from v_article
         <where>
             <if test="pojo.userName != null and pojo.userName != ''">and user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">and state=#{pojo.state}</if>
@@ -176,13 +175,13 @@
 
     <select id="getArticleInfo" resultType="com.technicalinterest.group.dto.ArticlesDTO">
         select t1.id,t1.title,t1.user_name as userName,t1.submit,t1.update_time as updateTime,t1.category_id as categoryId,t2.name AS categoryCN,
-        t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount from article t1 left join category t2 on t1.category_id=t2.id
-        LEFT JOIN tag t3 on t1.tag_id=t3.id
+        t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount from v_article t1 left join v_category t2 on t1.category_id=t2.id
+        LEFT JOIN v_tag t3 on t1.tag_id=t3.id
         where t1.id=#{id}
     </select>
 
     <select id="queryArticleListOrderBy" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select id,title,user_name as userName,update_time as updateTime from article where state=1 and is_del=0
+        select id,title,user_name as userName,update_time as updateTime from v_article where state=1
         <if test="userName!=null and userName!=''">and user_name=#{userName}</if>
         <if test="flag==1">
             order by create_time desc
@@ -194,17 +193,17 @@
     </select>
 
     <select id="queryArticleListArchive" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select date_format(create_time,'%Y年%m月' ) as time,count(id)as sum,user_name as userName from article where state=1
+        select date_format(create_time,'%Y年%m月' ) as time,count(id)as sum,user_name as userName from v_article where state=1
         <if test="userName!=null and userName!=''">and user_name=#{userName}</if>
         group by date_format(create_time,'%Y-%m')
     </select>
 
     <delete id="delArticle">
-        delete from article where id=#{id}
+        delete from v_article where id=#{id}
     </delete>
 
     <update id="updateReadCount">
-        update article set read_count=(read_count+1) where id=#{id}
+        update v_article set read_count=(read_count+1) where id=#{id}
     </update>
 </mapper>
 

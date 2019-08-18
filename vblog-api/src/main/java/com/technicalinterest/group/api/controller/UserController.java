@@ -6,6 +6,7 @@ import com.technicalinterest.group.api.param.UserParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.UserVO;
 import com.technicalinterest.group.api.vo.VSystemVO;
+import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -43,8 +44,9 @@ public class UserController {
 	 * @param editUserParam
 	 * @return com.technicalinterest.group.api.vo.ApiResult<com.technicalinterest.group.service.vo.UserVO>
 	 */
-	@ApiOperation(value = "修改信息", notes = "用户模块")
+	@ApiOperation(value = "修改用户信息", notes = "用户模块")
 	@PostMapping(value = "/edit")
+	@BlogOperation(value = "修改用户信息")
 	public ApiResult<String> editUser(@Valid @RequestBody EditUserParam editUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();
@@ -64,8 +66,9 @@ public class UserController {
 	 * @author: shuyu.wang
 	 * @date: 2019-07-14 19:24
 	 */
-	@ApiOperation(value = "用户信息", notes = "用户信息")
+	@ApiOperation(value = "查询用户信息", notes = "用户信息")
 	@GetMapping(value = "/detail/{userName}")
+	@BlogOperation(value = "查询用户信息")
 	public ApiResult<UserVO> detail(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass getUserByuserName = userService.getUserByuserName(authCheck, userName);

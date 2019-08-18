@@ -32,7 +32,7 @@
 
     <!--auto generated Code-->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
-        INSERT INTO user
+        INSERT INTO v_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.userName!=null">`user_name`,</if>
             <if test="pojo.nickName!=null">`nick_name`,</if>
@@ -57,7 +57,7 @@
 
     <!--auto generated Code-->
     <update id="update">
-        UPDATE user
+        UPDATE v_user
         <set>
             <if test="pojo.nickName!=null">nick_name=#{pojo.nickName},</if>
             <if test="pojo.passWord != null">`pass_word` = #{pojo.passWord},</if>
@@ -74,7 +74,7 @@
     <select id="getUserByUser" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.User">
         select
         <include refid="all_column"></include>
-        from user
+        from v_user
         <where>
             and is_del=0
             <if test="user.userName!=null">and user_name=#{user.userName}</if>

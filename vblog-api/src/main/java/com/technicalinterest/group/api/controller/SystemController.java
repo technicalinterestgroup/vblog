@@ -5,6 +5,7 @@ import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.UserVO;
 import com.technicalinterest.group.api.vo.VSystemVO;
 import com.technicalinterest.group.service.VSystemService;
+import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.VSystemDTO;
@@ -29,7 +30,7 @@ import javax.validation.Valid;
 @Api(tags = "博客自定义设置")
 @RestController
 @RequestMapping("system")
-public class VSystemController {
+public class SystemController {
 
 	@Autowired
 	private VSystemService vSystemService;
@@ -42,8 +43,9 @@ public class VSystemController {
 	 * @author: shuyu.wang
 	 * @date: 2019-07-14 19:24
 	 */
-	@ApiOperation(value = "查询参数详情", notes = "详情")
+	@ApiOperation(value = "查询系统参数详情", notes = "详情")
 	@GetMapping(value = "/detail/{userName}")
+	@BlogOperation(value = "查询系统参数详情")
 	public ApiResult<VSystemVO> detail(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass getSystemByUser = vSystemService.getSystemByUser(authCheck, userName);
@@ -64,8 +66,9 @@ public class VSystemController {
 	 * @author: shuyu.wang
 	 * @date: 2019-07-14 19:24
 	 */
-	@ApiOperation(value = "更新参数", notes = "详情")
+	@ApiOperation(value = "更新系统设置参数", notes = "详情")
 	@PostMapping(value = "/edit")
+	@BlogOperation(value = "更新系统设置参数")
 	public ApiResult<String> detail(@Valid @RequestBody EditVSystemParam editVSystemParam) {
 		ApiResult apiResult = new ApiResult();
 		VSystemDTO vSystemDTO = new VSystemDTO();
