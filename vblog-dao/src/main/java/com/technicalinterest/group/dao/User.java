@@ -43,8 +43,16 @@ public class User extends BaseDao {
 	 */
 	private Integer integral;
 	/**
-	 * 状态0：待激活，1：已激活ßßß
+	 * 博客等级
+	 */
+	private Short grade;
+	/**
+	 * 状态0：待激活，1：已激活
 	 */
 	private Short state;
+	/**
+	 * 个人简介
+	 */
+	private String userSummary;
 
 }

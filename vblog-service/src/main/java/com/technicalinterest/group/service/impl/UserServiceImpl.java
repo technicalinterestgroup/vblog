@@ -1,6 +1,7 @@
 package com.technicalinterest.group.service.impl;
 
 import com.technicalinterest.group.dao.User;
+import com.technicalinterest.group.dto.BlogUserDTO;
 import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.service.MailService;
 import com.technicalinterest.group.service.VSystemService;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -80,8 +82,8 @@ public class UserServiceImpl implements UserService {
 
 	private String setToken(String userName) {
 		String token = UUID.randomUUID().toString().replaceAll("-", "");
-		if (redisUtil.hasKey(userName)){
-			String o = (String)redisUtil.get(userName);
+		if (redisUtil.hasKey(userName)) {
+			String o = (String) redisUtil.get(userName);
 			redisUtil.del(o);
 		}
 		redisUtil.set(userName, token, 1800);
@@ -113,7 +115,7 @@ public class UserServiceImpl implements UserService {
 		if (i != 1) {
 			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
 		} else {
-			VSystemDTO vSystemDTO=VSystemDTO.builder().userName(newUserDTO.getUserName()).vStart(new Date()).build();
+			VSystemDTO vSystemDTO = VSystemDTO.builder().userName(newUserDTO.getUserName()).vStart(new Date()).build();
 			systemService.insertSelective(vSystemDTO);
 			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
 			redisUtil.set(key, String.valueOf(user.getId()), activation_time);
@@ -260,4 +262,19 @@ public class UserServiceImpl implements UserService {
 		return ReturnClass.fail();
 	}
 
+	/**
+	 * @Description:获取博客用户信息
+	 * @author: shuyu.wang
+	 * @date: 2019-08-19 12:56
+	 * @param userName
+	 * @return null
+	 */
+	@Override
+	public ReturnClass getBlogUserInfo(String userName) {
+		List<BlogUserDTO> blogUserDTOS = userMapper.queryUserBlog(userName);
+		if (blogUserDTOS.isEmpty()) {
+			return ReturnClass.fail();
+		}
+		return ReturnClass.success(blogUserDTOS);
+	}
 }

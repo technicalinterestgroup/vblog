@@ -152,6 +152,7 @@
             <if test="articleId!=null">and article_id=#{articleId} and parent_id=0</if>
             <if test="parentId!=null">and parent_id=#{parentId}</if>
         </where>
+        order by createTime desc
     </select>
 </mapper>
 

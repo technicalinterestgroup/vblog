@@ -2,11 +2,13 @@ package com.technicalinterest.group.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.Article;
+import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dao.Content;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.ContentMapper;
+import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.ArticleConstant;
@@ -25,6 +27,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,9 +49,13 @@ public class ArticleServiceImpl implements ArticleService {
 	@Autowired
 	private UserService userService;
 	@Autowired
+	private UserMapper userMapper;
+	@Autowired
 	private RedisUtil redisUtil;
 
 	public static final Integer ARTICLE_LENGTH = 50;
+
+	private static final Integer JF=5;
 
 
 	/**
@@ -63,15 +70,18 @@ public class ArticleServiceImpl implements ArticleService {
 	public ReturnClass saveArticle(ArticleContentDTO articleContentDTO) {
 		Article article = new Article();
 		BeanUtils.copyProperties(articleContentDTO, article);
+		Long userId=null;
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
 			UserDTO userDTO = (UserDTO) userByToken.getData();
 			article.setUserName(userDTO.getUserName());
+			userId=userDTO.getId();
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		article.setSubmit(
 				articleContentDTO.getContent().length() > ARTICLE_LENGTH ? articleContentDTO.getContent().substring(0, ARTICLE_LENGTH - 1) : articleContentDTO.getContent());
+		article.setCreateTime(new Date());
 		articleMapper.insertSelective(article);
 		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
 			Content content = new Content();
@@ -80,6 +90,12 @@ public class ArticleServiceImpl implements ArticleService {
 			int i = contentMapper.insertSelective(content);
 			if (i < 1) {
 				throw new VLogException(ArticleConstant.FAIL_ADD);
+			}
+			User user=User.builder().integral(JF).build();
+			user.setId(userId);
+			int update = userMapper.update(user);
+			if (update<1){
+				log.error("博客发布增加积分失败，userName={},ArticleId={}",article.getUserName(),article.getId());
 			}
 			return ReturnClass.success(ArticleConstant.SUS_ADD);
 		}

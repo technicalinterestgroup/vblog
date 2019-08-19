@@ -142,7 +142,6 @@ public class ViewController {
 			UserVO userVO = new UserVO();
 			BeanUtils.copyProperties(getUserByuserName.getData(), userVO);
 			apiResult.success(userVO);
-
 		} else {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
@@ -420,7 +419,6 @@ public class ViewController {
 		return apiResult;
 	}
 
-
 	@ApiOperation(value = "博客评论", notes = "评论")
 	@GetMapping(value = "/commet/list/{articleId}")
 	public ApiResult<List<CommentVO>> listCommet1(@PathVariable("articleId") Long articleId) {
@@ -436,6 +434,21 @@ public class ViewController {
 		}
 		return apiResult;
 	}
+
+	@ApiOperation(value = "获取网站排名前4位的博主信息", notes = "博主信息")
+	@GetMapping(value = "/bloguser")
+	public ApiResult<List<BlogUserVO>> listBlogUser() {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass blogUserInfo = userService.getBlogUserInfo(null);
+		if (blogUserInfo.isSuccess()) {
+			List list1 = ListBeanUtils.copyProperties(JSON.toJSONString(blogUserInfo.getData()), BlogUserVO.class);
+			apiResult.success(list1);
+		} else {
+			apiResult.setMsg(blogUserInfo.getMsg());
+		}
+		return apiResult;
+	}
+
 	//站点统计
 
 }

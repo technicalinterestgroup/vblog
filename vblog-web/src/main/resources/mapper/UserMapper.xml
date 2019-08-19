@@ -13,6 +13,9 @@
         <result column="integral" property="integral"/>
         <result column="is_del" property="isDel"/>
         <result column="state" property="state"/>
+        <result column="pass_word" property="passWord"/>
+        <result column="grade" property="grade"/>
+        <result column="user_summary" property="userSummary"/>
     </resultMap>
 
     <!--auto generated Code-->
@@ -26,8 +29,10 @@
         `photo`,
         `integral`,
         `is_del`,
-         state
-    </sql>
+        `state`,
+        `grade`,
+        `user_summary`
+</sql>
 
 
     <!--auto generated Code-->
@@ -64,9 +69,11 @@
             <if test="pojo.email != null">`email` = #{pojo.email},</if>
             <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime},</if>
             <if test="pojo.photo != null">`photo` = #{pojo.photo},</if>
-            <if test="pojo.integral != null">`integral` = #{pojo.integral},</if>
+            <if test="pojo.integral != null">`integral` = integral+#{pojo.integral},</if>
             <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
             <if test="pojo.state != null">`state` = #{pojo.state},</if>
+            <if test="pojo.grade != null">`grade` = #{pojo.grade},</if>
+            <if test="pojo.userSummary != null">`user_summary` = #{pojo.userSummary},</if>
         </set>
         WHERE id = #{pojo.id}
     </update>
@@ -81,6 +88,15 @@
             <if test="user.passWord!=null">and pass_word=MD5(#{user.passWord})</if>
         </where>
 
+    </select>
+
+    <select id="queryUserBlog" resultType="com.technicalinterest.group.dto.BlogUserDTO">
+        SELECT t1.user_name,t1.nick_name,(
+        SELECT count(1)FROM  v_article t2 WHERE t2.user_name=t1.user_name) as blogNum,user_summary as userSummary,
+        t1.photo
+        from v_user t1
+        <if test="userName!=null and userName!=''"> where t1.user_name=#{userName}</if>
+        <if test="userName==null or userName==''"> order by integral desc limit 4</if>
     </select>
 </mapper>
 
