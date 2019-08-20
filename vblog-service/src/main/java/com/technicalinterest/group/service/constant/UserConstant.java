@@ -25,7 +25,9 @@ public class UserConstant {
 
 	public static final String ADD_EMAIL_SEND = "激活邮件已经发送到邮箱，请在24小时内激活！";
 
-	public static final String EDIT_USER_ERROR = "更新用户信息失败！";
+	public static final String EDIT_USER_ERROR = "更新用户资料失败！";
+
+	public static final String EDIT_USER_SUS = "更新用户资料成功！";
 
 	public static final String FAILD_GET_USER_INFO = "获取用户信息失败！";
 
@@ -39,6 +41,6 @@ public class UserConstant {
 
 	public static final String ACTIVATION_URL = "http://127.0.0.1:8082/vblog/admin/user/activation/";
 
-	public static final String NO_AUTH = "无当前操作权限！";
+	public static final String NO_USER_INFO= "暂无用户数据！";
 
 }

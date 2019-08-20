@@ -78,5 +78,9 @@
     <delete id="delCategory">
         delete from v_category  WHERE id = #{id}
     </delete>
+
+    <select id="getArticleCountCategory" resultType="java.lang.Integer">
+        select count(1) from v_article where category_id=#{id}
+    </select>
 </mapper>
 

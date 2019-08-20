@@ -17,7 +17,7 @@ public class CommentNoticeDTO {
 	/**
 	 * 评论id
 	 */
-	private Long d;
+	private Long id;
 	/**
 	 * 用户名
 	 */

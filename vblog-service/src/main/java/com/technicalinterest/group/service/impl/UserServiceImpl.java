@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
 		if (update != 1) {
 			return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
 		} else {
-			return ReturnClass.success();
+			return ReturnClass.success(UserConstant.EDIT_USER_SUS);
 		}
 	}
 
@@ -273,7 +273,7 @@ public class UserServiceImpl implements UserService {
 	public ReturnClass getBlogUserInfo(String userName) {
 		List<BlogUserDTO> blogUserDTOS = userMapper.queryUserBlog(userName);
 		if (blogUserDTOS.isEmpty()) {
-			return ReturnClass.fail();
+			return ReturnClass.fail(UserConstant.NO_USER_INFO);
 		}
 		return ReturnClass.success(blogUserDTOS);
 	}

@@ -6,8 +6,8 @@ import com.technicalinterest.group.dto.TagDTO;
 import com.technicalinterest.group.mapper.TagMapper;
 import com.technicalinterest.group.service.TagService;
 import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.constant.Constant;
 import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.constant.TagConstant;
 import com.technicalinterest.group.service.dto.EditTagDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
@@ -44,13 +44,13 @@ public class TagServiceImpl implements TagService {
 		//名称是否重复
 		Tag tag1 = tagMapper.queryTag(Tag.builder().name(tag.getName()).userName(tag.getUserName()).build());
 		if (Objects.nonNull(tag1)) {
-			return ReturnClass.fail(Constant.TAG_REPEAT);
+			return ReturnClass.fail(TagConstant.TAG_REPEAT);
 		}
 		Integer flag = tagMapper.insertSelective(tag);
 		if (flag > 0) {
-			return ReturnClass.success();
+			return ReturnClass.success(TagConstant.SUS_ADD);
 		}
-		return ReturnClass.fail();
+		return ReturnClass.fail(TagConstant.FAIL_ADD);
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class TagServiceImpl implements TagService {
 		Tag tag2 = tagMapper.queryTag(Tag.builder().name(tag.getName()).userName(tag.getUserName()).build());
 		if (Objects.nonNull(tag2)) {
 			if (!StringUtils.equals(tag2.getName(), pojo.getName())) {
-				return ReturnClass.fail(Constant.TAG_REPEAT);
+				return ReturnClass.fail(TagConstant.TAG_REPEAT);
 			}
 		}
 
@@ -85,9 +85,9 @@ public class TagServiceImpl implements TagService {
 		}
 		Integer flag = tagMapper.update(tag);
 		if (flag > 0) {
-			return ReturnClass.success();
+			return ReturnClass.success(TagConstant.SUS_EDITE);
 		}
-		return ReturnClass.fail();
+		return ReturnClass.fail(TagConstant.FAIL_EDITE);
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class TagServiceImpl implements TagService {
 		}
 		List<TagDTO> tagDTOS = tagMapper.queryTagListByUser(userName);
 		if (tagDTOS.isEmpty()) {
-			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+			return ReturnClass.fail(TagConstant.NO_DATA);
 		}
 		return ReturnClass.success(tagDTOS);
 	}
@@ -133,10 +133,14 @@ public class TagServiceImpl implements TagService {
 		if (!StringUtils.equals(tag1.getUserName(), tag.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
+		Integer articleCountTag = tagMapper.getArticleCountTag(id);
+		if (articleCountTag>0){
+			return ReturnClass.fail(TagConstant.HAVA_ARTICLE);
+		}
 		Integer integer = tagMapper.delTag(id);
 		if (integer > 0) {
-			return ReturnClass.success();
+			return ReturnClass.success(TagConstant.SUS_DEL);
 		}
-		return ReturnClass.fail();
+		return ReturnClass.fail(TagConstant.FAIL_DEL);
 	}
 }

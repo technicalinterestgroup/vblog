@@ -20,4 +20,13 @@ public interface TagMapper {
 
     Integer delTag(@Param("id")Long id);
 
+    /**
+     * @Description: 查询标签下的文章数
+     * @author: shuyu.wang
+     * @date: 2019/8/20 22:26
+     * @param id
+     * @return null
+    */
+    Integer getArticleCountTag(@Param("id")Long id);
+
 }

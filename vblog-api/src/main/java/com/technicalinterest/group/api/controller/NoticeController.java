@@ -67,4 +67,18 @@ public class NoticeController {
 		}
 		return apiResult;
 	}
+	@ApiOperation(value = "查看评论通知", notes = "查看评论通知")
+	@GetMapping(value = "/view/{id}")
+	@BlogOperation(value = "查看评论通知")
+	public ApiResult<PageBean<CommentNoticeVO>> viewCommentNotic(@PathVariable("id") Long id) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass returnClass = noticeService.viewComment(id);
+		if (returnClass.isSuccess()){
+			apiResult.success();
+		}else {
+			apiResult.setMsg(returnClass.getMsg());
+		}
+		return apiResult;
+	}
+
 }

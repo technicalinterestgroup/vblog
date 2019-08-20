@@ -5,6 +5,7 @@ import com.technicalinterest.group.mapper.VSystemMapper;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.VSystemService;
 import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.constant.SystemConstant;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.VSystemDTO;
 import com.technicalinterest.group.service.exception.VLogException;
@@ -45,9 +46,9 @@ public class VSystemServiceImpl implements VSystemService {
 		BeanUtils.copyProperties(pojo, vSystem);
 		Integer integer = vSystemMapper.update(vSystem);
 		if (integer < 1) {
-			throw new VLogException(ResultEnum.NO_DATA);
+			return ReturnClass.success(SystemConstant.FAIL_EDITE);
 		}
-		return ReturnClass.success();
+		return ReturnClass.success(SystemConstant.SUS_EDITE);
 	}
 
 	/**

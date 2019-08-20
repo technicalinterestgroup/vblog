@@ -5,7 +5,7 @@ import com.technicalinterest.group.dto.CategoryDTO;
 import com.technicalinterest.group.mapper.CategoryMapper;
 import com.technicalinterest.group.service.CategoryService;
 import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.constant.Constant;
+import com.technicalinterest.group.service.constant.CategoryConstant;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.EditCategoryDTO;
 import com.technicalinterest.group.service.dto.EditTagDTO;
@@ -43,17 +43,13 @@ public class CategoryServiceImpl implements CategoryService {
 		//名称是否重复
 		Category category2 = categoryMapper.queryCategory(Category.builder().name(category.getName()).userName(category.getUserName()).build());
 		if (Objects.nonNull(category2)) {
-			return ReturnClass.fail(Constant.CATEGORY_REPEAT);
-		}
-		Category category1 = categoryMapper.queryCategory(category);
-		if (Objects.nonNull(category1)) {
-			return ReturnClass.fail(Constant.CATEGORY_REPEAT);
+			return ReturnClass.fail(CategoryConstant.CATEGORY_REPEAT);
 		}
 		Integer flag = categoryMapper.insertSelective(category);
 		if (flag > 0) {
-			return ReturnClass.success();
+			return ReturnClass.success(CategoryConstant.SUS_ADD);
 		}
-		return ReturnClass.fail();
+		return ReturnClass.fail(CategoryConstant.FAIL_ADD);
 	}
 
 	@Override
@@ -70,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
 		Category category2 = categoryMapper.queryCategory(Category.builder().name(category.getName()).userName(category.getUserName()).build());
 		if (Objects.nonNull(category2)) {
 			if (!StringUtils.equals(category2.getName(), pojo.getName())) {
-				return ReturnClass.fail(Constant.CATEGORY_REPEAT);
+				return ReturnClass.fail(CategoryConstant.CATEGORY_REPEAT);
 			}
 		}
 		ReturnClass userByToken = userService.getUserByToken();
@@ -87,9 +83,9 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 		Integer flag = categoryMapper.update(category);
 		if (flag > 0) {
-			return ReturnClass.success();
+			return ReturnClass.success(CategoryConstant.SUS_EDITE);
 		}
-		return ReturnClass.fail();
+		return ReturnClass.fail(CategoryConstant.FAIL_EDITE);
 	}
 
 	@Override
@@ -100,7 +96,7 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 		List<CategoryDTO> categoryDTOList = categoryMapper.queryCategoryListByUser(userName);
 		if (categoryDTOList.isEmpty()) {
-			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+			return ReturnClass.fail(CategoryConstant.NO_DATA);
 		}
 		return ReturnClass.success(categoryDTOList);
 	}
@@ -125,10 +121,14 @@ public class CategoryServiceImpl implements CategoryService {
 		if (!StringUtils.equals(category1.getUserName(), category.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
+		Integer articleCountCategory = categoryMapper.getArticleCountCategory(id);
+		if (articleCountCategory>0){
+			return ReturnClass.fail(CategoryConstant.HAVA_ARTICLE);
+		}
 		Integer integer = categoryMapper.delCategory(id);
 		if (integer > 0) {
-			return ReturnClass.success();
+			return ReturnClass.success(CategoryConstant.SUS_DEL);
 		}
-		return ReturnClass.fail();
+		return ReturnClass.fail(CategoryConstant.FAIL_DEL);
 	}
 }

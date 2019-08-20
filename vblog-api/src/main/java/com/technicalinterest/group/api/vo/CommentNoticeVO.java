@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -19,7 +20,7 @@ import java.util.Date;
 public class CommentNoticeVO {
 
 	@ApiModelProperty(value = "评论id")
-	private Long d;
+	private Long id;
 
 	@ApiModelProperty(value = "用户名")
 	private String userName;
@@ -31,5 +32,6 @@ public class CommentNoticeVO {
 	private String title;
 
 	@ApiModelProperty(value = "评论时间")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 }
