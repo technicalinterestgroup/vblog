@@ -79,4 +79,10 @@ public class VSystemVO{
 	 */
 	@ApiModelProperty(value = "评论开关")
 	private String commentSwitch;
+
+	/**
+	 * 系统主题
+	 */
+	@ApiModelProperty(value = "系统主题")
+	private String theme;
 }

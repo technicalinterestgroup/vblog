@@ -159,7 +159,7 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
 		if (integer < 1) {
-			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
 		PageHelper.startPage(queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize());
 		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
@@ -209,7 +209,7 @@ public class ArticleServiceImpl implements ArticleService {
 		queryArticleDTO.setState((short) 1);
 		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
 		if (integer < 1) {
-			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
 		PageHelper.startPage(queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize());
 		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
@@ -234,7 +234,7 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName);
 		if (articlesDTOS.isEmpty()) {
-			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
 		return ReturnClass.success(articlesDTOS);
 	}
@@ -254,7 +254,7 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListArchive(userName);
 		if (articlesDTOS.isEmpty()) {
-			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
 		return ReturnClass.success(articlesDTOS);
 	}
@@ -289,9 +289,9 @@ public class ArticleServiceImpl implements ArticleService {
 			if (integer1 < 1) {
 				log.error("文章详情删除失败，ArticleId={}", id);
 			}
-			return ReturnClass.success();
+			return ReturnClass.success(ArticleConstant.SUS_DEL);
 		} else {
-			return ReturnClass.fail();
+			return ReturnClass.fail(ArticleConstant.FAIL_DEL);
 		}
 
 	}

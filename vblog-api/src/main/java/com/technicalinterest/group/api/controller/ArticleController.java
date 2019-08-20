@@ -11,6 +11,7 @@ import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
+import com.technicalinterest.group.service.constant.ArticleConstant;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -144,9 +145,9 @@ public class ArticleController {
 		ArticleContentDTO articleContentDTO = ArticleContentDTO.builder().id(id).isTop((short) 1).build();
 		ReturnClass editArticle = articleService.updateArticleState(articleContentDTO);
 		if (editArticle.isSuccess()) {
-			apiResult.success(editArticle.getMsg(), null);
+			apiResult.success(ArticleConstant.SUS_TOP, null);
 		} else {
-			apiResult.fail(editArticle.getMsg());
+			apiResult.fail(ArticleConstant.FAIL_TOP);
 		}
 		return apiResult;
 	}
@@ -159,9 +160,9 @@ public class ArticleController {
 		ArticleContentDTO articleContentDTO = ArticleContentDTO.builder().id(id).isTop((short) 0).build();
 		ReturnClass editArticle = articleService.updateArticleState(articleContentDTO);
 		if (editArticle.isSuccess()) {
-			apiResult.success(editArticle.getMsg(), null);
+			apiResult.success(ArticleConstant.SUS_CANCEL_TOP, null);
 		} else {
-			apiResult.fail(editArticle.getMsg());
+			apiResult.fail(ArticleConstant.FAIL_CANCEL_TOP);
 		}
 		return apiResult;
 	}
