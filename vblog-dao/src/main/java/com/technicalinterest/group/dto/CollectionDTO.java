@@ -1,5 +1,7 @@
 package com.technicalinterest.group.dto;
 
+import lombok.Data;
+
 import java.util.Date;
 
 /**
@@ -10,7 +12,7 @@ import java.util.Date;
  * @date: 2019-08-21 13:26
  * @since: 0.1
  **/
-
+@Data
 public class CollectionDTO {
 
 	/**
@@ -29,5 +31,5 @@ public class CollectionDTO {
 	/**
 	 * 收藏时间
 	 */
-	private Date creatTime;
+	private Date createTime;
 }

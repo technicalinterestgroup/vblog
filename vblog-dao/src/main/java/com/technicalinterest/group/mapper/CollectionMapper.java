@@ -27,7 +27,7 @@ public interface CollectionMapper {
      * @param userName
      * @return null
     */
-    List<CollectionDTO> queryListCollectionByUserName(@Param("userName")Long userName);
+    List<CollectionDTO> queryListCollectionByUserName(@Param("userName")String userName);
 
     /**
      * @Description: 根据用户名查询收藏文章数量
@@ -36,5 +36,5 @@ public interface CollectionMapper {
      * @param userName
      * @return null
      */
-    Integer queryCountCollectionByUserName(@Param("userName")Long userName);
+    Integer queryCountCollectionByUserName(@Param("userName")String userName);
 }

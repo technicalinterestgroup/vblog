@@ -1,6 +1,7 @@
 package com.technicalinterest.group.service.impl;
 
 import com.technicalinterest.group.dao.Collection;
+import com.technicalinterest.group.dao.PageBase;
 import com.technicalinterest.group.mapper.CollectionMapper;
 import com.technicalinterest.group.service.CollectionService;
 import com.technicalinterest.group.service.UserService;
@@ -39,6 +40,26 @@ public class CollectionServiceImpl implements CollectionService {
 
 	@Override
 	public ReturnClass del(Long id) {
+		return null;
+	}
+	/**
+	 * @Description:查询收藏列表
+	 * @author: shuyu.wang
+	 * @date: 2019/8/21 22:50
+	 * @param
+	 * @return com.technicalinterest.group.service.dto.ReturnClass
+	 */
+	@Override
+	public ReturnClass queryListCollection(PageBase pageBase) {
+		ReturnClass userByToken = userService.getUserByToken();
+		if (!userByToken.isSuccess()){
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
+		}
+		UserDTO userDTO =(UserDTO)userByToken.getData();
+		Integer integer = collectionMapper.queryCountCollectionByUserName(userDTO.getUserName());
+		if (integer<0){
+
+		}
 		return null;
 	}
 }
