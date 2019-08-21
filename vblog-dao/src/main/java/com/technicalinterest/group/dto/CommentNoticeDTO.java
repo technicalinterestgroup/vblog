@@ -31,6 +31,10 @@ public class CommentNoticeDTO {
 	 * 博客标题
 	 */
 	private String title;
+	/**
+	 * 是否查看过
+	 */
+	private Short isView;
 
 
 	private Date createTime;

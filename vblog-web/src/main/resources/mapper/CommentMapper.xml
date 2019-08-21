@@ -167,7 +167,7 @@
 
     <select id="queryCountCommentNotice" resultType="java.lang.Integer">
          SELECT count(t2.id) from v_article t1 INNER JOIN v_comment t2 on t1.id=t2.article_id
-	    AND t2.parent_id=0 WHERE t1.user_name=#{userName} and t2.is_view=0
+	    AND t2.parent_id=0 WHERE t1.user_name=#{userName}
     </select>
 </mapper>
 

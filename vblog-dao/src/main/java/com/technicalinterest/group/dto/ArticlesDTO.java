@@ -71,5 +71,10 @@ public class ArticlesDTO {
 	 * 归档条数
 	 */
 	private Integer sum;
+	/**
+	 * 评论数
+	 */
+	private Integer commentNum;
+
 
 }

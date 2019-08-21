@@ -31,6 +31,9 @@ public class CommentNoticeVO {
 	@ApiModelProperty(value = "博客标题")
 	private String title;
 
+	@ApiModelProperty(value = "是否查看过")
+	private Short isView;
+
 	@ApiModelProperty(value = "评论时间")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
