@@ -1,0 +1,14 @@
+-- auto Generated on 2019-08-22 22:27:11 
+-- DROP TABLE IF EXISTS `v_like`; 
+CREATE TABLE `v_like`(
+    `user_name` VARCHAR (50) NOT NULL DEFAULT '' COMMENT 'userName',
+    `ip_address` VARCHAR (50) NOT NULL DEFAULT '' COMMENT 'ipAddress',
+    `type` SMALLINT (5) NOT NULL DEFAULT 0 COMMENT 'type',
+    `source_id` BIGINT (15) NOT NULL DEFAULT 0 COMMENT 'sourceId',
+    `is_view` SMALLINT (5) NOT NULL DEFAULT 0 COMMENT 'isView',
+    `id` BIGINT (15) NOT NULL AUTO_INCREMENT COMMENT 'id',
+    `is_del` SMALLINT (5) NOT NULL DEFAULT -1 COMMENT 'isDel',
+    `create_time` DATETIME NOT NULL DEFAULT '1000-01-01 00:00:00' COMMENT 'createTime',
+    `update_time` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'updateTime',
+    PRIMARY KEY (`id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT '`v_like`';

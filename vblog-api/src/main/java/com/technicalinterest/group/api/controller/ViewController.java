@@ -94,6 +94,7 @@ public class ViewController {
 	@ApiOperation(value = "新用户注册", notes = "新用户注册")
 	@PostMapping(value = "/user/new")
 	@BlogOperation(value = "新用户注册")
+	@DistributeLock(value = "updateUserStatus", key = "#userId", timeout = 10, expire = 60, errMsg = "更新失败，请刷新重试")
 	public ApiResult<String> saveUser(@Valid @RequestBody NewUserParam newUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO newUserDTO = new EditUserDTO();
