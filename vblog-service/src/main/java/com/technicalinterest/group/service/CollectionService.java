@@ -12,7 +12,7 @@ public interface CollectionService {
 
 	ReturnClass insert(Long articleId);
 
-	ReturnClass del(Long id);
+	ReturnClass del(Long articleId);
 
 	ReturnClass queryListCollection(String userName,PageBase pageBase);
 }

@@ -9,15 +9,15 @@ import java.util.List;
 
 @Mapper
 public interface CollectionMapper {
-    int insert(@Param("pojo") Collection pojo);
+    Integer insert(@Param("pojo") Collection pojo);
 
-    int insertSelective(@Param("pojo") Collection pojo);
+    Integer insertSelective(@Param("pojo") Collection pojo);
 
-    int insertList(@Param("pojos") List<Collection> pojo);
+    Integer insertList(@Param("pojos") List<Collection> pojo);
 
-    int update(@Param("pojo") Collection pojo);
+    Integer update(@Param("pojo") Collection pojo);
 
-    Collection queryById(@Param("id")Long id,@Param("articleId")Long articleId);
+    Collection queryCollection(Collection pojo);
 
 
     /**

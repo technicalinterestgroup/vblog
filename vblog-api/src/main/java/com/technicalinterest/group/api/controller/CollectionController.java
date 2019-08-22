@@ -100,15 +100,15 @@ public class CollectionController {
 	 * @Description: 取消收藏
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
-	 * @param id
+	 * @param articleId
 	 * @return null
 	 */
 	@ApiOperation(value = "取消收藏", notes = "取消收藏")
-	@GetMapping(value = "/del/{id}")
+	@GetMapping(value = "/del/{articleId}")
 	@BlogOperation(value = "取消收藏")
-	public ApiResult<String> delCollection(@PathVariable("id") Long id) {
+	public ApiResult<String> delCollection(@PathVariable("articleId") Long articleId) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass insert = collectionService.del(id);
+		ReturnClass insert = collectionService.del(articleId);
 		if (insert.isSuccess()) {
 			apiResult.success(insert.getMsg(), null);
 		} else {

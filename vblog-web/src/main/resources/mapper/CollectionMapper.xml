@@ -93,11 +93,12 @@
         WHERE id = #{pojo.id}
     </update>
 
-    <select id="queryById" resultMap="AllColumnMap">
+    <select id="queryCollection" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Collection">
         select <include refid="all_column"/> from v_collection
         <where>
             <if test="id!=null">and id=#{id}</if>
             <if test="articleId!=null">and article_id=#{articleId}</if>
+            <if test="userName!=null">and user_name=#{userName}</if>
         </where>
 
     </select>

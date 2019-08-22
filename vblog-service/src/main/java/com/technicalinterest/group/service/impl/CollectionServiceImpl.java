@@ -41,15 +41,14 @@ public class CollectionServiceImpl implements CollectionService {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleId);
-		if (Objects.isNull(articleInfo)){
+		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		Collection collection2 = collectionMapper.queryById(null,articleId);
 		UserDTO userDTO = (UserDTO) userByToken.getData();
-		if (Objects.nonNull(collection2)){
-			if (StringUtils.equals(collection2.getUserName(),userDTO.getUserName())){
-				return ReturnClass.success(CollectionConstant.ADD_REPAT);
-			}
+		Collection collectionPa = Collection.builder().userName(userDTO.getUserName()).articleId(articleId).build();
+		Collection collection2 = collectionMapper.queryCollection(collectionPa);
+		if (Objects.nonNull(collection2)) {
+			return ReturnClass.success(CollectionConstant.ADD_REPAT);
 		}
 		Collection collection = Collection.builder().articleId(articleId).userName(userDTO.getUserName()).build();
 		int insert = collectionMapper.insert(collection);
@@ -60,21 +59,28 @@ public class CollectionServiceImpl implements CollectionService {
 	}
 
 	@Override
-	public ReturnClass del(Long id) {
-		Collection collection = collectionMapper.queryById(id,null);
-		if (Objects.isNull(collection)){
+	public ReturnClass del(Long articleId) {
+		ReturnClass userByToken = userService.getUserByToken();
+		if (!userByToken.isSuccess()) {
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
+		}
+		UserDTO userDTO = (UserDTO) userByToken.getData();
+		Collection collectionPa = Collection.builder().userName(userDTO.getUserName()).articleId(articleId).build();
+		Collection collection = collectionMapper.queryCollection(collectionPa);
+		if (Objects.isNull(collection)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		ReturnClass returnClass = userService.userNameIsLoginUser(collection.getUserName());
-		if (!returnClass.isSuccess()){
-			throw new VLogException(ResultEnum.NO_AUTH);
-		}
-		Integer integer = collectionMapper.delCollection(id);
-		if (integer>0){
+		//		ReturnClass returnClass = userService.userNameIsLoginUser(collection.getUserName());
+		//		if (!returnClass.isSuccess()){
+		//			throw new VLogException(ResultEnum.NO_AUTH);
+		//		}
+		Integer integer = collectionMapper.delCollection(collection.getId());
+		if (integer > 0) {
 			return ReturnClass.success(CollectionConstant.SUS_DEL);
 		}
 		return ReturnClass.success(CollectionConstant.FAIL_DEL);
 	}
+
 	/**
 	 * @Description:查询收藏列表
 	 * @author: shuyu.wang
@@ -83,13 +89,13 @@ public class CollectionServiceImpl implements CollectionService {
 	 * @return com.technicalinterest.group.service.dto.ReturnClass
 	 */
 	@Override
-	public ReturnClass queryListCollection(String userName,PageBase pageBase) {
-		ReturnClass returnClass = userService.getUserByuserName(true,userName);
-		if (!returnClass.isSuccess()){
+	public ReturnClass queryListCollection(String userName, PageBase pageBase) {
+		ReturnClass returnClass = userService.getUserByuserName(true, userName);
+		if (!returnClass.isSuccess()) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
 		Integer integer = collectionMapper.queryCountCollectionByUserName(userName);
-		if (integer>0){
+		if (integer > 0) {
 			PageHelper.startPage(pageBase.getPageNum(), pageBase.getPageSize());
 			List<CollectionDTO> collectionDTOS = collectionMapper.queryListCollectionByUserName(userName);
 			PageBean<CollectionDTO> pageBean = new PageBean<>(collectionDTOS, pageBase.getPageNum(), pageBase.getPageSize(), integer);
