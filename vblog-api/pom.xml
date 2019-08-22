@@ -32,7 +32,10 @@
             <optional>true</optional>
         </dependency>
 
-
+        <dependency>
+            <groupId>com.github.blackshadowwalker.spring</groupId>
+            <artifactId>spring-distributelock</artifactId>
+        </dependency>
 
     </dependencies>
 
