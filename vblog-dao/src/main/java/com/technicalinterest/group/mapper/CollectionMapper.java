@@ -17,7 +17,7 @@ public interface CollectionMapper {
 
     int update(@Param("pojo") Collection pojo);
 
-    Collection queryById(@Param("id")Long id);
+    Collection queryById(@Param("id")Long id,@Param("articleId")Long articleId);
 
 
     /**
@@ -37,4 +37,6 @@ public interface CollectionMapper {
      * @return null
      */
     Integer queryCountCollectionByUserName(@Param("userName")String userName);
+
+    Integer delCollection(@Param("id")Long id);
 }

@@ -14,5 +14,5 @@ public interface CollectionService {
 
 	ReturnClass del(Long id);
 
-	ReturnClass queryListCollection(PageBase pageBase);
+	ReturnClass queryListCollection(String userName,PageBase pageBase);
 }

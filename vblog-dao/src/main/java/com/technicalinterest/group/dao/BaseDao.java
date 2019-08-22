@@ -17,7 +17,7 @@ import java.util.Date;
 public class BaseDao {
     private Long id;
 
-    private Short isDel;
+    private Short isDel=0;
 
     private Date createTime=new Date();
 

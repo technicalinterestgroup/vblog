@@ -94,18 +94,28 @@
     </update>
 
     <select id="queryById" resultMap="AllColumnMap">
-        select <include refid="all_column"/> from v_collection where id=#{id}
+        select <include refid="all_column"/> from v_collection
+        <where>
+            <if test="id!=null">and id=#{id}</if>
+            <if test="articleId!=null">and article_id=#{articleId}</if>
+        </where>
+
     </select>
 
     <select id="queryListCollectionByUserName" resultType="com.technicalinterest.group.dto.CollectionDTO">
-        select t1.article_id as articleId,t2.title,t2,user_name as userName,t1.create_time as createTime
+        select t1.article_id as articleId,t2.title,t2.user_name as userName,t1.create_time as createTime
         FROM v_collection t1 inner join v_article t2 on t1.article_id=t2.id where t1.user_name=#{userName}
         order by t1.create_time desc
     </select>
 
-    <select id="queryCountCollectionByUserName">
+    <select id="queryCountCollectionByUserName" resultType="java.lang.Integer">
          select count(t1.id)
         FROM v_collection t1 inner join v_article t2 on t1.article_id=t2.id where t1.user_name=#{userName}
     </select>
+
+
+    <delete id="delCollection">
+        delete from v_collection where id=#{id}
+    </delete>
 </mapper>
 

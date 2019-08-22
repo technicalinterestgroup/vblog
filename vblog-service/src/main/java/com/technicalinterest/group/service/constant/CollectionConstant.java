@@ -19,4 +19,8 @@ public class CollectionConstant {
 	public static final String SUS_DEL="取消收藏成功！";
 
 	public static final String FAIL_DEL="取消收藏失败！";
+
+	public static final String NO_DATA="暂无收藏记录！";
+
+	public static final String ADD_REPAT="重复收藏！";
 }
