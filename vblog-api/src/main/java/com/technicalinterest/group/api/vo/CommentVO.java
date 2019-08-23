@@ -43,5 +43,6 @@ public class CommentVO {
 	/**
 	 * 子评论
 	 */
+	@ApiModelProperty(value = "子评论")
 	private List<CommentVO> childComment;
 }

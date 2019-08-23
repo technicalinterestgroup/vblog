@@ -2,6 +2,7 @@ package com.technicalinterest.group.api.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.NewCommentParam;
 import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
@@ -94,8 +95,14 @@ public class ViewController {
 	@ApiOperation(value = "新用户注册", notes = "新用户注册")
 	@PostMapping(value = "/user/new")
 	@BlogOperation(value = "新用户注册")
-	@DistributeLock(value = "updateUserStatus", key = "#userId", timeout = 10, expire = 60, errMsg = "更新失败，请刷新重试")
+	@DistributeLock(value = "saveUser", key = "#newUserParam.userName", timeout = 10, expire = 10,errMsg = "00000")
 	public ApiResult<String> saveUser(@Valid @RequestBody NewUserParam newUserParam) {
+		try {
+			Thread.sleep(10000);
+		}catch (Exception e){
+
+		}
+
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO newUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(newUserParam, newUserDTO);

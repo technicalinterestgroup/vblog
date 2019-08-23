@@ -161,8 +161,8 @@
     </select>
 
     <select id="queryListCommentNotice" resultType="com.technicalinterest.group.dto.CommentNoticeDTO">
-        SELECT t1.title,t2.id,t2.article_id as articleId,t2.user_name as userName,t2.create_time as createTime FROM v_article t1 INNER JOIN v_comment t2 on t1.id=t2.article_id
-	    AND t2.parent_id=0 WHERE t1.user_name=#{userName} and t2.is_view=0 order by t2.create_time desc
+        SELECT t1.title,t2.id,t2.article_id as articleId,t2.user_name as userName,t2.create_time as createTime,t2.is_view as isView FROM v_article t1 INNER JOIN v_comment t2 on t1.id=t2.article_id
+	    AND t2.parent_id=0 WHERE t1.user_name=#{userName}  order by t2.create_time desc
     </select>
 
     <select id="queryCountCommentNotice" resultType="java.lang.Integer">

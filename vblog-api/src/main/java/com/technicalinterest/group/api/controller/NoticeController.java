@@ -5,9 +5,11 @@ import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticlesVO;
 import com.technicalinterest.group.api.vo.CommentNoticeVO;
+import com.technicalinterest.group.api.vo.LikeNoticeVO;
 import com.technicalinterest.group.dao.PageBase;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.CommentNoticeDTO;
+import com.technicalinterest.group.dto.LikeNoticeDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.service.NoticeService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
@@ -42,7 +44,7 @@ public class NoticeController {
 	private NoticeService noticeService;
 
 	@ApiOperation(value = "评论通知列表", notes = "通知列表")
-	@GetMapping(value = "/list/{userName}")
+	@GetMapping(value = "/comment/list/{userName}")
 	@BlogOperation(value = "评论通知列表")
 	public ApiResult<PageBean<CommentNoticeVO>> listCommentNotic(@PathVariable("userName") String userName, @Valid PageBaseParam pageBaseParam) {
 		ApiResult apiResult = new ApiResult();
@@ -67,15 +69,57 @@ public class NoticeController {
 		}
 		return apiResult;
 	}
+
 	@ApiOperation(value = "查看评论通知", notes = "查看评论通知")
-	@GetMapping(value = "/view/{id}")
+	@GetMapping(value = "/comment/view/{id}")
 	@BlogOperation(value = "查看评论通知")
 	public ApiResult<PageBean<CommentNoticeVO>> viewCommentNotic(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass returnClass = noticeService.viewComment(id);
-		if (returnClass.isSuccess()){
+		if (returnClass.isSuccess()) {
 			apiResult.success();
-		}else {
+		} else {
+			apiResult.setMsg(returnClass.getMsg());
+		}
+		return apiResult;
+	}
+
+	@ApiOperation(value = "点赞通知列表", notes = "通知列表")
+	@GetMapping(value = "/like/list/{userName}")
+	@BlogOperation(value = "点赞通知列表")
+	public ApiResult<PageBean<LikeNoticeVO>> listLikeNotic(@PathVariable("userName") String userName, @Valid PageBaseParam pageBaseParam) {
+		ApiResult apiResult = new ApiResult();
+
+		PageBase pageBase = new PageBase();
+		BeanUtils.copyProperties(pageBaseParam, pageBase);
+		ReturnClass listArticle = noticeService.queryLikeNotice(userName, pageBase);
+		if (listArticle.isSuccess()) {
+			PageBean<LikeNoticeDTO> pageBean = (PageBean<LikeNoticeDTO>) listArticle.getData();
+			List<LikeNoticeVO> list = new ArrayList<>();
+			for (LikeNoticeDTO entity : pageBean.getPageData()) {
+				LikeNoticeVO likeNoticeVO = new LikeNoticeVO();
+				BeanUtils.copyProperties(entity, likeNoticeVO);
+				list.add(likeNoticeVO);
+			}
+			PageBean<LikeNoticeVO> pageInfo = new PageBean<LikeNoticeVO>();
+			BeanUtils.copyProperties(listArticle.getData(), pageInfo);
+			pageInfo.setPageData(list);
+			apiResult.success(pageInfo);
+		} else {
+			apiResult.setMsg(listArticle.getMsg());
+		}
+		return apiResult;
+	}
+
+	@ApiOperation(value = "查看评论通知", notes = "查看评论通知")
+	@GetMapping(value = "/like/view/{id}")
+	@BlogOperation(value = "查看评论通知")
+	public ApiResult<PageBean<CommentNoticeVO>> viewLike(@PathVariable("id") Long id) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass returnClass = noticeService.viewLike(id);
+		if (returnClass.isSuccess()) {
+			apiResult.success();
+		} else {
 			apiResult.setMsg(returnClass.getMsg());
 		}
 		return apiResult;

@@ -15,11 +15,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class WebApplication {
 
 	public static void main(String[] args) {
-		ConfigurableApplicationContext context = SpringApplication.run(WebApplication.class, args);
-		String[] activeProfiles = context.getEnvironment().getActiveProfiles();
-		for (String profile : activeProfiles) {
-			log.info("Spring active profile:{}", profile);
-		}
+		SpringApplication.run(WebApplication.class, args);
+//		ConfigurableApplicationContext context =
+//		String[] activeProfiles = context.getEnvironment().getActiveProfiles();
+//		for (String profile : activeProfiles) {
+//			log.info("Spring active profile:{}", profile);
+//		}
 		log.info("Server startup");
 		log.info("应用程序启动完毕!");
 	}

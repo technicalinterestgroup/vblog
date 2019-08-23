@@ -6,9 +6,7 @@ import com.technicalinterest.group.dao.BaseDao;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**

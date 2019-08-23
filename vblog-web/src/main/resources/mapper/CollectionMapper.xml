@@ -104,7 +104,7 @@
     </select>
 
     <select id="queryListCollectionByUserName" resultType="com.technicalinterest.group.dto.CollectionDTO">
-        select t1.article_id as articleId,t2.title,t2.user_name as userName,t1.create_time as createTime
+        select t1.article_id as articleId,t2.title,t2.user_name as userName,t1.create_time as createTime,
         FROM v_collection t1 inner join v_article t2 on t1.article_id=t2.id where t1.user_name=#{userName}
         order by t1.create_time desc
     </select>

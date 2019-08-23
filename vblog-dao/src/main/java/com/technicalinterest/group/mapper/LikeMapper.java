@@ -1,5 +1,6 @@
 package com.technicalinterest.group.mapper;
 
+import com.technicalinterest.group.dto.LikeNoticeDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -21,4 +22,7 @@ public interface LikeMapper {
     Integer del(@Param("id")Long id);
 
 
+    List<LikeNoticeDTO> queryListLikeNotice(@Param("userName")String userName);
+
+    Integer queryCountLikeNotice(@Param("userName")String userName);
 }

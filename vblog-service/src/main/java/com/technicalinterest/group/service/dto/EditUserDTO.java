@@ -1,10 +1,7 @@
 package com.technicalinterest.group.service.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 
 /**
  * @package: com.technicalinterest.group.service.dto

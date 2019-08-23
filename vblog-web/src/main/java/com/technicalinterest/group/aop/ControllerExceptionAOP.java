@@ -1,6 +1,7 @@
 package com.technicalinterest.group.aop;
 
 import com.alibaba.fastjson.JSONException;
+import com.github.blackshadowwalker.spring.distributelock.LockException;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.exception.VLogException;
@@ -131,10 +132,28 @@ public class ControllerExceptionAOP {
 	@ExceptionHandler(value = VLogException.class)
 	@ResponseBody
 	public ApiResult myErrorHandler(VLogException e) {
-		log.info("自定义异常", e);
+		log.info("自定义异常：", e);
 		ApiResult apiResult = new ApiResult();
 		apiResult.fail(e.getMessage());
 		apiResult.setCode(e.getCode());
+		return apiResult;
+	}
+
+	/**
+	 * @Description:redis lock异常
+	 * @author: shuyu.wang
+	 * @date: 2019-08-05 17:56
+	 * @param e
+	 * @return null
+	 */
+
+	@ExceptionHandler(value = LockException.class)
+	@ResponseBody
+	public ApiResult lockException(LockException e) {
+		log.info("分布式redis锁异常", e);
+		ApiResult apiResult = new ApiResult();
+		apiResult.fail(ResultEnum.REQ_FREQUENT.getMsg());
+		apiResult.setCode(ResultEnum.REQ_FREQUENT.getCode());
 		return apiResult;
 	}
 

@@ -56,6 +56,7 @@ public class LikeServiceImpl implements LikeService {
 			return ReturnClass.success(LikeConstant.ADD_REPEAT);
 		}
 		like.setIpAddress(pojo.getIpAddress());
+		like.setIsView((short)0);
 		int insert = likeMapper.insert(like);
 		if (insert > 0) {
 			return ReturnClass.success(LikeConstant.SUS_ADD);

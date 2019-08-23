@@ -10,31 +10,45 @@ import java.util.Date;
 /**
  * @package: com.technicalinterest.group.dto
  * @className: CommentNoticeDTO
- * @description: 消息通知VO
+ * @description: 点赞消息通知DTO
  * @author: Shuyu.Wang
  * @date: 2019-08-20 12:38
  * @since: 0.1
  **/
 @Data
-@ApiModel(description = "评论通知")
-public class CommentNoticeVO {
-
-	@ApiModelProperty(value = "评论id")
+@ApiModel(description = "点赞列表")
+public class LikeNoticeVO {
+	/**
+	 * 点赞id
+	 */
+	@ApiModelProperty(value = "记录id")
 	private Long id;
-
-	@ApiModelProperty(value = "用户名")
+	/**
+	 * 用户名
+	 */
+	@ApiModelProperty(value = "点赞用户")
 	private String userName;
+	/**
+	 * id
+	 */
+	@ApiModelProperty(value = "元数据id")
+	private Long sourceId;
 
-	@ApiModelProperty(value = "博客id")
-	private Long articleId;
-
-	@ApiModelProperty(value = "博客标题")
+	/**
+	 * 标题
+	 */
+	@ApiModelProperty(value = "名称")
 	private String title;
-
+	/**
+	 * 是否查看过
+	 */
 	@ApiModelProperty(value = "是否查看过",allowableValues = "0:未查看，1:已经查看")
 	private Short isView;
 
-	@ApiModelProperty(value = "评论时间")
+	@ApiModelProperty(value = "点赞类型",allowableValues = "1:博客，2:评论")
+	private Short type;
+
+	@ApiModelProperty(value = "点赞时间")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 }

@@ -21,6 +21,7 @@ public enum ResultEnum {
 	JSON_ERROR("000009","json格式转换异常!"),
 	DUPLICATE_ERROR("000010","数据重复!"),
 	NO_DATA("000011","没有匹配数据!"),
+	REQ_FREQUENT("000012","请求过于频繁，请稍后重试!"),
 	//系统级异常
 	NO_URL("000101","url不存在!"),
 	METHOD_NOT_ALLOWED("000102","请求方式不支持!"),

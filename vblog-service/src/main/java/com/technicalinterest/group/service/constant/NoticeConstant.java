@@ -12,4 +12,6 @@ package com.technicalinterest.group.service.constant;
 public class NoticeConstant {
 
 	public static final String NO_COMMENT="暂无评论通知！";
+
+	public static final String NO_LIKE="暂无点赞通知！";
 }

@@ -58,6 +58,7 @@ public class CommentServiceImpl implements CommentService {
 				throw new VLogException(CommentConstant.PARENT_COMMENT_ID_ERROR);
 			}
 		}
+		comment.setIsView((short)0);
 		Integer integer = commentMapper.insertSelective(comment);
 		if (integer > 0) {
 			return ReturnClass.success(CommentConstant.SAVE_SUCCESS);

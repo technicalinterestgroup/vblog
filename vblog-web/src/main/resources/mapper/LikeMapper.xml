@@ -129,5 +129,22 @@
     <delete id="del">
         delete from v_like where id=#{id}
     </delete>
+
+    <select id="queryListLikeNotice" resultType="com.technicalinterest.group.dto.LikeNoticeDTO">
+        SELECT t1.title,t2.id,t2.source_id as sourceId,t2.user_name as userName,t2.create_time as createTime,t2.is_view as isView,
+        t2.type
+        FROM v_article t1 INNER JOIN v_like t2 on t1.id=t2.source_id
+	    AND t2.type=1 WHERE t1.user_name=#{userName}  order by t2.create_time desc
+    </select>
+
+    <select id="queryCountLikeNotice" resultType="java.lang.Integer">
+         SELECT count(1)
+        FROM v_article t1 INNER JOIN v_like t2 on t1.id=t2.source_id
+	    AND t2.type=1 WHERE t1.user_name=#{userName}
+    </select>
+
+
+
+
 </mapper>
 
