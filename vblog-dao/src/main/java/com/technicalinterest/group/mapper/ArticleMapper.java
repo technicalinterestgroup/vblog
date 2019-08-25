@@ -46,7 +46,7 @@ public interface ArticleMapper {
      * @param id
      * @return null
     */
-    ArticlesDTO getArticleInfo(@Param("id")Long id);
+    ArticlesDTO getArticleInfo(@Param("id")Long id,@Param("userName")String userName);
 
     /**
      * @Description: 文章名列表

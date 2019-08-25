@@ -80,13 +80,17 @@ public class DruidConfig {
     public DataSource druidDataSource(@Value("${spring.datasource.driverClassName}") String driver,
                                       @Value("${spring.datasource.url}") String url, @Value("${spring.datasource.username}") String username,
                                       @Value("${spring.datasource.password}") String password,
-                                      @Value("${spring.datasource.maxActive}") int maxActive) {
+                                      @Value("${spring.datasource.maxActive}") int maxActive,
+            @Value("${spring.datasource.minIdle}") int minIdle,
+            @Value("${spring.datasource.initialSize}") int initialSize) {
         DruidDataSource druidDataSource = new DruidDataSource();
         druidDataSource.setDriverClassName(driver);
         druidDataSource.setUrl(url);
         druidDataSource.setUsername(username);
         druidDataSource.setPassword(password);
         druidDataSource.setMaxActive(maxActive);
+        druidDataSource.setMinIdle(minIdle);
+        druidDataSource.setInitialSize(initialSize);
         log.info( "DruidConfiguration.druidDataSource(),url=" + url + ",username=" + username + ",password=" + password);
         try {
             druidDataSource.setFilters("stat, wall");

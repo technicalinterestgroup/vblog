@@ -37,4 +37,13 @@ public class UserDTO {
      * 积分
      */
     private Integer integral;
+
+    /**
+     * 个人简介
+     */
+    private String userSummary;
+    /**
+     * 博客等级
+     */
+    private Short grade;
 }

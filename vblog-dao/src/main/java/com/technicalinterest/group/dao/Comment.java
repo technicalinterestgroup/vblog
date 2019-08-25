@@ -46,4 +46,8 @@ public class Comment extends BaseDao {
 	 * 是否是作者回复
 	 */
 	private Short isAuther;
+	/**
+	 * 是否被查看
+	 */
+	private Short isView;
 }

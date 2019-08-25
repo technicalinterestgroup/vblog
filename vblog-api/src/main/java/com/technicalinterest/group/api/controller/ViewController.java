@@ -2,6 +2,7 @@ package com.technicalinterest.group.api.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.NewCommentParam;
 import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
@@ -94,6 +95,7 @@ public class ViewController {
 	@ApiOperation(value = "新用户注册", notes = "新用户注册")
 	@PostMapping(value = "/user/new")
 	@BlogOperation(value = "新用户注册")
+	@DistributeLock(value = "saveUser", key = "#newUserParam.userName", timeout = 10, expire = 10,errMsg = "00000")
 	public ApiResult<String> saveUser(@Valid @RequestBody NewUserParam newUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO newUserDTO = new EditUserDTO();
@@ -142,7 +144,6 @@ public class ViewController {
 			UserVO userVO = new UserVO();
 			BeanUtils.copyProperties(getUserByuserName.getData(), userVO);
 			apiResult.success(userVO);
-
 		} else {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
@@ -420,7 +421,6 @@ public class ViewController {
 		return apiResult;
 	}
 
-
 	@ApiOperation(value = "博客评论", notes = "评论")
 	@GetMapping(value = "/commet/list/{articleId}")
 	public ApiResult<List<CommentVO>> listCommet1(@PathVariable("articleId") Long articleId) {
@@ -436,6 +436,21 @@ public class ViewController {
 		}
 		return apiResult;
 	}
+
+	@ApiOperation(value = "获取网站排名前4位的博主信息", notes = "博主信息")
+	@GetMapping(value = "/bloguser")
+	public ApiResult<List<BlogUserVO>> listBlogUser() {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass blogUserInfo = userService.getBlogUserInfo(null);
+		if (blogUserInfo.isSuccess()) {
+			List list1 = ListBeanUtils.copyProperties(JSON.toJSONString(blogUserInfo.getData()), BlogUserVO.class);
+			apiResult.success(list1);
+		} else {
+			apiResult.setMsg(blogUserInfo.getMsg());
+		}
+		return apiResult;
+	}
+
 	//站点统计
 
 }

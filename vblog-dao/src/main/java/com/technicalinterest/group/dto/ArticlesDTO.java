@@ -71,5 +71,22 @@ public class ArticlesDTO {
 	 * 归档条数
 	 */
 	private Integer sum;
+	/**
+	 * 评论数
+	 */
+	private Integer commentNum;
+	/**
+	 * 是否收藏 1是
+	 */
+	private Integer vCollection;
+	/**
+	 * 是否点赞 1是
+	 */
+	private Integer vLike;
+	/**
+	 * 点赞数量
+	 */
+	private Integer likeCount;
+
 
 }

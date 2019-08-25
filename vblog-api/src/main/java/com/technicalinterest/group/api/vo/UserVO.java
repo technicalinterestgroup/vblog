@@ -27,4 +27,9 @@ public class UserVO {
     private String photo;
     @ApiModelProperty(value = "积分")
     private Integer integral;
+    @ApiModelProperty(value = "个人简介")
+    private String userSummary;
+    @ApiModelProperty(value = "博客等级")
+    private Short grade;
+
 }

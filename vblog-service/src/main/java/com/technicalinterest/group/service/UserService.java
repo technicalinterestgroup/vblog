@@ -93,4 +93,14 @@ public interface UserService {
     */
     ReturnClass userNameIsLoginUser(String userName);
 
+
+    /**
+     * @Description:获取博客用户信息
+     * @author: shuyu.wang
+     * @date: 2019-08-19 12:56
+     * @param userName
+     * @return null
+    */
+    ReturnClass getBlogUserInfo(String userName);
+
 }

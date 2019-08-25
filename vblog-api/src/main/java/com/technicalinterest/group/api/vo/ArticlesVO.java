@@ -49,6 +49,9 @@ public class ArticlesVO {
 	@ApiModelProperty(value = "文章阅读量")
 	private Long readCount;
 
+	@ApiModelProperty(value = "评论数")
+	private Integer commentNum;
+
 	@ApiModelProperty(value = "发布时间")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;

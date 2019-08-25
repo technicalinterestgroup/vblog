@@ -19,4 +19,13 @@ public interface CategoryMapper {
     Category queryCategory(Category pojo);
 
     Integer delCategory(@Param("id")Long id);
+
+    /**
+     * @Description: 该分类下的博客数量
+     * @author: shuyu.wang
+     * @date: 2019/8/20 22:17
+     * @param id
+     * @return null
+    */
+    Integer getArticleCountCategory(@Param("id")Long id);
 }

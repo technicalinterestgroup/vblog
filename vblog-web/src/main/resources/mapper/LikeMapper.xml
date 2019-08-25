@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.LikeMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.Like">
+        <result column="user_name" property="userName"/>
+        <result column="ip_address" property="ipAddress"/>
+        <result column="type" property="type"/>
+        <result column="source_id" property="sourceId"/>
+        <result column="is_view" property="isView"/>
+        <result column="id" property="id"/>
+        <result column="is_del" property="isDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `user_name`,
+        `ip_address`,
+        `type`,
+        `source_id`,
+        `is_view`,
+        `id`,
+        `is_del`,
+        `create_time`,
+        `update_time`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_like (
+            `user_name`,
+            `ip_address`,
+            `type`,
+            `source_id`,
+            `is_view`,
+            `id`,
+            `is_del`,
+            `create_time`,
+            `update_time`
+        ) VALUES (
+            #{pojo.userName},
+            #{pojo.ipAddress},
+            #{pojo.type},
+            #{pojo.sourceId},
+            #{pojo.isView},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+        )
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_like
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.userName!=null"> `user_name`,</if>
+            <if test="pojo.ipAddress!=null"> `ip_address`,</if>
+            <if test="pojo.type!=null"> `type`,</if>
+            <if test="pojo.sourceId!=null"> `source_id`,</if>
+            <if test="pojo.isView!=null"> `is_view`,</if>
+            <if test="pojo.id!=null"> `id`,</if>
+            <if test="pojo.isDel!=null"> `is_del`,</if>
+            <if test="pojo.createTime!=null"> `create_time`,</if>
+            <if test="pojo.updateTime!=null"> `update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.userName!=null">#{pojo.userName},</if>
+            <if test="pojo.ipAddress!=null">#{pojo.ipAddress},</if>
+            <if test="pojo.type!=null">#{pojo.type},</if>
+            <if test="pojo.sourceId!=null">#{pojo.sourceId},</if>
+            <if test="pojo.isView!=null">#{pojo.isView},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO v_like (
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.userName},
+            #{pojo.ipAddress},
+            #{pojo.type},
+            #{pojo.sourceId},
+            #{pojo.isView},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE v_like
+        <set>
+            <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
+            <if test="pojo.ipAddress != null"> `ip_address` = #{pojo.ipAddress}, </if>
+            <if test="pojo.type != null"> `type` = #{pojo.type}, </if>
+            <if test="pojo.sourceId != null"> `source_id` = #{pojo.sourceId}, </if>
+            <if test="pojo.isView != null"> `is_view` = #{pojo.isView}, </if>
+            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
+            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
+            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="queryLike" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Like">
+        select <include refid="all_column"/> from v_like
+        <where>
+            <if test="pojo.id!=null">and id=#{pojo.id}</if>
+            <if test="pojo.sourceId!=null">and source_id=#{pojo.sourceId}</if>
+            <if test="pojo.userName!=null">and user_name=#{pojo.userName}</if>
+        </where>
+    </select>
+
+    <delete id="del">
+        delete from v_like where id=#{id}
+    </delete>
+
+    <select id="queryListLikeNotice" resultType="com.technicalinterest.group.dto.LikeNoticeDTO">
+        SELECT t1.title,t2.id,t2.source_id as sourceId,t2.user_name as userName,t2.create_time as createTime,t2.is_view as isView,
+        t2.type
+        FROM v_article t1 INNER JOIN v_like t2 on t1.id=t2.source_id
+	    AND t2.type=1 WHERE t1.user_name=#{userName}  order by t2.create_time desc
+    </select>
+
+    <select id="queryCountLikeNotice" resultType="java.lang.Integer">
+         SELECT count(1)
+        FROM v_article t1 INNER JOIN v_like t2 on t1.id=t2.source_id
+	    AND t2.type=1 WHERE t1.user_name=#{userName}
+    </select>
+
+
+
+
+</mapper>
+

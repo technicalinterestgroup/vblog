@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.vo;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -12,6 +13,7 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
+@ApiModel(description = "标签查询返回")
 public class TagVO {
 	@ApiModelProperty(value = "标签id")
 	private Long id;

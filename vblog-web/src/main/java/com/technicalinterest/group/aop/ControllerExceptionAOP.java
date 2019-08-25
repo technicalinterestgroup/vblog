@@ -1,6 +1,7 @@
 package com.technicalinterest.group.aop;
 
 import com.alibaba.fastjson.JSONException;
+import com.github.blackshadowwalker.spring.distributelock.LockException;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.exception.VLogException;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -131,10 +133,47 @@ public class ControllerExceptionAOP {
 	@ExceptionHandler(value = VLogException.class)
 	@ResponseBody
 	public ApiResult myErrorHandler(VLogException e) {
-		log.info("自定义异常", e);
+		log.info("自定义异常：", e);
 		ApiResult apiResult = new ApiResult();
 		apiResult.fail(e.getMessage());
 		apiResult.setCode(e.getCode());
+		return apiResult;
+	}
+
+	/**
+	 * @Description:redis lock异常
+	 * @author: shuyu.wang
+	 * @date: 2019-08-05 17:56
+	 * @param e
+	 * @return null
+	 */
+
+	@ExceptionHandler(value = LockException.class)
+	@ResponseBody
+	public ApiResult lockException(LockException e) {
+		log.info("分布式redis锁异常", e);
+		ApiResult apiResult = new ApiResult();
+		apiResult.fail(ResultEnum.REQ_FREQUENT.getMsg());
+		apiResult.setCode(ResultEnum.REQ_FREQUENT.getCode());
+		return apiResult;
+	}
+
+	/**
+	 * @Description:redis 文件上传异常
+	 * @author: shuyu.wang
+	 * @date: 2019-08-05 17:56
+	 * @param e
+	 * @return null
+	 */
+
+	@ExceptionHandler(value = MultipartException.class)
+	@ResponseBody
+	public ApiResult lockException(MultipartException e) {
+		log.info("文件上传异常", e);
+		ApiResult apiResult = new ApiResult();
+		apiResult.fail(ResultEnum.DUPLOAD_ERROR.getMsg());
+		apiResult.setCode(ResultEnum.DUPLOAD_ERROR.getCode());
+		apiResult.setData(e.getMessage());
 		return apiResult;
 	}
 

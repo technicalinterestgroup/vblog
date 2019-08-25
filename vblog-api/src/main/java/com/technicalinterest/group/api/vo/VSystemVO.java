@@ -6,9 +6,7 @@ import com.technicalinterest.group.dao.BaseDao;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 /**
@@ -79,4 +77,10 @@ public class VSystemVO{
 	 */
 	@ApiModelProperty(value = "评论开关")
 	private String commentSwitch;
+
+	/**
+	 * 系统主题
+	 */
+	@ApiModelProperty(value = "系统主题")
+	private String theme;
 }

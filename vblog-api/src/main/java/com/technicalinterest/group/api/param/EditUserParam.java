@@ -30,4 +30,7 @@ public class EditUserParam {
 	@ApiModelProperty(value = "昵称")
 	private String nickName;
 
+	@ApiModelProperty(value = "个人简介")
+	private String userSummary;
+
 }

@@ -52,12 +52,11 @@ public class MyInterceptor implements HandlerInterceptor {
 		response.setHeader(UrlConstant.ALLOW_HEADERS_HEADER_STRING, UrlConstant.ALLOW_HEADERS_VALUE_STRING);
 		response.setHeader(UrlConstant.EXPOSE_HEADERS_HEADER_STRING, UrlConstant.HEADER_ALL_VALUE_STRING);
 		String url = request.getRequestURL().toString();
+		String ACCESS_TOKEN_STRING = request.getHeader(UrlConstant.ACCESS_TOKEN_STRING);
 		if (!url.contains(UrlConstant.NOT_AUTH_URL_STRING) && !url.endsWith(UrlConstant.DOC_URL_STRING)) {
-			String ACCESS_TOKEN_STRING = request.getHeader(UrlConstant.ACCESS_TOKEN_STRING);
 			if (!Objects.isNull(ACCESS_TOKEN_STRING)) {
-				String userName = (String) redisUtil.get(ACCESS_TOKEN_STRING);
-				if (Objects.isNull(userName)) {
-					log.error(">>>无效请求：登录超时;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request),request.getRequestURL().toString());
+				if (!redisUtil.hasKey(ACCESS_TOKEN_STRING)) {
+					log.error(">>>无效请求：登录超时;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
 					response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
 					ApiResult result = new ApiResult(ResultEnum.TIME_OUT);
 					PrintWriter out = response.getWriter();
@@ -65,11 +64,12 @@ public class MyInterceptor implements HandlerInterceptor {
 					out.close();
 					return false;
 				}
+				String userName = (String) redisUtil.get(ACCESS_TOKEN_STRING);
 				redisUtil.expire(ACCESS_TOKEN_STRING, ACTIVATION_TIME);
 				redisUtil.expire(userName, ACTIVATION_TIME);
 				return true;
 			} else {
-				log.error(">>>非法请求：无token;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request),request.getRequestURL().toString());
+				log.error(">>>非法请求：无token;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
 				response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
 				ApiResult result = new ApiResult(ResultEnum.ACCESTOKEN_NULL);
 				PrintWriter out = response.getWriter();
@@ -77,6 +77,20 @@ public class MyInterceptor implements HandlerInterceptor {
 				out.close();
 				return false;
 			}
+		}
+		if (Objects.nonNull(ACCESS_TOKEN_STRING)) {
+//			if (!redisUtil.hasKey(ACCESS_TOKEN_STRING)) {
+//				log.error(">>>无效请求：登录超时;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
+//				response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
+//				ApiResult result = new ApiResult(ResultEnum.TIME_OUT);
+//				PrintWriter out = response.getWriter();
+//				out.write(JSONObject.toJSONString(result));
+//				out.close();
+//				return false;
+//			}
+			String userName = (String) redisUtil.get(ACCESS_TOKEN_STRING);
+			redisUtil.expire(ACCESS_TOKEN_STRING, ACTIVATION_TIME);
+			redisUtil.expire(userName, ACTIVATION_TIME);
 		}
 		return flag;
 	}

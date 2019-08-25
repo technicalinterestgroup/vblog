@@ -2,15 +2,18 @@ package com.technicalinterest.group.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.Article;
+import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dao.Content;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.ContentMapper;
+import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.ArticleConstant;
 import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -25,6 +28,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,10 +50,13 @@ public class ArticleServiceImpl implements ArticleService {
 	@Autowired
 	private UserService userService;
 	@Autowired
+	private UserMapper userMapper;
+	@Autowired
 	private RedisUtil redisUtil;
 
 	public static final Integer ARTICLE_LENGTH = 50;
 
+	private static final Integer JF = 5;
 
 	/**
 	 * @Description: 新增文章
@@ -63,15 +70,18 @@ public class ArticleServiceImpl implements ArticleService {
 	public ReturnClass saveArticle(ArticleContentDTO articleContentDTO) {
 		Article article = new Article();
 		BeanUtils.copyProperties(articleContentDTO, article);
+		Long userId = null;
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
 			UserDTO userDTO = (UserDTO) userByToken.getData();
 			article.setUserName(userDTO.getUserName());
+			userId = userDTO.getId();
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		article.setSubmit(
 				articleContentDTO.getContent().length() > ARTICLE_LENGTH ? articleContentDTO.getContent().substring(0, ARTICLE_LENGTH - 1) : articleContentDTO.getContent());
+		article.setCreateTime(new Date());
 		articleMapper.insertSelective(article);
 		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
 			Content content = new Content();
@@ -80,6 +90,12 @@ public class ArticleServiceImpl implements ArticleService {
 			int i = contentMapper.insertSelective(content);
 			if (i < 1) {
 				throw new VLogException(ArticleConstant.FAIL_ADD);
+			}
+			User user = User.builder().integral(JF).build();
+			user.setId(userId);
+			int update = userMapper.update(user);
+			if (update < 1) {
+				log.error("博客发布增加积分失败，userName={},ArticleId={}", article.getUserName(), article.getId());
 			}
 			return ReturnClass.success(ArticleConstant.SUS_ADD);
 		}
@@ -102,7 +118,7 @@ public class ArticleServiceImpl implements ArticleService {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		//数据是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId());
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId(), null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
@@ -143,7 +159,7 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
 		if (integer < 1) {
-			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
 		PageHelper.startPage(queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize());
 		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
@@ -161,7 +177,16 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public ReturnClass articleDetail(Boolean authCheck, Long id) {
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id);
+		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+		String userName = null;
+		if(!authCheck){
+			if (Objects.nonNull(accessToken)) {
+				if (redisUtil.hasKey(accessToken)) {
+					userName = (String) redisUtil.get(accessToken);
+				}
+			}
+		}
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, userName);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
@@ -193,7 +218,7 @@ public class ArticleServiceImpl implements ArticleService {
 		queryArticleDTO.setState((short) 1);
 		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
 		if (integer < 1) {
-			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
 		PageHelper.startPage(queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize());
 		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
@@ -218,7 +243,7 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName);
 		if (articlesDTOS.isEmpty()) {
-			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
 		return ReturnClass.success(articlesDTOS);
 	}
@@ -238,7 +263,7 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListArchive(userName);
 		if (articlesDTOS.isEmpty()) {
-			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
+			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
 		return ReturnClass.success(articlesDTOS);
 	}
@@ -258,7 +283,7 @@ public class ArticleServiceImpl implements ArticleService {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		//数据是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id);
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
@@ -273,9 +298,9 @@ public class ArticleServiceImpl implements ArticleService {
 			if (integer1 < 1) {
 				log.error("文章详情删除失败，ArticleId={}", id);
 			}
-			return ReturnClass.success();
+			return ReturnClass.success(ArticleConstant.SUS_DEL);
 		} else {
-			return ReturnClass.fail();
+			return ReturnClass.fail(ArticleConstant.FAIL_DEL);
 		}
 
 	}
@@ -294,7 +319,7 @@ public class ArticleServiceImpl implements ArticleService {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		//数据是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId());
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId(), null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
@@ -326,7 +351,7 @@ public class ArticleServiceImpl implements ArticleService {
 		Integer update = articleMapper.updateReadCount(id);
 		if (update > 0) {
 			log.info("文章阅读数累加成功！");
-		}else {
+		} else {
 			log.info("文章阅读数累加失败！");
 		}
 		return ReturnClass.success();

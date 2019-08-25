@@ -1,10 +1,7 @@
 package com.technicalinterest.group.service.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 
 /**
  * @package: com.technicalinterest.group.service.dto
@@ -41,8 +38,14 @@ public class EditUserDTO {
 	 * 状态0：待激活，1：已激活
 	 */
 	private Short state;
-
+	/**
+	 * 昵称
+	 */
 	private String nickName;
+	/**
+	 * 个人简介
+	 */
+	private String userSummary;
 
 
 }

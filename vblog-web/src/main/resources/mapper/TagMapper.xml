@@ -79,5 +79,9 @@
     <delete id="delTag">
         delete from v_tag  WHERE id = #{id}
     </delete>
+
+    <select id="getArticleCountTag" resultType="java.lang.Integer">
+        select count(1) from v_article where tag_id=#{id}
+    </select>
 </mapper>
 

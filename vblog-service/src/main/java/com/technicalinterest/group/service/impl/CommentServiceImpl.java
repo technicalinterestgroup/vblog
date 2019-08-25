@@ -7,16 +7,17 @@ import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.CommentMapper;
 import com.technicalinterest.group.service.CommentService;
 import com.technicalinterest.group.service.UserService;
+import com.technicalinterest.group.service.constant.CommentConstant;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.EditCommentDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.exception.VLogException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,11 +45,25 @@ public class CommentServiceImpl implements CommentService {
 			UserDTO userDTO = (UserDTO) userByToken.getData();
 			comment.setUserName(userDTO.getUserName());
 		}
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getArticleId(),null);
+		if (Objects.isNull(articleInfo)){
+			throw new VLogException(CommentConstant.ARTICLE_ID_ERROR);
+		}
+		if (StringUtils.equals(articleInfo.getUserName(),comment.getUserName())){
+			comment.setIsAuther((short)1);
+		}
+		if (Objects.nonNull(comment.getParentId())){
+			Comment comment1 = commentMapper.queryCommentById(comment.getParentId());
+			if (Objects.isNull(comment1)){
+				throw new VLogException(CommentConstant.PARENT_COMMENT_ID_ERROR);
+			}
+		}
+		comment.setIsView((short)0);
 		Integer integer = commentMapper.insertSelective(comment);
 		if (integer > 0) {
-			return ReturnClass.success();
+			return ReturnClass.success(CommentConstant.SAVE_SUCCESS);
 		}
-		return ReturnClass.fail();
+		return ReturnClass.fail(CommentConstant.SAVE_FAIL);
 	}
 
 	@Override
@@ -63,9 +78,9 @@ public class CommentServiceImpl implements CommentService {
 		}
 		Integer integer = commentMapper.delComment(id);
 		if (integer > 0) {
-			return ReturnClass.success();
+			return ReturnClass.success(CommentConstant.DEL_SUCCESS);
 		}
-		return ReturnClass.fail();
+		return ReturnClass.fail(CommentConstant.DEL_FAIL);
 	}
 
 	/**
@@ -78,7 +93,7 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public ReturnClass getArticleComment(Long id) {
 		//文章id是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id);
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id,null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
@@ -88,7 +103,7 @@ public class CommentServiceImpl implements CommentService {
 			entity.setChildComment(childParent);
 		}
 		if (commentDTOS.isEmpty()) {
-			return ReturnClass.fail();
+			return ReturnClass.fail(CommentConstant.NO_COMMENT);
 		}
 
 		return ReturnClass.success(commentDTOS);

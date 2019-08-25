@@ -61,4 +61,8 @@ public class VSystemDTO{
 	 * 评论开关
 	 */
 	private String commentSwitch;
+	/**
+	 * 系统主题
+	 */
+	private String theme;
 }
