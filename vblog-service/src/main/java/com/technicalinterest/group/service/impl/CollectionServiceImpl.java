@@ -40,7 +40,7 @@ public class CollectionServiceImpl implements CollectionService {
 		if (!userByToken.isSuccess()) {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleId);
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleId,null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}

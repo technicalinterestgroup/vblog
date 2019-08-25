@@ -45,7 +45,7 @@ public class LikeServiceImpl implements LikeService {
 		if (!userByToken.isSuccess()) {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getSourceId());
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getSourceId(),null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}

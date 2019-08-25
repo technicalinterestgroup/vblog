@@ -77,11 +77,27 @@ public class ArticleContentDTO {
 	*/ 
 	private Long readCount;
 
-	private Date updateTime;
+	/**
+	 * 是否收藏 1是
+	 */
+	private Integer vCollection;
+	/**
+	 * 是否点赞 1是
+	 */
+	private Integer vLike;
 
-	private Date createTime;
+	/**
+	 * 点赞数量
+	 */
+	private Integer likeCount;
+
 	/**
 	 * 访问者ip
 	 */
 	private String ip;
+
+	private Date updateTime;
+
+	private Date createTime;
+
 }

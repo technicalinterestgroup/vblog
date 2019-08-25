@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.FileUploadMpper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.FileUpload">
+        <result column="user_name" property="userName"/>
+        <result column="file_name" property="fileName"/>
+        <result column="new_file_name" property="newFileName"/>
+        <result column="file_path" property="filePath"/>
+        <result column="file_size" property="fileSize"/>
+        <result column="id" property="id"/>
+        <result column="is_del" property="isDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="file_type" property="fileType"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `user_name`,
+        `file_name`,
+        `new_file_name`,
+        `file_path`,
+        `file_size`,
+        `id`,
+        `is_del`,
+        `create_time`,
+        `update_time`,
+        `file_type`
+</sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_file_upload (
+            `user_name`,
+            `file_name`,
+            `new_file_name`,
+            `file_path`,
+            `file_size`,
+            `id`,
+            `is_del`,
+            `create_time`,
+            `update_time`
+        ) VALUES (
+            #{pojo.userName},
+            #{pojo.fileName},
+            #{pojo.newFileName},
+            #{pojo.filePath},
+            #{pojo.fileSize},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+        )
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_file_upload
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.userName!=null">`user_name`,</if>
+            <if test="pojo.fileName!=null">`file_name`,</if>
+            <if test="pojo.newFileName!=null">`new_file_name`,</if>
+            <if test="pojo.filePath!=null">`file_path`,</if>
+            <if test="pojo.fileSize!=null">`file_size`,</if>
+            <if test="pojo.fileType!=null">`file_type`,</if>
+            <if test="pojo.id!=null">`id`,</if>
+            <if test="pojo.isDel!=null">`is_del`,</if>
+            <if test="pojo.createTime!=null">`create_time`,</if>
+            <if test="pojo.updateTime!=null">`update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.userName!=null">#{pojo.userName},</if>
+            <if test="pojo.fileName!=null">#{pojo.fileName},</if>
+            <if test="pojo.newFileName!=null">#{pojo.newFileName},</if>
+            <if test="pojo.filePath!=null">#{pojo.filePath},</if>
+            <if test="pojo.fileSize!=null">#{pojo.fileSize},</if>
+            <if test="pojo.fileType!=null">#{pojo.fileType},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO v_file_upload (
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.userName},
+            #{pojo.fileName},
+            #{pojo.newFileName},
+            #{pojo.filePath},
+            #{pojo.fileSize},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE v_file_upload
+        <set>
+            <if test="pojo.userName != null">`user_name` = #{pojo.userName},</if>
+            <if test="pojo.fileName != null">`file_name` = #{pojo.fileName},</if>
+            <if test="pojo.newFileName != null">`new_file_name` = #{pojo.newFileName},</if>
+            <if test="pojo.filePath != null">`file_path` = #{pojo.filePath},</if>
+            <if test="pojo.fileSize != null">`file_size` = #{pojo.fileSize},</if>
+            <if test="pojo.id != null">`id` = #{pojo.id},</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
+            <if test="pojo.createTime != null">`create_time` = #{pojo.createTime},</if>
+            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime}</if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="queryListFile" resultType="com.technicalinterest.group.dto.FileDTO">
+        select
+        <include refid="all_column"/>
+        from v_file_upload
+        <where>
+            <if test="userName!=null">user_name=#{userName}</if>
+            <if test="fileType!=null">file_type=#{fileType}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="queryCountFile" resultType="java.lang.Integer">
+        select count(1) from v_file_upload
+        <where>
+            <if test="userName!=null">user_name=#{userName}</if>
+            <if test="fileType!=null">file_type=#{fileType}</if>
+        </where>
+    </select>
+
+    <select id="queryFileById" resultMap="AllColumnMap">
+        select
+        <include refid="all_column"/>
+        from v_file_upload
+        where id=#{id}
+    </select>
+
+    <delete id="del">
+        delete from v_file_upload  where id=#{id}
+    </delete>
+
+</mapper>
+

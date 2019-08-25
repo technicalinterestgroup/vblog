@@ -150,14 +150,12 @@
         t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount,
         (SELECT count(1) FROM v_comment t4 WHERE t4.article_id=t1.id and t4.parent_id=0)as commentNum
         from v_article t1 left join v_category t2 on t1.category_id=t2.id
-        LEFT JOIN v_tag t3 on t1.tag_id=t3.id
-        <where>
+        LEFT JOIN v_tag t3 on t1.tag_id=t3.id where t1.is_del=0
             <if test="pojo.userName != null and pojo.userName != ''">and t1.user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">and t1.state=#{pojo.state}</if>
             <if test="pojo.condition != null and pojo.condition !=''">and t1.title like CONCAT('%',#{pojo.condition},'%')</if>
             <if test="pojo.condition != null and pojo.condition !=''">and t1.submit like CONCAT('%',#{pojo.condition},'%')</if>
             <if test="pojo.archiveTime != null and pojo.condition !=''">and date_format(t1.create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
-        </where>
         order by
         <if test="pojo.userName != null and pojo.userName != ''">t1.is_top,</if>
         t1.id desc
@@ -165,25 +163,29 @@
     </select>
 
     <select id="queryArticleListCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
-        select count(1) from v_article
-        <where>
+        select count(1) from v_article where is_del=0
             <if test="pojo.userName != null and pojo.userName != ''">and user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">and state=#{pojo.state}</if>
             <if test="pojo.condition != null and pojo.condition !=''">and title like CONCAT('%',#{pojo.condition},'%')</if>
             <if test="pojo.condition != null and pojo.condition !=''">and submit like CONCAT('%',#{pojo.condition},'%')</if>
             <if test="pojo.archiveTime != null and pojo.condition !=''">and date_format(create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
-        </where>
     </select>
 
     <select id="getArticleInfo" resultType="com.technicalinterest.group.dto.ArticlesDTO">
         select t1.id,t1.title,t1.user_name as userName,t1.submit,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
-        t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount from v_article t1 left join v_category t2 on t1.category_id=t2.id
+        t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount,
+        (SELECT count(1) FROM v_like t5 WHERE t5.source_id=t1.id) AS likeCount
+        <if test="userName!=null and userName!=''">
+            ,(SELECT count(1) FROM v_collection t4 WHERE t4.article_id=t1.id and t4.user_name=#{userName}) AS vCollection,
+            (SELECT count(1) FROM v_like t5 WHERE t5.source_id=t1.id and t5.user_name=#{userName}) AS vLike
+        </if>
+        from v_article t1 left join v_category t2 on t1.category_id=t2.id
         LEFT JOIN v_tag t3 on t1.tag_id=t3.id
-        where t1.id=#{id}
+        where t1.id=#{id} and t1.is_del=0
     </select>
 
     <select id="queryArticleListOrderBy" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select id,title,user_name as userName,create_time as createTime from v_article where state=1
+        select id,title,user_name as userName,create_time as createTime from v_article where state=1 and is_del=0
         <if test="userName!=null and userName!=''">and user_name=#{userName}</if>
         <if test="flag==1">
             order by create_time desc
@@ -195,7 +197,7 @@
     </select>
 
     <select id="queryArticleListArchive" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select date_format(create_time,'%Y年%m月' ) as time,count(id)as sum,user_name as userName from v_article where state=1
+        select date_format(create_time,'%Y年%m月' ) as time,count(id)as sum,user_name as userName from v_article where state=1 and is_del=0
         <if test="userName!=null and userName!=''">and user_name=#{userName}</if>
         group by date_format(create_time,'%Y-%m')
     </select>

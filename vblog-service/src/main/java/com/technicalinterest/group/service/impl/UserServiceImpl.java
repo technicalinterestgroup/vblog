@@ -202,10 +202,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ReturnClass getUserByToken() {
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		String userName = (String) redisUtil.get(accessToken);
-		if (Objects.isNull(userName)) {
+		if (!redisUtil.hasKey(accessToken)){
 			throw new VLogException(ResultEnum.TIME_OUT);
 		}
+		String userName = (String) redisUtil.get(accessToken);
 		User user = User.builder().userName(userName).build();
 		User userByUser = userMapper.getUserByUser(user);
 		if (Objects.nonNull(userByUser)) {
@@ -252,10 +252,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ReturnClass userNameIsLoginUser(String userName) {
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		String userNameLogin = (String) redisUtil.get(accessToken);
-		if (Objects.isNull(userNameLogin)) {
+		if (!redisUtil.hasKey(accessToken)){
 			throw new VLogException(ResultEnum.TIME_OUT);
 		}
+		String userNameLogin = (String) redisUtil.get(accessToken);
 		if (StringUtils.equals(userName, userNameLogin)) {
 			return ReturnClass.success();
 		}

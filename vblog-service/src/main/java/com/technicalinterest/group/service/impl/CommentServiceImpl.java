@@ -45,7 +45,7 @@ public class CommentServiceImpl implements CommentService {
 			UserDTO userDTO = (UserDTO) userByToken.getData();
 			comment.setUserName(userDTO.getUserName());
 		}
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getArticleId());
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getArticleId(),null);
 		if (Objects.isNull(articleInfo)){
 			throw new VLogException(CommentConstant.ARTICLE_ID_ERROR);
 		}
@@ -93,7 +93,7 @@ public class CommentServiceImpl implements CommentService {
 	@Override
 	public ReturnClass getArticleComment(Long id) {
 		//文章id是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id);
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id,null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}

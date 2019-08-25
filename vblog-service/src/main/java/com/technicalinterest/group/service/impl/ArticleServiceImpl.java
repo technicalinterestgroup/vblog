@@ -13,6 +13,7 @@ import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.ArticleConstant;
 import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -55,8 +56,7 @@ public class ArticleServiceImpl implements ArticleService {
 
 	public static final Integer ARTICLE_LENGTH = 50;
 
-	private static final Integer JF=5;
-
+	private static final Integer JF = 5;
 
 	/**
 	 * @Description: 新增文章
@@ -70,12 +70,12 @@ public class ArticleServiceImpl implements ArticleService {
 	public ReturnClass saveArticle(ArticleContentDTO articleContentDTO) {
 		Article article = new Article();
 		BeanUtils.copyProperties(articleContentDTO, article);
-		Long userId=null;
+		Long userId = null;
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
 			UserDTO userDTO = (UserDTO) userByToken.getData();
 			article.setUserName(userDTO.getUserName());
-			userId=userDTO.getId();
+			userId = userDTO.getId();
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
@@ -91,11 +91,11 @@ public class ArticleServiceImpl implements ArticleService {
 			if (i < 1) {
 				throw new VLogException(ArticleConstant.FAIL_ADD);
 			}
-			User user=User.builder().integral(JF).build();
+			User user = User.builder().integral(JF).build();
 			user.setId(userId);
 			int update = userMapper.update(user);
-			if (update<1){
-				log.error("博客发布增加积分失败，userName={},ArticleId={}",article.getUserName(),article.getId());
+			if (update < 1) {
+				log.error("博客发布增加积分失败，userName={},ArticleId={}", article.getUserName(), article.getId());
 			}
 			return ReturnClass.success(ArticleConstant.SUS_ADD);
 		}
@@ -118,7 +118,7 @@ public class ArticleServiceImpl implements ArticleService {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		//数据是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId());
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId(), null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
@@ -177,7 +177,16 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public ReturnClass articleDetail(Boolean authCheck, Long id) {
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id);
+		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+		String userName = null;
+		if(!authCheck){
+			if (Objects.nonNull(accessToken)) {
+				if (redisUtil.hasKey(accessToken)) {
+					userName = (String) redisUtil.get(accessToken);
+				}
+			}
+		}
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, userName);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
@@ -274,7 +283,7 @@ public class ArticleServiceImpl implements ArticleService {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		//数据是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id);
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
@@ -310,7 +319,7 @@ public class ArticleServiceImpl implements ArticleService {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		//数据是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId());
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId(), null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
@@ -342,7 +351,7 @@ public class ArticleServiceImpl implements ArticleService {
 		Integer update = articleMapper.updateReadCount(id);
 		if (update > 0) {
 			log.info("文章阅读数累加成功！");
-		}else {
+		} else {
 			log.info("文章阅读数累加失败！");
 		}
 		return ReturnClass.success();

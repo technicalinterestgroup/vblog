@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -154,6 +155,25 @@ public class ControllerExceptionAOP {
 		ApiResult apiResult = new ApiResult();
 		apiResult.fail(ResultEnum.REQ_FREQUENT.getMsg());
 		apiResult.setCode(ResultEnum.REQ_FREQUENT.getCode());
+		return apiResult;
+	}
+
+	/**
+	 * @Description:redis 文件上传异常
+	 * @author: shuyu.wang
+	 * @date: 2019-08-05 17:56
+	 * @param e
+	 * @return null
+	 */
+
+	@ExceptionHandler(value = MultipartException.class)
+	@ResponseBody
+	public ApiResult lockException(MultipartException e) {
+		log.info("文件上传异常", e);
+		ApiResult apiResult = new ApiResult();
+		apiResult.fail(ResultEnum.DUPLOAD_ERROR.getMsg());
+		apiResult.setCode(ResultEnum.DUPLOAD_ERROR.getCode());
+		apiResult.setData(e.getMessage());
 		return apiResult;
 	}
 
