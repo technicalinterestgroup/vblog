@@ -33,14 +33,21 @@ public interface UserMapper {
 	 */
 	List<BlogUserDTO> queryUserBlog(@Param("userName") String userName);
 
-
-
 	/**
 	 * @Description: 获取用户和角色信息
 	 * @author: shuyu.wang
 	 * @date: 2019-08-31 21:30
 	 * @param user
 	 * @return null
-	*/
+	 */
 	UserRoleDTO queryUserRoleDTO(@Param("user") User user);
+
+	/**
+	 * @Description: 查询所有博客用户
+	 * @author: shuyu.wang
+	 * @date: 2019-09-01 15:16
+	 * @param user
+	 * @return null
+	 */
+	List<UserRoleDTO> queryAllUser(@Param("user") User user);
 }

@@ -124,20 +124,16 @@
     <select id="queryListFile" resultType="com.technicalinterest.group.dto.FileDTO">
         select
         <include refid="all_column"/>
-        from v_file_upload
-        <where>
-            <if test="userName!=null">user_name=#{userName}</if>
-            <if test="fileType!=null">file_type=#{fileType}</if>
-        </where>
+        from v_file_upload where is_del=0
+        <if test="userName!=null">and user_name=#{userName}</if>
+        <if test="fileType!=null">and file_type=#{fileType}</if>
         order by id desc
     </select>
 
     <select id="queryCountFile" resultType="java.lang.Integer">
-        select count(1) from v_file_upload
-        <where>
-            <if test="userName!=null">user_name=#{userName}</if>
-            <if test="fileType!=null">file_type=#{fileType}</if>
-        </where>
+        select count(1) from v_file_upload where is_del=0
+        <if test="userName!=null">and user_name=#{userName}</if>
+        <if test="fileType!=null">and file_type=#{fileType}</if>
     </select>
 
     <select id="queryFileById" resultMap="AllColumnMap">
@@ -151,5 +147,26 @@
         delete from v_file_upload  where id=#{id}
     </delete>
 
+
+    <select id="allFileList" resultType="com.technicalinterest.group.dto.FileDTO" parameterType="com.technicalinterest.group.dto.QueryFileDTO">
+        select
+        <include refid="all_column"/>
+        from v_file_upload
+        <where>
+            <if test="userName!=null">and user_name=#{userName}</if>
+            <if test="fileType!=null">and file_type=#{fileType}</if>
+            <if test="fileName!=null">and file_name=#{fileName}</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="allFileCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dto.QueryFileDTO">
+        select count(1) from v_file_upload
+        <where>
+            <if test="userName!=null">and user_name=#{userName}</if>
+            <if test="fileType!=null">and file_type=#{fileType}</if>
+            <if test="fileName!=null">and file_name=#{fileName}</if>
+        </where>
+    </select>
 </mapper>
 

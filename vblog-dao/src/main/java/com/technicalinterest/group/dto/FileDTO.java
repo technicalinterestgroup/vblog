@@ -40,6 +40,10 @@ public class FileDTO {
 	 * 上传时间
 	 */
 	private Date createTime;
+	/**
+	 * 状态
+	 */
+	private Short isDel;
 
 
 }

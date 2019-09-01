@@ -24,14 +24,24 @@ public class UserRoleDTO {
 	 * 头像
 	 */
 	private String photo;
-
+	/**
+	 * 博客数量
+	 */
+	private Integer blogNum;
+	/**
+	 * 状态
+	 */
 	private Short state;
 
 	private Short isDel;
 
 	private Long roleId;
-
+	/**
+	 * 角色名称
+	 */
 	private String roleName;
-
+	/**
+	 * 角色类型
+	 */
 	private Short roleType;
 }

@@ -87,4 +87,25 @@ public interface ArticleMapper {
     Integer updateReadCount(@Param("id")Long id);
 
 
+    /**
+     * @Description: 管理员查询列表+摘要
+     * @author: shuyu.wang
+     * @date: 2019-08-05 13:25
+     * @param queryArticleDTO
+     * @return null
+     */
+    List<ArticlesDTO> allArticleList(@Param("pojo")QueryArticleDTO queryArticleDTO);
+
+
+    /**
+     * @Description: 管理员查询条数
+     * @author: shuyu.wang
+     * @date: 2019-08-05 13:25
+     * @param queryArticleDTO
+     * @return null
+     */
+    Integer allArticleListCount(@Param("pojo")QueryArticleDTO queryArticleDTO);
+
+
+
 }

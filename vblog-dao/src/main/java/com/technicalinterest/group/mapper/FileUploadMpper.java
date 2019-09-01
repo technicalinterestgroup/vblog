@@ -1,6 +1,7 @@
 package com.technicalinterest.group.mapper;
 
 import com.technicalinterest.group.dto.FileDTO;
+import com.technicalinterest.group.dto.QueryFileDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,12 +19,17 @@ public interface FileUploadMpper {
 
 	Integer update(@Param("pojo") FileUpload pojo);
 
-	List<FileDTO> queryListFile(@Param("userName") String userName, @Param("fileType") Short fileType);
+	List<FileDTO> queryListFile(QueryFileDTO queryFileDTO);
 
-	Integer queryCountFile(@Param("userName") String userName, @Param("fileType") Short fileType);
+	Integer queryCountFile(QueryFileDTO queryFileDTO);
 
 	FileUpload queryFileById(@Param("id") Long id);
 
 	Integer del(@Param("id") Long id);
+
+
+	List<FileDTO> allFileList(QueryFileDTO queryFileDTO);
+
+	Integer allFileCount(QueryFileDTO queryFileDTO);
 
 }

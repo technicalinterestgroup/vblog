@@ -74,9 +74,10 @@ public class ViewController {
 			UserVO userVO = new UserVO();
 			UserDTO resultUser = (UserDTO) login.getData();
 			BeanUtils.copyProperties(resultUser, userVO);
-			List list = ListBeanUtils.copyProperties(JSON.toJSONString(resultUser.getAuthList()), RoleAuthVO.class);
+			List list = ListBeanUtils.copyProperties(resultUser.getAuthList(), RoleAuthVO.class);
 			userVO.setAuthList(list);
 			apiResult.success(userVO);
+			apiResult.setMsg(login.getMsg());
 		} else {
 			apiResult.fail(login.getMsg());
 		}
@@ -427,7 +428,7 @@ public class ViewController {
 		ReturnClass returnClass = commentService.getArticleComment(articleId);
 		if (returnClass.isSuccess()) {
 
-			List list = ListBeanUtils.copyProperties(JSON.toJSONString(returnClass.getData()), CommentVO.class);
+			List list = ListBeanUtils.copyProperties(returnClass.getData(), CommentVO.class);
 			apiResult.success(list);
 		} else {
 			apiResult.fail(returnClass.getMsg());
@@ -441,7 +442,7 @@ public class ViewController {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass blogUserInfo = userService.getBlogUserInfo(null);
 		if (blogUserInfo.isSuccess()) {
-			List list1 = ListBeanUtils.copyProperties(JSON.toJSONString(blogUserInfo.getData()), BlogUserVO.class);
+			List list1 = ListBeanUtils.copyProperties(blogUserInfo.getData(), BlogUserVO.class);
 			apiResult.success(list1);
 		} else {
 			apiResult.setMsg(blogUserInfo.getMsg());

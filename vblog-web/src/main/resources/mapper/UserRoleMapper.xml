@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.UserRoleMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.UserRole">
+        <result column="user_id" property="userId"/>
+        <result column="role_id" property="roleId"/>
+        <result column="id" property="id"/>
+        <result column="is_del" property="isDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `user_id`,
+        `role_id`,
+        `id`,
+        `is_del`,
+        `create_time`,
+        `update_time`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_user_role (
+            `user_id`,
+            `role_id`,
+            `id`,
+            `is_del`,
+            `create_time`,
+            `update_time`
+        ) VALUES (
+            #{pojo.userId},
+            #{pojo.roleId},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+        )
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_user_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.userId!=null"> `user_id`,</if>
+            <if test="pojo.roleId!=null"> `role_id`,</if>
+            <if test="pojo.id!=null"> `id`,</if>
+            <if test="pojo.isDel!=null"> `is_del`,</if>
+            <if test="pojo.createTime!=null"> `create_time`,</if>
+            <if test="pojo.updateTime!=null"> `update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.userId!=null">#{pojo.userId},</if>
+            <if test="pojo.roleId!=null">#{pojo.roleId},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO v_user_role (
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.userId},
+            #{pojo.roleId},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE v_user_role
+        <set>
+            <if test="pojo.userId != null"> `user_id` = #{pojo.userId}, </if>
+            <if test="pojo.roleId != null"> `role_id` = #{pojo.roleId}, </if>
+            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
+            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
+            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+</mapper>
+

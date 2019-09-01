@@ -87,6 +87,10 @@ public class ArticlesDTO {
 	 * 点赞数量
 	 */
 	private Integer likeCount;
+	/**
+	 * 状态
+	 */
+	private Short isDel;
 
 
 }

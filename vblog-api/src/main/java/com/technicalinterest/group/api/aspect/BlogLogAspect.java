@@ -1,8 +1,11 @@
 package com.technicalinterest.group.api.aspect;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleContentVO;
+import com.technicalinterest.group.dao.Log;
+import com.technicalinterest.group.service.LogService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.constant.ResultEnum;
@@ -43,6 +46,8 @@ import java.util.Objects;
 public class BlogLogAspect {
 	@Autowired
 	private RedisUtil redisUtil;
+	@Autowired
+	private LogService logService;
 
 	@Pointcut("@annotation(com.technicalinterest.group.service.annotation.BlogOperation)")
 	public void logPoinCut() {
@@ -85,6 +90,13 @@ public class BlogLogAspect {
 					userName, methodStr, operationName, params);
 		}
 		log.info(">>>请求返回结果：{}", JSONObject.toJSON(result));
+		try {
+			Log log = Log.builder().url(request.getRequestURL().toString()).ip(IpAdrressUtil.getIpAdrress(request)).userName(userName).classMethod(methodStr)
+					.operation(operationName).params(params).result(result.getMsg()).build();
+			logService.insert(log);
+		} catch (Exception e) {
+			log.error("日志保存异常", e);
+		}
 
 	}
 

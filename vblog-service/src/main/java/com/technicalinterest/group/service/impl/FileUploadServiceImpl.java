@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.FileUpload;
 import com.technicalinterest.group.dao.PageBase;
 import com.technicalinterest.group.dto.FileDTO;
+import com.technicalinterest.group.dto.QueryFileDTO;
 import com.technicalinterest.group.mapper.FileUploadMpper;
 import com.technicalinterest.group.service.FileUploadService;
 import com.technicalinterest.group.service.UserService;
@@ -77,18 +78,18 @@ public class FileUploadServiceImpl implements FileUploadService {
 	}
 
 	@Override
-	public ReturnClass queryFileList(String userName, PageBase pageBase) {
-		ReturnClass returnClass = userService.getUserByuserName(true, userName);
+	public ReturnClass queryFileList(QueryFileDTO queryFileDTO) {
+		ReturnClass returnClass = userService.getUserByuserName(true, queryFileDTO.getUserName());
 		if (!returnClass.isSuccess()) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		Integer integer = fileUploadMpper.queryCountFile(userName,null);
+		Integer integer = fileUploadMpper.queryCountFile(queryFileDTO);
 		if (integer < 1) {
-			return ReturnClass.fail(FileConstant.SAVE_SUCCESS);
+			return ReturnClass.fail(FileConstant.NO_FILE);
 		}
-		PageHelper.startPage(pageBase.getPageNum(), pageBase.getPageSize());
-		List<FileDTO> fileDTOS = fileUploadMpper.queryListFile(userName,null);
-		PageBean<FileDTO> pageBean = new PageBean<>(fileDTOS, pageBase.getPageNum(), pageBase.getPageSize(), integer);
+		PageHelper.startPage(queryFileDTO.getPageNum(), queryFileDTO.getPageSize());
+		List<FileDTO> fileDTOS = fileUploadMpper.queryListFile(queryFileDTO);
+		PageBean<FileDTO> pageBean = new PageBean<>(fileDTOS, queryFileDTO.getPageNum(), queryFileDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 }

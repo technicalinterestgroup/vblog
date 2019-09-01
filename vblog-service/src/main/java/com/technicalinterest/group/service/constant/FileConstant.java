@@ -10,7 +10,7 @@ package com.technicalinterest.group.service.constant;
  **/
 
 public class FileConstant {
-	public static final String SAVE_SUCCESS="暂时没有上传文件记录！";
+	public static final String NO_FILE="暂时没有上传文件记录！";
 
 	public static final String DEL_SUS="文件删除成功！";
 

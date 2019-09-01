@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
 	private static final long activation_time = 60 * 60 * 24;
 
 	private static final long login_time = 60 * 30;
+
 	/**
 	 * 登录
 	 * @param userDTO
@@ -89,9 +90,16 @@ public class UserServiceImpl implements UserService {
 		}
 		//获取权限列表
 		List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 1);
-		if(userRoleDTO.getRoleType()==1){
-			List<RoleAuthDTO> roleAuth = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 2);
-			redisUtil.set(UserConstant.ADMIN_AUTH_URL, JSON.toJSONString(roleAuth));
+		if (userRoleDTO.getRoleType() == 1) {
+			if (!redisUtil.hasKey(UserConstant.ADMIN_AUTH_URL)) {
+				List<RoleAuthDTO> roleAuth = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 2);
+				StringBuffer stringBuffer = new StringBuffer();
+				for (RoleAuthDTO entity : roleAuth) {
+					stringBuffer.append(entity.getUrl());
+					stringBuffer.append(",");
+				}
+				redisUtil.set(UserConstant.ADMIN_AUTH_URL, stringBuffer.toString());
+			}
 		}
 		//生成token
 		UserDTO userVO = new UserDTO();
@@ -100,7 +108,7 @@ public class UserServiceImpl implements UserService {
 		userVO.setNickName(userRoleDTO.getNickName());
 		userVO.setRoleType(userRoleDTO.getRoleType());
 		userVO.setAuthList(roleAuthDTOS);
-		return ReturnClass.success(userVO);
+		return ReturnClass.success(UserConstant.LOGIN_SUCCESS, userVO);
 	}
 
 	private String setToken(String userName) {
@@ -139,11 +147,11 @@ public class UserServiceImpl implements UserService {
 		if (i != 1) {
 			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
 		} else {
-			UserRole userRole=new UserRole();
+			UserRole userRole = new UserRole();
 			userRole.setUserId(user.getId());
 			userRole.setRoleId(2L);
 			int i1 = userRoleMapper.insertSelective(userRole);
-			if (i1<1){
+			if (i1 < 1) {
 				throw new VLogException(UserConstant.ADD_USER_ERROR);
 			}
 			VSystemDTO vSystemDTO = VSystemDTO.builder().userName(newUserDTO.getUserName()).vStart(new Date()).build();
@@ -233,7 +241,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ReturnClass getUserByToken() {
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		if (!redisUtil.hasKey(accessToken)){
+		if (!redisUtil.hasKey(accessToken)) {
 			throw new VLogException(ResultEnum.TIME_OUT);
 		}
 		String userName = (String) redisUtil.get(accessToken);
@@ -283,7 +291,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ReturnClass userNameIsLoginUser(String userName) {
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		if (!redisUtil.hasKey(accessToken)){
+		if (!redisUtil.hasKey(accessToken)) {
 			throw new VLogException(ResultEnum.TIME_OUT);
 		}
 		String userNameLogin = (String) redisUtil.get(accessToken);

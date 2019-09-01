@@ -1,11 +1,13 @@
 package com.technicalinterest.group.api.controller;
 
 import com.technicalinterest.group.api.param.PageBaseParam;
+import com.technicalinterest.group.api.param.QueryFileParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.FileVO;
 import com.technicalinterest.group.api.vo.ImgVO;
 import com.technicalinterest.group.dao.PageBase;
 import com.technicalinterest.group.dto.FileDTO;
+import com.technicalinterest.group.dto.QueryFileDTO;
 import com.technicalinterest.group.service.FileUploadService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
@@ -150,12 +152,12 @@ public class UploadController {
 	@ApiOperation(value = "上传文件列表", notes = "文件列表")
 	@GetMapping(value = "/list/{userName}")
 	@BlogOperation(value = "上传文件列表")
-	public ApiResult<PageBean<FileVO>> listFile(@PathVariable("userName") String userName, @Valid PageBaseParam pageBaseParam) {
+	public ApiResult<PageBean<FileVO>> listFile(@PathVariable("userName") String userName, QueryFileParam queryFileParam) {
 		ApiResult apiResult = new ApiResult();
-
-		PageBase pageBase = new PageBase();
-		BeanUtils.copyProperties(pageBaseParam, pageBase);
-		ReturnClass listArticle = fileUploadService.queryFileList(userName, pageBase);
+		QueryFileDTO queryFileDTO = new QueryFileDTO();
+		BeanUtils.copyProperties(queryFileParam, queryFileDTO);
+		queryFileDTO.setUserName(userName);
+		ReturnClass listArticle = fileUploadService.queryFileList(queryFileDTO);
 		if (listArticle.isSuccess()) {
 			PageBean<FileDTO> pageBean = (PageBean<FileDTO>) listArticle.getData();
 			List<FileVO> list = new ArrayList<>();
@@ -179,10 +181,11 @@ public class UploadController {
 	@BlogOperation(value = "上传图片列表")
 	public ApiResult<PageBean<ImgVO>> listImg(@PathVariable("userName") String userName, @Valid PageBaseParam pageBaseParam) {
 		ApiResult apiResult = new ApiResult();
-
-		PageBase pageBase = new PageBase();
-		BeanUtils.copyProperties(pageBaseParam, pageBase);
-		ReturnClass listArticle = fileUploadService.queryFileList(userName, pageBase);
+		QueryFileDTO queryFileDTO = new QueryFileDTO();
+		BeanUtils.copyProperties(pageBaseParam, queryFileDTO);
+		queryFileDTO.setUserName(userName);
+		queryFileDTO.setFileType((short) 1);
+		ReturnClass listArticle = fileUploadService.queryFileList(queryFileDTO);
 		if (listArticle.isSuccess()) {
 			PageBean<FileDTO> pageBean = (PageBean<FileDTO>) listArticle.getData();
 			List<ImgVO> list = new ArrayList<>();
