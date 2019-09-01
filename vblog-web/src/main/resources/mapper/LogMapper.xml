@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.LogMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.Log">
+        <result column="url" property="url"/>
+        <result column="ip" property="ip"/>
+        <result column="user_name" property="userName"/>
+        <result column="class_method" property="classMethod"/>
+        <result column="operation" property="operation"/>
+        <result column="params" property="params"/>
+        <result column="result" property="result"/>
+        <result column="id" property="id"/>
+        <result column="is_del" property="isDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `url`,
+        `ip`,
+        `user_name`,
+        `class_method`,
+        `operation`,
+        `params`,
+        `result`,
+        `id`,
+        `is_del`,
+        `create_time`,
+        `update_time`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_log (
+            `url`,
+            `ip`,
+            `user_name`,
+            `class_method`,
+            `operation`,
+            `params`,
+            `result`,
+            `id`,
+            `is_del`,
+            `create_time`,
+            `update_time`
+        ) VALUES (
+            #{pojo.url},
+            #{pojo.ip},
+            #{pojo.userName},
+            #{pojo.classMethod},
+            #{pojo.operation},
+            #{pojo.params},
+            #{pojo.result},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+        )
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.url!=null">`url`,</if>
+            <if test="pojo.ip!=null">`ip`,</if>
+            <if test="pojo.userName!=null">`user_name`,</if>
+            <if test="pojo.classMethod!=null">`class_method`,</if>
+            <if test="pojo.operation!=null">`operation`,</if>
+            <if test="pojo.params!=null">`params`,</if>
+            <if test="pojo.result!=null">`result`,</if>
+            <if test="pojo.id!=null">`id`,</if>
+            <if test="pojo.isDel!=null">`is_del`,</if>
+            <if test="pojo.createTime!=null">`create_time`,</if>
+            <if test="pojo.updateTime!=null">`update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.url!=null">#{pojo.url},</if>
+            <if test="pojo.ip!=null">#{pojo.ip},</if>
+            <if test="pojo.userName!=null">#{pojo.userName},</if>
+            <if test="pojo.classMethod!=null">#{pojo.classMethod},</if>
+            <if test="pojo.operation!=null">#{pojo.operation},</if>
+            <if test="pojo.params!=null">#{pojo.params},</if>
+            <if test="pojo.result!=null">#{pojo.result},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO v_log (
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.url},
+            #{pojo.ip},
+            #{pojo.userName},
+            #{pojo.classMethod},
+            #{pojo.operation},
+            #{pojo.params},
+            #{pojo.result},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE v_log
+        <set>
+            <if test="pojo.url != null">`url` = #{pojo.url},</if>
+            <if test="pojo.ip != null">`ip` = #{pojo.ip},</if>
+            <if test="pojo.userName != null">`user_name` = #{pojo.userName},</if>
+            <if test="pojo.classMethod != null">`class_method` = #{pojo.classMethod},</if>
+            <if test="pojo.operation != null">`operation` = #{pojo.operation},</if>
+            <if test="pojo.params != null">`params` = #{pojo.params},</if>
+            <if test="pojo.result != null">`result` = #{pojo.result},</if>
+            <if test="pojo.id != null">`id` = #{pojo.id},</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
+            <if test="pojo.createTime != null">`create_time` = #{pojo.createTime},</if>
+            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime}</if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="allLogList" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dto.QueryLogDTO">
+        select
+        <include refid="all_column"/>
+        from v_log
+        <where>
+            <if test="pojo.userName!=null">and user_name=#{pojo.userName}</if>
+            <if test="pojo.classMethod!=null">and class_method like concat('%',#{pojo.classMethod},'%')</if>
+            <if test="pojo.operation!=null">and operation like concat('%',#{pojo.operation},'%')</if>
+        </where>
+        order by id desc
+    </select>
+
+    <select id="allLogCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dto.QueryLogDTO">
+        select count(1)
+        from v_log
+        <where>
+            <if test="pojo.userName!=null">and user_name=#{pojo.userName}</if>
+            <if test="pojo.classMethod!=null">and class_method like concat('%',#{pojo.classMethod},'%')</if>
+            <if test="pojo.operation!=null">and operation like concat('%',#{pojo.operation},'%')</if>
+        </where>
+    </select>
+</mapper>
+

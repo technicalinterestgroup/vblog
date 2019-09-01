@@ -20,7 +20,7 @@ public class UrlConstant {
 
     public static final String NEW_URL_STRING = "user/new";
 
-    public static final String DOC_URL_STRING = "doc.html";
+    public static final String DOC_URL_STRING = "swagger-resources";
 
     public static final String CONTENT_TYPE_STRING = "text/json;charset=UTF-8";
 

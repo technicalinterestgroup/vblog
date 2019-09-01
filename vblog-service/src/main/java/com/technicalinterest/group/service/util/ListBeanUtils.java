@@ -21,13 +21,13 @@ public class ListBeanUtils {
 	 * @Description:集合深度copay
 	 * @author: shuyu.wang
 	 * @date: 2019-08-18 20:12
-	 * @param source
+	 * @param list
 	 * @return java.util.List
 	 */
-	public static <T> List copyProperties(String source, Class<T> clazz) {
-		if (Objects.isNull(source)) {
+	public static <T> List copyProperties(Object list, Class<T> clazz) {
+		if (Objects.isNull(list)) {
 			return new ArrayList();
 		}
-		return JSON.parseArray(source, clazz);
+		return JSON.parseArray(JSON.toJSONString(list), clazz);
 	}
 }

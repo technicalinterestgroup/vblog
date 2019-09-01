@@ -47,5 +47,5 @@ public class UserConstant {
 
 	public static final String ADMIN_AUTH_URL= "adminAuthUrl";
 
-
+	public static final String LOGIN_SUCCESS= "登录成功！";
 }

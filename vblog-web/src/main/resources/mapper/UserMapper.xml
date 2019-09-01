@@ -109,5 +109,12 @@
             <if test="user.passWord!=null">and t1.pass_word=MD5(#{user.passWord})</if>
         </where>
     </select>
+
+    <select id="queryAllUser" resultType="com.technicalinterest.group.dto.UserRoleDTO" parameterType="com.technicalinterest.group.dao.User">
+        SELECT t1.user_name AS userName,t1.nick_name AS nickName,t1.photo,t1.state,t1.is_del as isDel,t3.id as roleId,t3.`name` AS roleName,
+        t3.type as roleType,(select count(1) from v_article t4 where t4.user_name=t1.user_name)as blogNum
+        from v_user t1 INNER JOIN v_user_role t2 on t1.id=t2.user_id INNER JOIN v_role t3
+        on t2.role_id=t3.id where t3.type=2 order by t1.id desc
+    </select>
 </mapper>
 
