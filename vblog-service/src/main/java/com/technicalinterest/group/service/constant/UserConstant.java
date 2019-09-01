@@ -17,6 +17,8 @@ public class UserConstant {
 
 	public static final String NO_ACTIVATION= "该账号尚未激活，请前往注册邮箱激活！";
 
+	public static final String USER_DISABLE= "账号被禁用，请联系管理员！";
+
 	public static final String DUPLICATE_USER_NAME = "该用户名已被占用！";
 
 	public static final String DUPLICATE_USER_EMAIL = "该邮箱已被注册！";
@@ -42,5 +44,8 @@ public class UserConstant {
 	public static final String ACTIVATION_URL = "http://127.0.0.1:8082/vblog/admin/user/activation/";
 
 	public static final String NO_USER_INFO= "暂无用户数据！";
+
+	public static final String ADMIN_AUTH_URL= "adminAuthUrl";
+
 
 }

@@ -92,11 +92,22 @@
 
     <select id="queryUserBlog" resultType="com.technicalinterest.group.dto.BlogUserDTO">
         SELECT t1.user_name,t1.nick_name,(
-        SELECT count(1)FROM  v_article t2 WHERE t2.user_name=t1.user_name) as blogNum,user_summary as userSummary,
+        SELECT count(1)FROM v_article t2 WHERE t2.user_name=t1.user_name) as blogNum,user_summary as userSummary,
         t1.photo
         from v_user t1
-        <if test="userName!=null and userName!=''"> where t1.user_name=#{userName}</if>
-        <if test="userName==null or userName==''"> order by integral desc limit 4</if>
+        <if test="userName!=null and userName!=''">where t1.user_name=#{userName}</if>
+        <if test="userName==null or userName==''">order by integral desc limit 4</if>
+    </select>
+
+    <select id="queryUserRoleDTO" resultType="com.technicalinterest.group.dto.UserRoleDTO" parameterType="com.technicalinterest.group.dao.User">
+        SELECT t1.user_name AS userName,t1.nick_name AS nickName,t1.photo,t1.state,t1.is_del as isDel,t3.id as roleId,t3.`name` AS roleName,
+        t3.type as roleType
+        from v_user t1 INNER JOIN v_user_role t2 on t1.id=t2.user_id INNER JOIN v_role t3
+        on t2.role_id=t3.id
+        <where>
+            <if test="user.userName!=null">and t1.user_name=#{user.userName}</if>
+            <if test="user.passWord!=null">and t1.pass_word=MD5(#{user.passWord})</if>
+        </where>
     </select>
 </mapper>
 

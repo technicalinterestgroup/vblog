@@ -3,7 +3,11 @@ package com.technicalinterest.group.interceptor;
 import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.constant.UrlConstant;
+import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.constant.UserConstant;
+import com.technicalinterest.group.service.dto.ReturnClass;
+import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +33,8 @@ public class MyInterceptor implements HandlerInterceptor {
 
 	@Autowired
 	private RedisUtil redisUtil;
+
+	private UserService userService;
 
 	private static final long ACTIVATION_TIME = 60 * 60 * 24;
 
@@ -65,6 +71,23 @@ public class MyInterceptor implements HandlerInterceptor {
 					return false;
 				}
 				String userName = (String) redisUtil.get(ACCESS_TOKEN_STRING);
+				ReturnClass userByuserName = userService.getUserByuserName(false, userName);
+				if (!userByuserName.isSuccess()){
+					log.error(">>>无效请求：登录超时;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
+					response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
+					ApiResult result = new ApiResult(ResultEnum.TIME_OUT);
+					PrintWriter out = response.getWriter();
+					out.write(JSONObject.toJSONString(result));
+					out.close();
+					return false;
+				}
+				UserDTO userDTO=(UserDTO)userByuserName.getData();
+				if (userDTO.getRoleType()==2){
+					String o = (String)redisUtil.get(UserConstant.ADMIN_AUTH_URL);
+					if(o.contains(url)){
+						//TODO 普通用户无权访问管理员功能
+					}
+				}
 				redisUtil.expire(ACCESS_TOKEN_STRING, ACTIVATION_TIME);
 				redisUtil.expire(userName, ACTIVATION_TIME);
 				return true;
