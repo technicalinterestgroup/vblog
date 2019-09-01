@@ -1,8 +1,14 @@
 package com.technicalinterest.group.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.technicalinterest.group.dao.User;
+import com.technicalinterest.group.dao.UserRole;
 import com.technicalinterest.group.dto.BlogUserDTO;
+import com.technicalinterest.group.dto.RoleAuthDTO;
+import com.technicalinterest.group.dto.UserRoleDTO;
+import com.technicalinterest.group.mapper.RoleAuthMapper;
 import com.technicalinterest.group.mapper.UserMapper;
+import com.technicalinterest.group.mapper.UserRoleMapper;
 import com.technicalinterest.group.service.MailService;
 import com.technicalinterest.group.service.VSystemService;
 import com.technicalinterest.group.service.constant.ResultEnum;
@@ -19,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -39,6 +46,10 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserMapper userMapper;
 	@Autowired
+	private RoleAuthMapper roleAuthMapper;
+	@Autowired
+	private UserRoleMapper userRoleMapper;
+	@Autowired
 	private RedisUtil redisUtil;
 	@Autowired
 	private MailService mailService;
@@ -47,6 +58,7 @@ public class UserServiceImpl implements UserService {
 
 	private static final long activation_time = 60 * 60 * 24;
 
+	private static final long login_time = 60 * 30;
 	/**
 	 * 登录
 	 * @param userDTO
@@ -59,24 +71,35 @@ public class UserServiceImpl implements UserService {
 		User user = new User();
 		user.setUserName(userDTO.getUserName());
 		//用户名判断
-		User user1 = userMapper.getUserByUser(user);
-		if (Objects.isNull(user1)) {
+		UserRoleDTO userRoleDTO1 = userMapper.queryUserRoleDTO(user);
+		if (Objects.isNull(userRoleDTO1)) {
 			return ReturnClass.fail(UserConstant.NO_USER);
+		}
+		if (userRoleDTO1.getState() == 0) {
+			return ReturnClass.fail(UserConstant.NO_ACTIVATION);
+		}
+		if (userRoleDTO1.getIsDel() == 1) {
+			return ReturnClass.fail(UserConstant.USER_DISABLE);
 		}
 		//密码判断
 		user.setPassWord(user.getPassWord());
-		user1 = userMapper.getUserByUser(user);
-		if (Objects.isNull(user1)) {
+		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
+		if (Objects.isNull(userRoleDTO)) {
 			return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
 		}
-		if (user1.getState() == 0) {
-			return ReturnClass.fail(UserConstant.NO_ACTIVATION);
+		//获取权限列表
+		List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 1);
+		if(userRoleDTO.getRoleType()==1){
+			List<RoleAuthDTO> roleAuth = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 2);
+			redisUtil.set(UserConstant.ADMIN_AUTH_URL, JSON.toJSONString(roleAuth));
 		}
 		//生成token
 		UserDTO userVO = new UserDTO();
-		userVO.setUserToken(setToken(user1.getUserName()));
-		userVO.setUserName(user1.getUserName());
-		userVO.setNickName(user1.getNickName());
+		userVO.setUserToken(setToken(userRoleDTO.getUserName()));
+		userVO.setUserName(userRoleDTO.getUserName());
+		userVO.setNickName(userRoleDTO.getNickName());
+		userVO.setRoleType(userRoleDTO.getRoleType());
+		userVO.setAuthList(roleAuthDTOS);
 		return ReturnClass.success(userVO);
 	}
 
@@ -86,8 +109,8 @@ public class UserServiceImpl implements UserService {
 			String o = (String) redisUtil.get(userName);
 			redisUtil.del(o);
 		}
-		redisUtil.set(userName, token, 1800);
-		redisUtil.set(token, userName, 1800);
+		redisUtil.set(userName, token, login_time);
+		redisUtil.set(token, userName, login_time);
 		return token;
 	}
 
@@ -99,6 +122,7 @@ public class UserServiceImpl implements UserService {
 	 * @return null
 	 */
 	@Override
+	@Transactional
 	public ReturnClass addUser(EditUserDTO newUserDTO) {
 		User user = User.builder().userName(newUserDTO.getUserName()).build();
 		User userByUser = userMapper.getUserByUser(user);
@@ -115,6 +139,13 @@ public class UserServiceImpl implements UserService {
 		if (i != 1) {
 			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
 		} else {
+			UserRole userRole=new UserRole();
+			userRole.setUserId(user.getId());
+			userRole.setRoleId(2L);
+			int i1 = userRoleMapper.insertSelective(userRole);
+			if (i1<1){
+				throw new VLogException(UserConstant.ADD_USER_ERROR);
+			}
 			VSystemDTO vSystemDTO = VSystemDTO.builder().userName(newUserDTO.getUserName()).vStart(new Date()).build();
 			systemService.insertSelective(vSystemDTO);
 			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
@@ -233,10 +264,10 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		User user = User.builder().userName(userName).build();
-		User userByUser = userMapper.getUserByUser(user);
-		if (Objects.nonNull(userByUser)) {
+		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
+		if (Objects.nonNull(userRoleDTO)) {
 			UserDTO userDTO = new UserDTO();
-			BeanUtils.copyProperties(userByUser, userDTO);
+			BeanUtils.copyProperties(userRoleDTO, userDTO);
 			return ReturnClass.success(userDTO);
 		}
 		return ReturnClass.fail();

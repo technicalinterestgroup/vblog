@@ -1,7 +1,9 @@
 package com.technicalinterest.group.service.dto;
 
+import com.technicalinterest.group.dto.RoleAuthDTO;
 import lombok.Data;
 
+import java.util.List;
 
 /**
  * @package: com.shuyu.blog.vo
@@ -46,4 +48,13 @@ public class UserDTO {
      * 博客等级
      */
     private Short grade;
+    /**
+     * 角色等级 1;管理员 2：普通用户
+     */
+    private Short roleType;
+
+    /**
+     * 权限列表
+     */
+    private List<RoleAuthDTO> authList;
 }

@@ -8,18 +8,13 @@ import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.param.UserParam;
 import com.technicalinterest.group.api.vo.*;
-import com.technicalinterest.group.dto.ArticlesDTO;
-import com.technicalinterest.group.dto.CategoryDTO;
-import com.technicalinterest.group.dto.CommentDTO;
-import com.technicalinterest.group.dto.QueryArticleDTO;
+import com.technicalinterest.group.dao.RoleAuth;
+import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.*;
 import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.annotation.VBlogReadCount;
 import com.technicalinterest.group.service.constant.ResultEnum;
-import com.technicalinterest.group.service.dto.EditCommentDTO;
-import com.technicalinterest.group.service.dto.EditUserDTO;
-import com.technicalinterest.group.service.dto.PageBean;
-import com.technicalinterest.group.service.dto.ReturnClass;
+import com.technicalinterest.group.service.dto.*;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.ListBeanUtils;
@@ -77,7 +72,10 @@ public class ViewController {
 		ReturnClass login = userService.login(userDTO);
 		if (login.isSuccess()) {
 			UserVO userVO = new UserVO();
-			BeanUtils.copyProperties(login.getData(), userVO);
+			UserDTO resultUser = (UserDTO) login.getData();
+			BeanUtils.copyProperties(resultUser, userVO);
+			List list = ListBeanUtils.copyProperties(JSON.toJSONString(resultUser.getAuthList()), RoleAuthVO.class);
+			userVO.setAuthList(list);
 			apiResult.success(userVO);
 		} else {
 			apiResult.fail(login.getMsg());
@@ -95,14 +93,14 @@ public class ViewController {
 	@ApiOperation(value = "新用户注册", notes = "新用户注册")
 	@PostMapping(value = "/user/new")
 	@BlogOperation(value = "新用户注册")
-	@DistributeLock(value = "saveUser", key = "#newUserParam.userName", timeout = 10, expire = 10,errMsg = "00000")
+	@DistributeLock(value = "saveUser", key = "#newUserParam.userName", timeout = 10, expire = 10, errMsg = "00000")
 	public ApiResult<String> saveUser(@Valid @RequestBody NewUserParam newUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO newUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(newUserParam, newUserDTO);
 		ReturnClass addUser = userService.addUser(newUserDTO);
 		if (addUser.isSuccess()) {
-			apiResult.success(addUser.getData());
+			apiResult.success(addUser.getMsg(), null);
 		} else {
 			apiResult.fail(addUser.getMsg());
 		}

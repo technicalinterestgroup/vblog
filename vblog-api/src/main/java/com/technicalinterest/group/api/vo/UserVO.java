@@ -5,6 +5,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @package: com.shuyu.blog.dto
  * @className: UserDTO
@@ -31,5 +33,9 @@ public class UserVO {
     private String userSummary;
     @ApiModelProperty(value = "博客等级")
     private Short grade;
+    @ApiModelProperty(value = "用户角色",allowableValues = "1:管理员，2:普通用户")
+    private Short authType;
+    @ApiModelProperty(value = "权限菜单列表")
+    private List<RoleAuthVO> authList;
 
 }
