@@ -59,6 +59,7 @@ public class MailService {
 	 */
 	@Async
 	public void sendHtmlMail(String to, String subject, String content){
+
 		MimeMessage message = sender.createMimeMessage();
 		try {
 			//true表示需要创建一个multipart message
