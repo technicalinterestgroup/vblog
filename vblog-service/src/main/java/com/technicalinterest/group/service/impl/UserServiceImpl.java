@@ -24,6 +24,7 @@ import com.technicalinterest.group.service.util.RedisUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +56,8 @@ public class UserServiceImpl implements UserService {
 	private MailService mailService;
 	@Autowired
 	private VSystemService systemService;
+	@Value("${server}")
+	private String server;
 
 	private static final long activation_time = 60 * 60 * 24;
 
@@ -149,7 +152,7 @@ public class UserServiceImpl implements UserService {
 		} else {
 			UserRole userRole = new UserRole();
 			userRole.setUserId(user.getId());
-			userRole.setRoleId(2L);
+			userRole.setRoleId((long)2);
 			int i1 = userRoleMapper.insertSelective(userRole);
 			if (i1 < 1) {
 				throw new VLogException(UserConstant.ADD_USER_ERROR);
@@ -161,7 +164,7 @@ public class UserServiceImpl implements UserService {
 			//发送邮件
 			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
 			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
-					"<a href=\"" + UserConstant.ACTIVATION_URL + key + "\">" + UserConstant.ACTIVATION_URL + key + "</a>");
+					"<a href=\"" + UserConstant.ACTIVATION_URL + key + "\">" + server+UserConstant.ACTIVATION_URL + key + "</a>");
 
 			return ReturnClass.success(UserConstant.ADD_EMAIL_SEND);
 		}

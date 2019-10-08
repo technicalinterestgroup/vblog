@@ -41,7 +41,7 @@ public class UserConstant {
 
 	public static final String ACTIVATION_SUC = "账号激活成功！";
 
-	public static final String ACTIVATION_URL = "http://127.0.0.1:8082/vblog/admin/user/activation/";
+	public static final String ACTIVATION_URL = "/vblog/admin/user/activation/";
 
 	public static final String NO_USER_INFO= "暂无用户数据！";
 
