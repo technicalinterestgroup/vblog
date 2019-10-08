@@ -103,4 +103,23 @@ public interface UserService {
     */
     ReturnClass getBlogUserInfo(String userName);
 
+
+    /**
+     * @Description: 发送忘记密码邮件
+     * @author: shuyu.wang
+     * @date: 2019-10-08 17:04
+     * @param userName
+     * @return null
+    */
+    ReturnClass sendForgetPassMail(String userName);
+
+
+    /**
+     * @Description: 修改密码
+     * @author: shuyu.wang
+     * @date: 2019-10-08 17:23
+     * @param editUserDTO
+     * @return null
+    */
+    ReturnClass resetPassWord(String key,EditUserDTO editUserDTO);
 }

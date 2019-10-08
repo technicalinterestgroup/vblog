@@ -59,6 +59,9 @@ public class UserServiceImpl implements UserService {
 	@Value("${server}")
 	private String server;
 
+	@Value("${activation_web_url}")
+	private String ACTIVATION_WEB_URL;
+
 	private static final long activation_time = 60 * 60 * 24;
 
 	private static final long login_time = 60 * 30;
@@ -152,7 +155,7 @@ public class UserServiceImpl implements UserService {
 		} else {
 			UserRole userRole = new UserRole();
 			userRole.setUserId(user.getId());
-			userRole.setRoleId((long)2);
+			userRole.setRoleId((long) 2);
 			int i1 = userRoleMapper.insertSelective(userRole);
 			if (i1 < 1) {
 				throw new VLogException(UserConstant.ADD_USER_ERROR);
@@ -164,7 +167,7 @@ public class UserServiceImpl implements UserService {
 			//发送邮件
 			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
 			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
-					"<a href=\"" + UserConstant.ACTIVATION_URL + key + "\">" + server+UserConstant.ACTIVATION_URL + key + "</a>");
+					"<a href=\"" + server + UserConstant.ACTIVATION_URL + key + "\">" + server + UserConstant.ACTIVATION_URL + key + "</a>");
 
 			return ReturnClass.success(UserConstant.ADD_EMAIL_SEND);
 		}
@@ -227,7 +230,7 @@ public class UserServiceImpl implements UserService {
 			user.setState((short) 1);
 			int update = userMapper.update(user);
 			if (update < 1) {
-				throw new VLogException(ResultEnum.USERINFO_ERROR);
+				throw new VLogException(UserConstant.ACTIVATION_FAIL);
 			}
 			redisUtil.del(key);
 			return ReturnClass.success(UserConstant.ACTIVATION_SUC);
@@ -319,5 +322,69 @@ public class UserServiceImpl implements UserService {
 			return ReturnClass.fail(UserConstant.NO_USER_INFO);
 		}
 		return ReturnClass.success(blogUserDTOS);
+	}
+
+	/**
+	 * @Description: 发送忘记密码邮件
+	 * @author: shuyu.wang
+	 * @date: 2019-10-08 17:04
+	 * @param userName
+	 * @return null
+	 */
+	@Override
+	public ReturnClass sendForgetPassMail(String userName) {
+		User user = new User();
+		user.setUserName(userName);
+		//用户名判断
+		User userByUser = userMapper.getUserByUser(user);
+		if (Objects.isNull(userByUser)) {
+			return ReturnClass.fail(UserConstant.NO_USER);
+		}
+		if (userByUser.getState() == 0) {
+			return ReturnClass.fail(UserConstant.NO_ACTIVATION);
+		}
+		String key = userName + "_" + UUID.randomUUID().toString();
+		redisUtil.set(key, String.valueOf(userByUser.getId()), activation_time);
+		//发送邮件
+		//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
+		mailService.sendHtmlMail(userByUser.getEmail(), UserConstant.FORGET_PASS_MAIL_TITLE,
+				"<a href=\"" + server + UserConstant.FORGET_PASS_URL + key + "\">" + server + UserConstant.FORGET_PASS_URL + key + "</a>");
+
+		return ReturnClass.success(UserConstant.FORGET_PASS_MAIL_SEND);
+	}
+
+	/**
+	 * @Description: 修改密码
+	 * @author: shuyu.wang
+	 * @date: 2019-10-08 17:23
+	 * @param editUserDTO
+	 * @return null
+	 */
+	@Override
+	public ReturnClass resetPassWord(String key, EditUserDTO editUserDTO) {
+
+		String id = (String) redisUtil.get(key);
+		if (!StringUtils.isEmpty(id)) {
+			User user = new User();
+			user.setUserName(editUserDTO.getUserName());
+			//用户名判断
+			User userByUser = userMapper.getUserByUser(user);
+			if (Objects.isNull(userByUser)) {
+				return ReturnClass.fail(UserConstant.NO_USER);
+			}
+			if (Long.parseLong(id) != userByUser.getId()) {
+				return ReturnClass.fail(UserConstant.KEY_ERROR);
+			}
+			user.setId(Long.parseLong(id));
+			user.setPassWord(editUserDTO.getPassWord());
+			int update = userMapper.update(user);
+			if (update < 1) {
+				throw new VLogException(UserConstant.CHANGE_PASS_FAIL);
+			}
+			redisUtil.del(key);
+			return ReturnClass.success(UserConstant.CHANGE_PASS_SUC);
+		} else {
+			return ReturnClass.fail(UserConstant.MAIL_OUTTIME);
+		}
 	}
 }

@@ -113,7 +113,6 @@ public class ArticleController {
 		ReturnClass articleDetail = articleService.articleDetail(authCheck, id);
 		ArticleContentVO articleContentVO = new ArticleContentVO();
 		if (articleDetail.isSuccess()) {
-			PageBean<ArticlesVO> pageInfo = new PageBean<ArticlesVO>();
 			BeanUtils.copyProperties(articleDetail.getData(), articleContentVO);
 			apiResult.success(articleContentVO);
 

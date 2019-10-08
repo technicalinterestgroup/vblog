@@ -81,7 +81,7 @@ public class CategoryController {
 		BeanUtils.copyProperties(editCategoryParam, editCategoryDTO);
 		ReturnClass update = categoryService.update(editCategoryDTO);
 		if (update.isSuccess()) {
-			apiResult.success();
+			apiResult.success(update.getMsg(),null);
 		} else {
 			apiResult.setMsg(update.getMsg());
 		}
@@ -104,7 +104,7 @@ public class CategoryController {
 		BeanUtils.copyProperties(newCategoryParam, editCategoryDTO);
 		ReturnClass update = categoryService.insertSelective(editCategoryDTO);
 		if (update.isSuccess()) {
-			apiResult.success();
+			apiResult.success(update.getMsg(),null);
 		} else {
 			apiResult.setMsg(update.getMsg());
 		}
