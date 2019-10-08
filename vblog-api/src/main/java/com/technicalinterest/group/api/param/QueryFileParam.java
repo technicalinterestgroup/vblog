@@ -26,7 +26,7 @@ public class QueryFileParam extends UserBaseParam {
 	/**
 	 * 文件类型 1：图片 2：文件
 	 */
-	@ApiModelProperty(value = "文件类型",allowableValues = "1：图片 2：文件")
+	@ApiModelProperty(value = "文件类型,可用值 1：图片,2：文件",example = "1")
 	private Short fileType;
 
 
