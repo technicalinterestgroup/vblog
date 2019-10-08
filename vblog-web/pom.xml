@@ -170,9 +170,9 @@
         </profile>
 
         <profile>
-            <id>beta</id>
+            <id>beat</id>
             <properties>
-                <profileActive>beta</profileActive>
+                <profileActive>beat</profileActive>
             </properties>
         </profile>
 
