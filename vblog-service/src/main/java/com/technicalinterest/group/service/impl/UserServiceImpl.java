@@ -229,6 +229,7 @@ public class UserServiceImpl implements UserService {
 			if (update < 1) {
 				throw new VLogException(ResultEnum.USERINFO_ERROR);
 			}
+			redisUtil.del(key);
 			return ReturnClass.success(UserConstant.ACTIVATION_SUC);
 		} else {
 			return ReturnClass.fail(UserConstant.MAIL_OUTTIME);
