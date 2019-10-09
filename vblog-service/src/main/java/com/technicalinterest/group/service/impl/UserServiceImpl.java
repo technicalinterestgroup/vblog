@@ -167,7 +167,10 @@ public class UserServiceImpl implements UserService {
 			//发送邮件
 			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
 			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
-					"<a href=\"" + server + UserConstant.ACTIVATION_URL + key + "\">" + server + UserConstant.ACTIVATION_URL + key + "</a>");
+					"<p>欢迎!&nbsp"+newUserDTO.getUserName()+"<br>"
+							+ "感谢您在技术兴趣博客网站的注册，请点击这里激活您的账号:<br></p>"
+							+ "<a href=\"" + ACTIVATION_WEB_URL + UserConstant.ACTIVATION_URL + key + "\">" + server + UserConstant.ACTIVATION_URL + key + "</a><br>"
+							+ "<p>祝您使用愉快，使用过程中您有任何问题请及时联系我们。</p>");
 
 			return ReturnClass.success(UserConstant.ADD_EMAIL_SEND);
 		}
@@ -348,7 +351,10 @@ public class UserServiceImpl implements UserService {
 		//发送邮件
 		//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
 		mailService.sendHtmlMail(userByUser.getEmail(), UserConstant.FORGET_PASS_MAIL_TITLE,
-				"<a href=\"" + server + UserConstant.FORGET_PASS_URL + key + "\">" + server + UserConstant.FORGET_PASS_URL + key + "</a>");
+				"<p>您好!&nbsp"+userName+"<br>"
+						+ "如果您确认忘记登录密码，请点击这里重置您的登录密码:<br></p>"
+						+ "<a href=\"" + ACTIVATION_WEB_URL + UserConstant.FORGET_PASS_URL + key + "\">" + server + UserConstant.FORGET_PASS_URL + key + "</a><br>"
+						+ "<p>如果操作过程中遇到其他问题请及时联系我们。</p>");
 
 		return ReturnClass.success(UserConstant.FORGET_PASS_MAIL_SEND);
 	}
