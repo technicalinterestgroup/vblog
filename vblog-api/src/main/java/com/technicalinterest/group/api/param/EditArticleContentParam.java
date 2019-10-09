@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.param;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -51,12 +52,26 @@ public class EditArticleContentParam {
 	/**
 	 * 文章内容
 	 */
-	@ApiModelProperty(value = "文章内容")
+	@ApiModelProperty(value = "文章内容html格式")
 	private String content;
+
+	/**
+	 * 文章内容markdown格式
+	 */
+	@ApiModelProperty(value = "文章内容markdown格式")
+	@JsonProperty("contentMD")
+	private String contentMD;
 	/**
 	 * 文章状态 0：草稿，1：发布
 	 */
 	@ApiModelProperty(value = "文章状态",allowableValues = "0：草稿，1：发布")
 	private Short state;
 
+	public String getContentMD() {
+		return contentMD;
+	}
+
+	public void setContentMD(String contentMD) {
+		this.contentMD = contentMD;
+	}
 }

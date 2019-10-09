@@ -65,9 +65,14 @@ public class ArticleContentDTO {
 	private String userName;
 
 	/**
-	 * 文章内容
+	 * 文章内容html格式
 	 */
 	private String content;
+
+	/**
+	 * 文章内容markdown格式
+	 */
+	private String contentMD;
 	/**
 	 * 文章状态 0：草稿，1：发布
 	 */
