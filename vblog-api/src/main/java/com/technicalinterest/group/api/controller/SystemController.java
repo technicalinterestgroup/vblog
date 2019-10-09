@@ -73,11 +73,11 @@ public class SystemController {
 		ApiResult apiResult = new ApiResult();
 		VSystemDTO vSystemDTO = new VSystemDTO();
 		BeanUtils.copyProperties(editVSystemParam, vSystemDTO);
-		ReturnClass getSystemByUser = vSystemService.update(vSystemDTO);
-		if (getSystemByUser.isSuccess()) {
-			apiResult.success();
+		ReturnClass update = vSystemService.update(vSystemDTO);
+		if (update.isSuccess()) {
+			apiResult.success(update.getMsg(),null);
 		} else {
-			apiResult.fail(getSystemByUser.getMsg());
+			apiResult.fail(update.getMsg());
 		}
 		return apiResult;
 	}

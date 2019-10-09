@@ -3,6 +3,7 @@ package com.technicalinterest.group.api.controller;
 import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
+import com.technicalinterest.group.api.param.ResetPassParam;
 import com.technicalinterest.group.api.param.UserParam;
 import com.technicalinterest.group.api.vo.*;
 import com.technicalinterest.group.dto.*;
@@ -17,6 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -81,7 +83,7 @@ public class ViewController {
 	 * @author: shuyu.wang
 	 * @date: 2019-07-21 21:50
 	 * @param newUserParam
-	 * @return com.technicalinterest.group.api.vo.ApiResult<com.technicalinterest.group.service.vo.UserVO>
+	 * @return com.technicalinterest.group.api.vo.ApiResult<String>
 	 */
 	@ApiOperation(value = "新用户注册", notes = "新用户注册")
 	@PostMapping(value = "/user/new")
@@ -113,7 +115,49 @@ public class ViewController {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass activationUser = userService.activationUser(key);
 		if (activationUser.isSuccess()) {
-			apiResult.success(activationUser.getMsg());
+			apiResult.success(activationUser.getMsg(), null);
+		} else {
+			apiResult.fail(activationUser.getMsg());
+		}
+		return apiResult;
+	}
+
+	/**
+	 * 发送重置密码邮件
+	 * @author: shuyu.wang
+	 * @date: 2019-07-21 22:27
+	 * @return null
+	 */
+	@ApiOperation(value = "发送重置密码邮件")
+	@GetMapping(value = "/user/forget/{userName}")
+	@BlogOperation(value = "发送重置密码邮件")
+	public ApiResult<String> forgetPassWord(@PathVariable("userName") String userName) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass activationUser = userService.sendForgetPassMail(userName);
+		if (activationUser.isSuccess()) {
+			apiResult.success(activationUser.getMsg(), null);
+		} else {
+			apiResult.fail(activationUser.getMsg());
+		}
+		return apiResult;
+	}
+
+	/**
+	 * 重置密码
+	 * @author: shuyu.wang
+	 * @date: 2019-07-21 22:27
+	 * @return null
+	 */
+	@ApiOperation(value = "重置密码")
+	@PostMapping(value = "/user/reset/{key}")
+	@BlogOperation(value = "重置密码")
+	public ApiResult<String> resetPassWord(@PathVariable("key") String key, @Validated @RequestBody ResetPassParam resetPassParam) {
+		ApiResult apiResult = new ApiResult();
+		EditUserDTO editUserDTO = new EditUserDTO();
+		BeanUtils.copyProperties(resetPassParam, editUserDTO);
+		ReturnClass activationUser = userService.resetPassWord(key, editUserDTO);
+		if (activationUser.isSuccess()) {
+			apiResult.success(activationUser.getMsg(), null);
 		} else {
 			apiResult.fail(activationUser.getMsg());
 		}

@@ -53,7 +53,7 @@ public class UserController {
 		BeanUtils.copyProperties(editUserParam, editUserDTO);
 		ReturnClass addUser = userService.updateUser(authCheck, editUserDTO);
 		if (addUser.isSuccess()) {
-			apiResult.success(addUser.getData());
+			apiResult.success(addUser.getMsg(),null);
 		} else {
 			apiResult.fail(addUser.getMsg());
 		}
@@ -94,7 +94,7 @@ public class UserController {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass addUser = userService.logout("");
 		if (addUser.isSuccess()) {
-			apiResult.success(addUser.getData());
+			apiResult.success(addUser.getMsg(),null);
 		} else {
 			apiResult.fail(addUser.getMsg());
 		}

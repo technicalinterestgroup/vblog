@@ -87,7 +87,7 @@ public class TagController {
 		BeanUtils.copyProperties(editTagParam, editTagDTO);
 		ReturnClass update = tagService.update(editTagDTO);
 		if (update.isSuccess()) {
-			apiResult.success();
+			apiResult.success(update.getMsg(),null);
 		} else {
 			apiResult.setMsg(update.getMsg());
 		}
@@ -110,7 +110,7 @@ public class TagController {
 		BeanUtils.copyProperties(newTagParam, editTagDTO);
 		ReturnClass update = tagService.insertSelective(editTagDTO);
 		if (update.isSuccess()) {
-			apiResult.success();
+			apiResult.success(update.getMsg(),null);
 		} else {
 			apiResult.setMsg(update.getMsg());
 		}

@@ -37,9 +37,11 @@ public class UserConstant {
 
 	public static final String MAIL_TITLE = "用户激活邮件！";
 
-	public static final String MAIL_OUTTIME = "激活邮件已经过期！";
+	public static final String MAIL_OUTTIME = "邮件已经过期！";
 
 	public static final String ACTIVATION_SUC = "账号激活成功！";
+
+	public static final String ACTIVATION_FAIL = "账号激活失败！";
 
 	public static final String ACTIVATION_URL = "/vblog/view/user/activation/";
 
@@ -48,4 +50,16 @@ public class UserConstant {
 	public static final String ADMIN_AUTH_URL= "adminAuthUrl";
 
 	public static final String LOGIN_SUCCESS= "登录成功！";
+
+	public static final String FORGET_PASS_MAIL_TITLE = "密码重置邮件！";
+
+	public static final String FORGET_PASS_URL = "/vblog/view/user/reset/";
+
+	public static final String FORGET_PASS_MAIL_SEND = "重置密码邮件已经发送，请在24小时内完成修改！";
+
+	public static final String CHANGE_PASS_SUC = "密码重置成功！";
+
+	public static final String KEY_ERROR = "密码重置链接与用户名不匹配！";
+
+	public static final String CHANGE_PASS_FAIL = "密码重置失败！";
 }

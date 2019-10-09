@@ -77,7 +77,7 @@ public class NoticeController {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass returnClass = noticeService.viewComment(id);
 		if (returnClass.isSuccess()) {
-			apiResult.success();
+			apiResult.success(returnClass.getMsg(),null);
 		} else {
 			apiResult.setMsg(returnClass.getMsg());
 		}
