@@ -31,7 +31,7 @@ public class KaptchaConfig {
 		//图片高
 		properties.put("kaptcha.image.height","40");
 		//图片宽
-		properties.put("kaptcha.image.width","130");
+		properties.put("kaptcha.image.width","140");
 		//字体实颜色
 		properties.put("kaptcha.textproducer.font.color","76,197,253");
 		//字体大小

@@ -1,7 +1,6 @@
 package com.technicalinterest.group.service.impl;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.dao.UserRole;
 import com.technicalinterest.group.dto.BlogUserDTO;
@@ -21,6 +20,7 @@ import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -437,7 +437,7 @@ public class UserServiceImpl implements UserService {
 		try {
 			BufferedImage image = producer.createImage(text);
 			ImageIO.write(image, "png", out);
-			String base64bytes = Base64.encode(out.toByteArray());
+			String base64bytes = Base64.encodeBase64String(out.toByteArray());
 			//该字符串传输至前端放入src即可显示图片，安卓可以去掉data:image/png;base64,
 			String src = "data:image/png;base64," + base64bytes;
 			String token = UUID.randomUUID().toString();
