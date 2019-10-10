@@ -46,6 +46,14 @@ public class EditUserDTO {
 	 * 个人简介
 	 */
 	private String userSummary;
+	/**
+	 * 验证码
+	 */
+	private String img;
+	/**
+	 * 验证码token
+	 */
+	private String token;
 
 
 }

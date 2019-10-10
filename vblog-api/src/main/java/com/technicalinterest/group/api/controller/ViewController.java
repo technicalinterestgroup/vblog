@@ -1,10 +1,7 @@
 package com.technicalinterest.group.api.controller;
 
 import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
-import com.technicalinterest.group.api.param.NewUserParam;
-import com.technicalinterest.group.api.param.QueryArticleParam;
-import com.technicalinterest.group.api.param.ResetPassParam;
-import com.technicalinterest.group.api.param.UserParam;
+import com.technicalinterest.group.api.param.*;
 import com.technicalinterest.group.api.vo.*;
 import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.*;
@@ -131,9 +128,9 @@ public class ViewController {
 	@ApiOperation(value = "发送重置密码邮件")
 	@GetMapping(value = "/user/forget/{userName}")
 	@BlogOperation(value = "发送重置密码邮件")
-	public ApiResult<String> forgetPassWord(@PathVariable("userName") String userName) {
+	public ApiResult<String> forgetPassWord(@PathVariable("userName") String userName,@Validated ResetEmailParam resetEmailParam) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass activationUser = userService.sendForgetPassMail(userName);
+		ReturnClass activationUser = userService.sendForgetPassMail(userName,resetEmailParam.getEmail(),resetEmailParam.getImg(),resetEmailParam.getToken());
 		if (activationUser.isSuccess()) {
 			apiResult.success(activationUser.getMsg(), null);
 		} else {
@@ -482,6 +479,19 @@ public class ViewController {
 			apiResult.success(list1);
 		} else {
 			apiResult.setMsg(blogUserInfo.getMsg());
+		}
+		return apiResult;
+	}
+
+	@ApiOperation(value = "获取验证码")
+	@GetMapping(value = "/captcha")
+	public ApiResult<ImagVerifi> captcha() {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass img = userService.createImage();
+		if (img.isSuccess()) {
+			apiResult.success(img.getData());
+		} else {
+			apiResult.setMsg(img.getMsg());
 		}
 		return apiResult;
 	}

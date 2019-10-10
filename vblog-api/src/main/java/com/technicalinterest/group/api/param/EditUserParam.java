@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.Pattern;
+
 /**
  * @package: com.technicalinterest.group.service.dto
  * @className: NewUserDTO
@@ -18,7 +20,8 @@ public class EditUserParam {
 	/**
 	 * 密码
 	 */
-	@ApiModelProperty(value = "密码")
+	@ApiModelProperty(value = "密码",example = "6-16位字母数字组合")
+	@Pattern(regexp ="^[a-zA-Z0-9]{6,16}$",message = "密码不符合规范!")
 	private String passWord;
 	/**
 	 * 头像

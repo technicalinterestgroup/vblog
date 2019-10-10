@@ -44,6 +44,7 @@
         <distributelock.version>1.1.0</distributelock.version>
         <aop.version>2.1.6.RELEASE</aop.version>
         <apache.collections.version>4.4</apache.collections.version>
+        <kaptcha.version>2.3.2</kaptcha.version>
     </properties>
 
     <dependencyManagement>
@@ -151,6 +152,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${apache.collections.version}</version>
+            </dependency>
+            <!-- 验证码生成包-->
+            <dependency>
+                <groupId>com.github.penggle</groupId>
+                <artifactId>kaptcha</artifactId>
+                <version>${kaptcha.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
