@@ -193,7 +193,7 @@
         <if test="flag==2">
             order by read_count desc
         </if>
-        limit 0,10
+        limit 0,#{total}
     </select>
 
     <select id="queryArticleListArchive" resultType="com.technicalinterest.group.dto.ArticlesDTO">

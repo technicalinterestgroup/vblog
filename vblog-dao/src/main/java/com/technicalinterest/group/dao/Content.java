@@ -16,7 +16,12 @@ public class Content extends BaseDao {
 	private Long articleId;
 
 	/** 
-	* 文章内容
+	* 文章内容html格式
 	*/ 
 	private String content;
+
+	/**
+	 * 文章内容md格式
+	 */
+	private String contentMD;
 }

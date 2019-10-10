@@ -19,11 +19,13 @@ import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.exception.VLogException;
+import com.technicalinterest.group.service.util.HtmlUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,10 +55,13 @@ public class ArticleServiceImpl implements ArticleService {
 	private UserMapper userMapper;
 	@Autowired
 	private RedisUtil redisUtil;
+	@Value("${submit_length}")
+	private Integer ARTICLE_LENGTH;
 
-	public static final Integer ARTICLE_LENGTH = 50;
-
-	private static final Integer JF = 5;
+	@Value("${article_jf}")
+	private Integer JF;
+	@Value("${article_limit}")
+	private Integer ARTICLE_LIMIT;
 
 	/**
 	 * @Description: 新增文章
@@ -79,23 +84,28 @@ public class ArticleServiceImpl implements ArticleService {
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		article.setSubmit(
-				articleContentDTO.getContent().length() > ARTICLE_LENGTH ? articleContentDTO.getContent().substring(0, ARTICLE_LENGTH - 1) : articleContentDTO.getContent());
+		//文章摘要
+		String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContent());
+		article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
 		article.setCreateTime(new Date());
 		articleMapper.insertSelective(article);
 		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
 			Content content = new Content();
 			content.setArticleId(article.getId());
 			content.setContent(articleContentDTO.getContent());
+			content.setContentMD(articleContentDTO.getContentMD());
 			int i = contentMapper.insertSelective(content);
 			if (i < 1) {
 				throw new VLogException(ArticleConstant.FAIL_ADD);
 			}
-			User user = User.builder().integral(JF).build();
-			user.setId(userId);
-			int update = userMapper.update(user);
-			if (update < 1) {
-				log.error("博客发布增加积分失败，userName={},ArticleId={}", article.getUserName(), article.getId());
+			//增加积分
+			if (articleContentDTO.getState() == 1) {
+				User user = User.builder().integral(JF).build();
+				user.setId(userId);
+				int update = userMapper.update(user);
+				if (update < 1) {
+					log.error("博客发布增加积分失败，userName={},ArticleId={}", article.getUserName(), article.getId());
+				}
 			}
 			return ReturnClass.success(ArticleConstant.SUS_ADD);
 		}
@@ -127,14 +137,16 @@ public class ArticleServiceImpl implements ArticleService {
 		if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
-
-		article.setSubmit(
-				articleContentDTO.getContent().length() > ARTICLE_LENGTH ? articleContentDTO.getContent().substring(0, ARTICLE_LENGTH - 1) : articleContentDTO.getContent());
+		//文章摘要
+		String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContent());
+		article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
 		articleMapper.update(article);
 		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
 			Content content = new Content();
 			content.setArticleId(article.getId());
 			content.setContent(articleContentDTO.getContent());
+			content.setContentMD(articleContentDTO.getContentMD());
+			content.setUpdateTime(new Date());
 			int i = contentMapper.update(content);
 			if (i < 1) {
 				throw new VLogException(ArticleConstant.FAIL_EDIT);
@@ -179,7 +191,7 @@ public class ArticleServiceImpl implements ArticleService {
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
 		String userName = null;
-		if(!authCheck){
+		if (!authCheck) {
 			if (Objects.nonNull(accessToken)) {
 				if (redisUtil.hasKey(accessToken)) {
 					userName = (String) redisUtil.get(accessToken);
@@ -200,7 +212,12 @@ public class ArticleServiceImpl implements ArticleService {
 		BeanUtils.copyProperties(articleInfo, articleContentDTO);
 		Content content = contentMapper.getContent(articleInfo.getId());
 		if (Objects.nonNull(content)) {
-			articleContentDTO.setContent(content.getContent());
+			if (authCheck) {
+				articleContentDTO.setContent(content.getContentMD());
+			} else {
+				articleContentDTO.setContent(content.getContent());
+			}
+
 		}
 		return ReturnClass.success(articleContentDTO);
 	}
@@ -214,7 +231,6 @@ public class ArticleServiceImpl implements ArticleService {
 	 */
 	@Override
 	public ReturnClass allListArticle(QueryArticleDTO queryArticleDTO) {
-
 		queryArticleDTO.setState((short) 1);
 		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
 		if (integer < 1) {
@@ -241,7 +257,7 @@ public class ArticleServiceImpl implements ArticleService {
 				throw new VLogException(ResultEnum.NO_URL);
 			}
 		}
-		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName);
+		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName,ARTICLE_LIMIT);
 		if (articlesDTOS.isEmpty()) {
 			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}

@@ -4,6 +4,9 @@ import com.technicalinterest.group.api.param.EditVSystemParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.UserVO;
 import com.technicalinterest.group.api.vo.VSystemVO;
+import com.technicalinterest.group.dao.Dic;
+import com.technicalinterest.group.dto.DicDTO;
+import com.technicalinterest.group.service.DicService;
 import com.technicalinterest.group.service.VSystemService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.constant.ResultEnum;
@@ -34,6 +37,8 @@ public class SystemController {
 
 	@Autowired
 	private VSystemService vSystemService;
+	@Autowired
+	private DicService dicService;
 
 	private static final Boolean authCheck = true;
 
@@ -78,6 +83,26 @@ public class SystemController {
 			apiResult.success(update.getMsg(),null);
 		} else {
 			apiResult.fail(update.getMsg());
+		}
+		return apiResult;
+	}
+	/**
+	 * 查询配置参数
+	 * @return null
+	 * @author: shuyu.wang
+	 * @date: 2019-07-14 19:24
+	 */
+	@ApiOperation(value = "查询配置参数", notes = "详情")
+	@GetMapping(value = "/dic/{key}")
+	public ApiResult<DicDTO> dic(@PathVariable("key") String key) {
+		ApiResult apiResult = new ApiResult();
+		Dic dic=new Dic();
+		dic.setDicKey(key);
+		ReturnClass list = dicService.dicList(dic);
+		if (list.isSuccess()) {
+			apiResult.success(list);
+		} else {
+			apiResult.fail(list.getMsg());
 		}
 		return apiResult;
 	}

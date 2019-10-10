@@ -111,7 +111,7 @@ public interface UserService {
      * @param userName
      * @return null
     */
-    ReturnClass sendForgetPassMail(String userName);
+    ReturnClass sendForgetPassMail(String userName,String email,String img,String token);
 
 
     /**
@@ -122,4 +122,11 @@ public interface UserService {
      * @return null
     */
     ReturnClass resetPassWord(String key,EditUserDTO editUserDTO);
+    /**
+     * @Description: 生成验证码
+     * @author: shuyu.wang
+     * @date: 2019-10-08 17:23
+     * @return null
+     */
+    ReturnClass createImage();
 }

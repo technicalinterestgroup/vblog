@@ -56,7 +56,7 @@ public interface ArticleMapper {
      * @param userName
      * @return null
      */
-    List<ArticlesDTO> queryArticleListOrderBy(@Param("flag")Integer flag,@Param("userName")String userName);
+    List<ArticlesDTO> queryArticleListOrderBy(@Param("flag")Integer flag,@Param("userName")String userName,@Param("total")Integer total);
 
 
     /**

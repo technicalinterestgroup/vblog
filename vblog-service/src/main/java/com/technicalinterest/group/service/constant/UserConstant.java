@@ -62,4 +62,14 @@ public class UserConstant {
 	public static final String KEY_ERROR = "密码重置链接与用户名不匹配！";
 
 	public static final String CHANGE_PASS_FAIL = "密码重置失败！";
+
+	public static final String CREAT_IMG_FAIL = "验证码生成失败！";
+
+	public static final String IMG_TIME_OUT = "验证码已过期,请重新获取！";
+
+	public static final String IMG_SUC = "验证通过！";
+
+	public static final String IMG_FAIL = "验证码错误！";
+
+	public static final String MAIL_FAIL = "用户名邮箱不匹配！";
 }

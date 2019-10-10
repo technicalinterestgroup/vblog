@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.DicMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dto.DicDTO">
+        <result column="dic_key" property="dicKey"/>
+        <result column="key_desc" property="keyDesc"/>
+        <result column="dic_value" property="dicValue"/>
+        <result column="value_desc" property="valueDesc"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `dic_key`,
+        `key_desc`,
+        `dic_value`,
+        `value_desc`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_dic (
+            `dic_key`,
+            `key_desc`,
+            `dic_value`,
+            `value_desc`,
+            `parent_key`,
+            `id`,
+            `is_del`,
+            `create_time`,
+            `update_time`
+        ) VALUES (
+            #{pojo.dicKey},
+            #{pojo.keyDesc},
+            #{pojo.dicValue},
+            #{pojo.valueDesc},
+            #{pojo.parentKey},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+        )
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_dic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.dicKey!=null"> `dic_key`,</if>
+            <if test="pojo.keyDesc!=null"> `key_desc`,</if>
+            <if test="pojo.dicValue!=null"> `dic_value`,</if>
+            <if test="pojo.valueDesc!=null"> `value_desc`,</if>
+            <if test="pojo.parentKey!=null"> `parent_key`,</if>
+            <if test="pojo.id!=null"> `id`,</if>
+            <if test="pojo.isDel!=null"> `is_del`,</if>
+            <if test="pojo.createTime!=null"> `create_time`,</if>
+            <if test="pojo.updateTime!=null"> `update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.dicKey!=null">#{pojo.dicKey},</if>
+            <if test="pojo.keyDesc!=null">#{pojo.keyDesc},</if>
+            <if test="pojo.dicValue!=null">#{pojo.dicValue},</if>
+            <if test="pojo.valueDesc!=null">#{pojo.valueDesc},</if>
+            <if test="pojo.parentKey!=null">#{pojo.parentKey},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO v_dic (
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.dicKey},
+            #{pojo.keyDesc},
+            #{pojo.dicValue},
+            #{pojo.valueDesc},
+            #{pojo.parentKey},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE v_dic
+        <set>
+            <if test="pojo.dicKey != null"> `dic_key` = #{pojo.dicKey}, </if>
+            <if test="pojo.keyDesc != null"> `key_desc` = #{pojo.keyDesc}, </if>
+            <if test="pojo.dicValue != null"> `dic_value` = #{pojo.dicValue}, </if>
+            <if test="pojo.valueDesc != null"> `value_desc` = #{pojo.valueDesc}, </if>
+            <if test="pojo.parentKey != null"> `parent_key` = #{pojo.parentKey}, </if>
+            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
+            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
+            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="dicList" resultMap="AllColumnMap" >
+        select <include refid="all_column"/>
+        from  v_dic
+        <where>
+            <if test="pojo.isDel!=null">and is_del=#{pojo.isDel}</if>
+            <if test="pojo.dicKey!=null">and dic_key=#{pojo.dicKey}</if>
+            <if test="pojo.parentKey!=null">and parent_key=#{pojo.parentKey}</if>
+        </where>
+    </select>
+</mapper>
+

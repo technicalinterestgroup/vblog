@@ -26,4 +26,11 @@ public class UserParam {
     @ApiParam(value = "密码",required = true)
     @NotBlank(message = "密码不能为空")
     private String passWord;
+
+    @ApiModelProperty(value = "验证码",required = true)
+    @NotBlank(message = "验证码不能为空")
+    private String img;
+    @ApiModelProperty(value = "验证码token",required = true)
+    @NotBlank(message = "不能为空")
+    private String token;
 }
