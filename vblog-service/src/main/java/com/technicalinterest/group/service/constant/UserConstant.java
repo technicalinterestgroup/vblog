@@ -72,4 +72,6 @@ public class UserConstant {
 	public static final String IMG_FAIL = "验证码错误！";
 
 	public static final String MAIL_FAIL = "用户名邮箱不匹配！";
+
+	public static final String LOGIN_ERROR_OVER_TIMES = "登录密码错误超过6次，账户被锁定10分钟！";
 }

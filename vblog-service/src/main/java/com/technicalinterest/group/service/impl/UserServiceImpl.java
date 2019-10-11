@@ -71,12 +71,18 @@ public class UserServiceImpl implements UserService {
 
 	@Value("${reset_web_url}")
 	private String REST_WEB_URL;
-
-	private static final long activation_time = 60 * 60 * 24;
-
-	private static final long login_time = 60 * 30;
+    //邮件过期时间
+	private static final long ACTIVATION_TIME = 60 * 60 * 24;
+	//登录过期时间
+	private static final long LOGIN_TIME = 60 * 30;
 	//验证码过期时间
-	private static final long img_time = 60 * 5;
+	private static final long IMG_TIME = 60 * 5;
+
+	private long LOGIN_ERROR_TIMES=6;
+
+	private static final String PASS_SALT="3edc4rfv!@#";
+	
+	private static final String LOGIN_ERROR_KEY="login_error";
 
 	/**
 	 * 登录
@@ -106,9 +112,11 @@ public class UserServiceImpl implements UserService {
 			return ReturnClass.fail(UserConstant.USER_DISABLE);
 		}
 		//密码判断
-		user.setPassWord(user.getPassWord());
+		user.setPassWord(user.getPassWord()+PASS_SALT);
 		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
 		if (Objects.isNull(userRoleDTO)) {
+			//累加错误次数
+
 			return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
 		}
 		//获取权限列表
@@ -140,8 +148,8 @@ public class UserServiceImpl implements UserService {
 			String o = (String) redisUtil.get(userName);
 			redisUtil.del(o);
 		}
-		redisUtil.set(userName, token, login_time);
-		redisUtil.set(token, userName, login_time);
+		redisUtil.set(userName, token, LOGIN_TIME);
+		redisUtil.set(token, userName, LOGIN_TIME);
 		return token;
 	}
 
@@ -172,6 +180,7 @@ public class UserServiceImpl implements UserService {
 		}
 		BeanUtils.copyProperties(newUserDTO, user);
 		user.setNickName("小小程序员");
+		user.setPassWord(newUserDTO.getPassWord()+PASS_SALT);
 		int i = userMapper.insertSelective(user);
 		if (i != 1) {
 			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
@@ -186,7 +195,7 @@ public class UserServiceImpl implements UserService {
 			VSystemDTO vSystemDTO = VSystemDTO.builder().userName(newUserDTO.getUserName()).vStart(new Date()).build();
 			systemService.insertSelective(vSystemDTO);
 			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
-			redisUtil.set(key, String.valueOf(user.getId()), activation_time);
+			redisUtil.set(key, String.valueOf(user.getId()), ACTIVATION_TIME);
 			//发送邮件
 			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
 			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
@@ -214,6 +223,9 @@ public class UserServiceImpl implements UserService {
 		UserDTO userDTO = (UserDTO) userByToken.getData();
 		BeanUtils.copyProperties(editUserDTO, user);
 		user.setId(userDTO.getId());
+		if (StringUtils.isNotEmpty(editUserDTO.getPassWord())){
+			user.setPassWord(editUserDTO.getPassWord()+PASS_SALT);
+		}
 		int update = userMapper.update(user);
 		if (update != 1) {
 			return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
@@ -376,7 +388,7 @@ public class UserServiceImpl implements UserService {
 			return ReturnClass.fail(UserConstant.MAIL_FAIL);
 		}
 		String key = userName + "_" + UUID.randomUUID().toString();
-		redisUtil.set(key, String.valueOf(userByUser.getId()), activation_time);
+		redisUtil.set(key, String.valueOf(userByUser.getId()), ACTIVATION_TIME);
 		//发送邮件
 		//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
 		mailService.sendHtmlMail(userByUser.getEmail(), UserConstant.FORGET_PASS_MAIL_TITLE,
@@ -441,7 +453,7 @@ public class UserServiceImpl implements UserService {
 			//该字符串传输至前端放入src即可显示图片，安卓可以去掉data:image/png;base64,
 			String src = "data:image/png;base64," + base64bytes;
 			String token = UUID.randomUUID().toString();
-			redisUtil.set(token, text, img_time);
+			redisUtil.set(token, text, IMG_TIME);
 			ImagVerifi imagVerifi = ImagVerifi.builder().img(src.replaceAll("[\\s*\t\n\r]", "")).token(token).build();
 			return ReturnClass.success(imagVerifi);
 		} catch (IOException e) {
@@ -467,6 +479,30 @@ public class UserServiceImpl implements UserService {
 			return ReturnClass.fail(UserConstant.IMG_FAIL);
 		}
 		return ReturnClass.fail(UserConstant.IMG_TIME_OUT);
+	}
+
+
+	/**
+	 * @Description: 累加错误次数
+	 * @author: shuyu.wang
+	 * @date: 2019-10-11 18:27
+	 * @param userName
+	 * @return null
+	*/
+	private ReturnClass addErrorSum(String userName){
+		String key=LOGIN_ERROR_KEY+userName;
+		if (redisUtil.hasKey(key)){
+			long sum=(long)redisUtil.get(key);
+			if (sum>=LOGIN_ERROR_TIMES){
+				redisUtil.expire(key,(long)60);
+				return ReturnClass.fail(UserConstant.LOGIN_ERROR_OVER_TIMES);
+			}
+			redisUtil.incr(key,(long)1);
+		}else {
+			redisUtil.set(key,(long)1);
+		}
+		return ReturnClass.success();
+
 	}
 
 }

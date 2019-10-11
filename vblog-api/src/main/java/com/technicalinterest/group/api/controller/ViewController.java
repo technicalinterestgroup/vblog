@@ -161,6 +161,27 @@ public class ViewController {
 		return apiResult;
 	}
 
+	
+	/**
+	 * @Description: 获取验证码
+	 * @author: shuyu.wang
+	 * @date: 2019-10-11 11:24
+	 * @param null
+	 * @return null
+	*/
+	@ApiOperation(value = "获取验证码")
+	@GetMapping(value = "/captcha")
+	public ApiResult<ImagVerifi> captcha() {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass img = userService.createImage();
+		if (img.isSuccess()) {
+			apiResult.success(img.getData());
+		} else {
+			apiResult.setMsg(img.getMsg());
+		}
+		return apiResult;
+	}
+
 	/**
 	 * 用户信息接口
 	 * @return null
@@ -221,7 +242,7 @@ public class ViewController {
 	 * @Description: 会员最新文章
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
-	 * @param
+	 * @param userName
 	 * @return null
 	 */
 	@ApiOperation(value = "会员最新文章列表", notes = "文章列表")
@@ -248,7 +269,7 @@ public class ViewController {
 	 * @Description: 会员热门文章
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
-	 * @param
+	 * @param userName
 	 * @return null
 	 */
 	@ApiOperation(value = "会员热门文章列表", notes = "文章列表")
@@ -275,7 +296,7 @@ public class ViewController {
 	 * @Description: 文章归档
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
-	 * @param
+	 * @param userName
 	 * @return null
 	 */
 	@ApiOperation(value = "会员文章归档", notes = "文章归档")
@@ -344,7 +365,7 @@ public class ViewController {
 	}
 
 	/**
-	 * 	 * @Description: 网站文章列表
+	 * @Description: 网站文章列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
 	 * @param queryArticleParam
@@ -380,7 +401,6 @@ public class ViewController {
 	 * @Description: 网站最新文章
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
-	 * @param
 	 * @return null
 	 */
 	@ApiOperation(value = "最新文章列表", notes = "文章列表")
@@ -408,7 +428,6 @@ public class ViewController {
 	 * @Description: 热门文章
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
-	 * @param
 	 * @return null
 	 */
 	@ApiOperation(value = "网站热门文章列表", notes = "文章列表")
@@ -483,18 +502,7 @@ public class ViewController {
 		return apiResult;
 	}
 
-	@ApiOperation(value = "获取验证码")
-	@GetMapping(value = "/captcha")
-	public ApiResult<ImagVerifi> captcha() {
-		ApiResult apiResult = new ApiResult();
-		ReturnClass img = userService.createImage();
-		if (img.isSuccess()) {
-			apiResult.success(img.getData());
-		} else {
-			apiResult.setMsg(img.getMsg());
-		}
-		return apiResult;
-	}
+	
 
 	//站点统计
 
