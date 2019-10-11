@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.EditUserParam;
 import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.UserParam;
@@ -47,6 +48,7 @@ public class UserController {
 	@ApiOperation(value = "修改用户信息", notes = "用户模块")
 	@PostMapping(value = "/edit")
 	@BlogOperation(value = "修改用户信息")
+//	@DistributeLock(value = "editUser", key = "#newUserParam.userName", timeout = 5, expire = 2, errMsg = "00000")
 	public ApiResult<String> editUser(@Valid @RequestBody EditUserParam editUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();

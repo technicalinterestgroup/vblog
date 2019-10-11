@@ -78,11 +78,11 @@ public class UserServiceImpl implements UserService {
 	//验证码过期时间
 	private static final long IMG_TIME = 60 * 5;
 
-	private long LOGIN_ERROR_TIMES=6;
+	private int LOGIN_ERROR_TIMES=6;
 
 	private static final String PASS_SALT="3edc4rfv!@#";
 	
-	private static final String LOGIN_ERROR_KEY="login_error";
+	private static final String LOGIN_ERROR_KEY="login_error_";
 
 	/**
 	 * 登录
@@ -98,6 +98,11 @@ public class UserServiceImpl implements UserService {
 		if (!returnClass.isSuccess()){
 			return returnClass;
 		}
+		//判断登录错误次数
+		ReturnClass loginErrorTimes=loginErrorTimes(userDTO.getUserName());
+		if (!loginErrorTimes.isSuccess()){
+			return loginErrorTimes;
+		}
 		User user = new User();
 		user.setUserName(userDTO.getUserName());
 		//用户名判断
@@ -112,13 +117,18 @@ public class UserServiceImpl implements UserService {
 			return ReturnClass.fail(UserConstant.USER_DISABLE);
 		}
 		//密码判断
-		user.setPassWord(user.getPassWord()+PASS_SALT);
+		user.setPassWord(userDTO.getPassWord()+PASS_SALT);
 		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
 		if (Objects.isNull(userRoleDTO)) {
 			//累加错误次数
-
+			ReturnClass returnClass1 = addErrorSum(userDTO.getUserName());
+			if (!returnClass1.isSuccess()){
+				return returnClass1;
+			}
 			return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
 		}
+		//清除错误登录次数
+		redisUtil.del(LOGIN_ERROR_KEY+userDTO.getUserName());
 		//获取权限列表
 		List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 1);
 		if (userRoleDTO.getRoleType() == 1) {
@@ -492,17 +502,34 @@ public class UserServiceImpl implements UserService {
 	private ReturnClass addErrorSum(String userName){
 		String key=LOGIN_ERROR_KEY+userName;
 		if (redisUtil.hasKey(key)){
-			long sum=(long)redisUtil.get(key);
+			int sum=(int)redisUtil.get(key);
 			if (sum>=LOGIN_ERROR_TIMES){
 				redisUtil.expire(key,(long)60);
 				return ReturnClass.fail(UserConstant.LOGIN_ERROR_OVER_TIMES);
 			}
 			redisUtil.incr(key,(long)1);
 		}else {
-			redisUtil.set(key,(long)1);
+			redisUtil.set(key,(long)1,(long)60);
 		}
 		return ReturnClass.success();
+	}
 
+	/**
+	 * @Description: 判断登录错误次数
+	 * @author: shuyu.wang
+	 * @date: 2019/10/11 21:45
+	 * @param userName
+	 * @return com.technicalinterest.group.service.dto.ReturnClass
+	 */
+	private ReturnClass loginErrorTimes(String userName){
+		String key=LOGIN_ERROR_KEY+userName;
+		if (redisUtil.hasKey(key)){
+			int sum=(int)redisUtil.get(key);
+			if (sum>=LOGIN_ERROR_TIMES){
+				return ReturnClass.fail(UserConstant.LOGIN_ERROR_OVER_TIMES);
+			}
+		}
+		return ReturnClass.success();
 	}
 
 }

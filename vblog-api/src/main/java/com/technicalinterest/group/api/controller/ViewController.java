@@ -85,7 +85,7 @@ public class ViewController {
 	@ApiOperation(value = "新用户注册", notes = "新用户注册")
 	@PostMapping(value = "/user/new")
 	@BlogOperation(value = "新用户注册")
-	@DistributeLock(value = "saveUser", key = "#newUserParam.userName", timeout = 10, expire = 10, errMsg = "00000")
+	@DistributeLock(value = "newUser", key = "#newUserParam.userName", timeout = 5, expire = 2, errMsg = "00000")
 	public ApiResult<String> saveUser(@Valid @RequestBody NewUserParam newUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO newUserDTO = new EditUserDTO();
@@ -148,6 +148,7 @@ public class ViewController {
 	@ApiOperation(value = "重置密码")
 	@PostMapping(value = "/user/reset/{key}")
 	@BlogOperation(value = "重置密码")
+	@DistributeLock(value = "saveUser", key = "#key", timeout = 5, expire = 2, errMsg = "00000")
 	public ApiResult<String> resetPassWord(@PathVariable("key") String key, @Validated @RequestBody ResetPassParam resetPassParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();
@@ -166,7 +167,6 @@ public class ViewController {
 	 * @Description: 获取验证码
 	 * @author: shuyu.wang
 	 * @date: 2019-10-11 11:24
-	 * @param null
 	 * @return null
 	*/
 	@ApiOperation(value = "获取验证码")
