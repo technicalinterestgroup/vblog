@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.NewCommentParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.service.CommentService;
@@ -39,6 +40,7 @@ public class CommentController {
 	@ApiOperation(value = "发表评论", notes = "发表评论")
 	@PostMapping(value = "/new")
 	@BlogOperation(value = "发表评论")
+	@DistributeLock( key = "#newCommentParam.articleId", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> saveArticle(@Valid @RequestBody NewCommentParam newCommentParam) {
 		ApiResult apiResult = new ApiResult();
 		EditCommentDTO editCommentDTO = new EditCommentDTO();

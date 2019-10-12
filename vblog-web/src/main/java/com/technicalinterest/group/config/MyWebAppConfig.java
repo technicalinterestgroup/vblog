@@ -1,6 +1,7 @@
 package com.technicalinterest.group.config;
 
 
+import com.technicalinterest.group.interceptor.IpUrlLimitInterceptor;
 import com.technicalinterest.group.interceptor.MyInterceptor;
 import com.technicalinterest.group.interceptor.RequestHeaderContextInterceptor;
 import com.technicalinterest.group.interceptor.RequestLimitInterceptor;
@@ -29,23 +30,28 @@ public class MyWebAppConfig extends WebMvcConfigurerAdapter {
 	@Value("${spring.profiles.active}")
 	private String profile;
 
-	private static final String ENV="prod";
+	private static final String LOACL_ENV="local";
 
+	private static final String PROD_ENV="prod";
     @Bean
-    MyInterceptor myInterceptor() {
+    MyInterceptor getMyInterceptor() {
         return new MyInterceptor();
     }
 
 	@Bean
-	public HandlerInterceptor getRequestLimitInterceptor(){
+	HandlerInterceptor getRequestLimitInterceptor(){
 		return new RequestLimitInterceptor();
 	}
 
 	@Bean
-	public RequestHeaderContextInterceptor requestHeaderContextInterceptor() {
+	RequestHeaderContextInterceptor getRequestHeaderContextInterceptor() {
 		return new RequestHeaderContextInterceptor();
 	}
 
+	@Bean
+	IpUrlLimitInterceptor getIpUrlLimitInterceptor(){
+    	return new IpUrlLimitInterceptor();
+	}
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -53,20 +59,22 @@ public class MyWebAppConfig extends WebMvcConfigurerAdapter {
         // 多个拦截器组成一个拦截器链
         // addPathPatterns 用于添加拦截规则
         // excludePathPatterns 用户排除拦截
-		if (StringUtils.equals(ENV,profile)){
-			registry.addInterceptor(myInterceptor()).addPathPatterns("/**");
+		if (!StringUtils.equals(LOACL_ENV,profile)){
+			registry.addInterceptor(getMyInterceptor()).addPathPatterns("/**");
 		}
-		registry.addInterceptor(requestHeaderContextInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(getRequestHeaderContextInterceptor()).addPathPatterns("/**");
 		registry.addInterceptor(getRequestLimitInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(getIpUrlLimitInterceptor()).addPathPatterns("/**");
         super.addInterceptors(registry);
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-		registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+		if (!StringUtils.equals(PROD_ENV,profile)){
+			registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+			registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
+			registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+		}
     }
-
 
 }

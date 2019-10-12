@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.util.concurrent.RateLimiter;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.util.IpAdrressUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -14,20 +16,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 /**
- * @description: 自定义拦截器
+ * @description: 限流拦截器
  * @author: Shuyu.Wang
  * @date: 2018-11-30 18:13
  * @version: V1.0
  **/
+@Slf4j
 public class RequestLimitInterceptor implements HandlerInterceptor {
 
-    private static final RateLimiter LIMITER = RateLimiter.create(20);
+    private static final RateLimiter LIMITER = RateLimiter.create(30);
 
-    private static Logger logger = LoggerFactory.getLogger(RequestLimitInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
         if (!LIMITER.tryAcquire()) {
+            log.info("请求数量超过网站限流，请求被拦截! ulr={},ip={}",httpServletRequest.getRequestURL().toString(), IpAdrressUtil.getIpAdrress(httpServletRequest));
             ApiResult result = new ApiResult(ResultEnum.NET_BLOCK);
             returnJson(httpServletResponse, JSON.toJSONString(result));
             return false;
@@ -53,7 +56,7 @@ public class RequestLimitInterceptor implements HandlerInterceptor {
             writer = response.getWriter();
             writer.print(json);
         } catch (IOException e) {
-            logger.error("LoginInterceptor response error ---> {}", e.getMessage(), e);
+            log.error("LoginInterceptor response error ---> {}", e.getMessage(), e);
         } finally {
             if (writer != null) {
                 writer.close();

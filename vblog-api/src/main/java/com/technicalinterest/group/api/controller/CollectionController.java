@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.PageBaseParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticlesVO;
@@ -85,6 +86,7 @@ public class CollectionController {
 	@ApiOperation(value = "添加收藏", notes = "添加收藏")
 	@GetMapping(value = "/new/{articleId}")
 	@BlogOperation(value = "添加收藏")
+	@DistributeLock( key = "#articleId", timeout = 1, expire = 1, errMsg = "00000")
 	public ApiResult<String> addCollection(@PathVariable("articleId") Long articleId) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass insert = collectionService.insert(articleId);

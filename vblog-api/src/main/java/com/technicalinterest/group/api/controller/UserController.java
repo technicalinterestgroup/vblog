@@ -48,7 +48,7 @@ public class UserController {
 	@ApiOperation(value = "修改用户信息", notes = "用户模块")
 	@PostMapping(value = "/edit")
 	@BlogOperation(value = "修改用户信息")
-//	@DistributeLock(value = "editUser", key = "#newUserParam.userName", timeout = 5, expire = 2, errMsg = "00000")
+	@DistributeLock( key = "#newUserParam.userName", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> editUser(@Valid @RequestBody EditUserParam editUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();

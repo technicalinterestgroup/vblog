@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.EditVSystemParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.UserVO;
@@ -74,6 +75,7 @@ public class SystemController {
 	@ApiOperation(value = "更新系统设置参数", notes = "详情")
 	@PostMapping(value = "/edit")
 	@BlogOperation(value = "更新系统设置参数")
+	@DistributeLock( key = "#editVSystemParam.userName", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> detail(@Valid @RequestBody EditVSystemParam editVSystemParam) {
 		ApiResult apiResult = new ApiResult();
 		VSystemDTO vSystemDTO = new VSystemDTO();

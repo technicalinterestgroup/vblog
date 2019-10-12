@@ -48,7 +48,7 @@ public class ArticleController {
 	@ApiOperation(value = "博客发布", notes = "博客发布")
 	@PostMapping(value = "/new")
 	@BlogOperation(value = "博客发布")
-	@DistributeLock(value = "saveArticle", key = "#articleContentParam.title", timeout = 5, expire = 2, errMsg = "00000")
+	@DistributeLock( key = "#articleContentParam.title", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> saveArticle(@Valid @RequestBody NewArticleContentParam articleContentParam) {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();

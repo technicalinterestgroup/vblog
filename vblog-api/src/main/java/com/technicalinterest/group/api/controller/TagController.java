@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.EditCategoryParam;
 import com.technicalinterest.group.api.param.EditTagParam;
 import com.technicalinterest.group.api.param.NewCategoryParam;
@@ -81,6 +82,7 @@ public class TagController {
 	@ApiOperation(value = "编辑博客标签", notes = "更新")
 	@PostMapping(value = "/edit")
 	@BlogOperation(value = "编辑博客标签")
+	@DistributeLock( key = "#editTagParam.id", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> editCategory(@Valid @RequestBody EditTagParam editTagParam) {
 		ApiResult apiResult = new ApiResult();
 		EditTagDTO editTagDTO = new EditTagDTO();
@@ -104,6 +106,7 @@ public class TagController {
 	@ApiOperation(value = "新增博客标签", notes = "新增")
 	@PostMapping(value = "/new")
 	@BlogOperation(value = "新增博客标签")
+	@DistributeLock( key = "#newTagParam.userName", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> newCategory(@Valid @RequestBody NewTagParam newTagParam) {
 		ApiResult apiResult = new ApiResult();
 		EditTagDTO editTagDTO = new EditTagDTO();

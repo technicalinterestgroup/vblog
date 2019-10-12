@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.PageBaseParam;
 import com.technicalinterest.group.api.param.QueryFileParam;
 import com.technicalinterest.group.api.vo.ApiResult;
@@ -81,6 +82,7 @@ public class UploadController {
 	@ApiOperation(value = "图片上传", notes = "图片上传")
 	@PostMapping(value = "/img/upload")
 	@BlogOperation(value = "图片上传")
+	@DistributeLock( key = "#file.getOriginalFilename", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> uploadImg(@RequestParam(value = "file") MultipartFile file) {
 		ReturnClass userByToken = userService.getUserByToken();
 		String userName = null;
@@ -117,6 +119,7 @@ public class UploadController {
 	@ApiOperation(value = "文件上传", notes = "文件上传")
 	@PostMapping(value = "/file/upload")
 	@BlogOperation(value = "文件上传")
+	@DistributeLock( key = "#file.getOriginalFilename", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> uploadFile(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "filePaht", required = false) String filePaht) {
 		ReturnClass userByToken = userService.getUserByToken();
 		String userName = null;

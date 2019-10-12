@@ -23,7 +23,7 @@ import java.util.Objects;
 /**
  * @package: com.ganinfo.common.interceptor
  * @className: MybatisInterceptor
- * @description: 自定义拦截器
+ * @description: 权限拦截器
  * @author: Shuyu.Wang
  * @date: 2018-11-30 18:13
  * @version: V1.0
@@ -58,9 +58,7 @@ public class MyInterceptor implements HandlerInterceptor {
 		response.setHeader(UrlConstant.ALLOW_HEADERS_HEADER_STRING, UrlConstant.ALLOW_HEADERS_VALUE_STRING);
 		response.setHeader(UrlConstant.EXPOSE_HEADERS_HEADER_STRING, UrlConstant.HEADER_ALL_VALUE_STRING);
 
-		int begin = request.getRequestURL().toString().indexOf("/vblog");
-		int lenth = request.getRequestURL().toString().length();
-		String url = request.getRequestURL().toString().substring(begin, lenth);
+		String url = request.getRequestURI();
 		String ACCESS_TOKEN_STRING = request.getHeader(UrlConstant.ACCESS_TOKEN_STRING);
 		if (!url.startsWith(UrlConstant.NOT_AUTH_URL_STRING) && !url.contains(UrlConstant.DOC_URL_STRING)) {
 			if (!Objects.isNull(ACCESS_TOKEN_STRING)) {
