@@ -37,6 +37,8 @@ public class IpUrlLimitInterceptor implements HandlerInterceptor {
 
 	private static final long LIMIT_TIMES=5;
 
+	private static final int IP_LOCK_TIME=60;
+
 	@Override
 	public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
 		log.info("request请求地址uri={},ip={}", httpServletRequest.getRequestURI(), IpAdrressUtil.getIpAdrress(httpServletRequest));
@@ -92,7 +94,7 @@ public class IpUrlLimitInterceptor implements HandlerInterceptor {
 		if (redisUtil.hasKey(key)){
 			long time=redisUtil.incr(key,(long)1);
 			if (time>=LIMIT_TIMES){
-				redisUtil.getLock(LOCK_IP_URL_KEY+ip,ip,60);
+				redisUtil.getLock(LOCK_IP_URL_KEY+ip,ip,IP_LOCK_TIME);
 				return false;
 			}
 		}else {
