@@ -7,6 +7,7 @@ import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import com.technicalinterest.group.service.util.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,10 +35,16 @@ public class IpUrlLimitInterceptor implements HandlerInterceptor {
 	private static final String LOCK_IP_URL_KEY="lock_ip_";
 
 	private static final String IP_URL_REQ_TIME="ip_url_times_";
-
-	private static final long LIMIT_TIMES=5;
-
-	private static final int IP_LOCK_TIME=60;
+	/**
+	 * 访问限制次数
+	 */
+	@Value("${request_limit_times}")
+	private Long LIMIT_TIMES;
+	/**
+	 * 用户锁住时间
+	 */
+	@Value("${ip_lock_time}")
+	private Integer IP_LOCK_TIME;
 
 	@Override
 	public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
@@ -53,6 +60,7 @@ public class IpUrlLimitInterceptor implements HandlerInterceptor {
 			returnJson(httpServletResponse, JSON.toJSONString(result));
 			return false;
 		}
+		log.info("通过判断");
 		return true;
 	}
 
