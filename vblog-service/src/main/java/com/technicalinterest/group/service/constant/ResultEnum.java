@@ -31,8 +31,8 @@ public enum ResultEnum {
 	MEDIATYPE_ERROR("000105","媒体类型不支持!"),
 	FILESIZE_ERROR("000106","文件过大!"),
 	PARAM_ERROR("000107","参数获取异常！"),
-	DATA_ERROR("000108","数据格式异常!");
-
+	DATA_ERROR("000108","数据格式异常!"),
+	LOCK_IP("000109","请求过于频繁，ip被禁止访问该系统1小时，如有问题请与管理员联系!");
 	private String code;
 	private String msg;
 

@@ -11,19 +11,21 @@ import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Objects;
 
 /**
  * @package: com.ganinfo.common.interceptor
  * @className: MybatisInterceptor
- * @description: 自定义拦截器
+ * @description: 权限拦截器
  * @author: Shuyu.Wang
  * @date: 2018-11-30 18:13
  * @version: V1.0
@@ -50,7 +52,6 @@ public class MyInterceptor implements HandlerInterceptor {
 	 */
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		boolean flag = true;
 		response.setHeader(UrlConstant.ORIGIN_HEADER_STRING, UrlConstant.HEADER_ALL_VALUE_STRING);
 		response.setHeader(UrlConstant.CREDENTIALS_HEADER_STRING, UrlConstant.CREDENTIALS_VALUE_STRING);
 		response.setHeader(UrlConstant.METHODS_HEADER_STRING, UrlConstant.HEADER_ALL_VALUE_STRING);
@@ -58,77 +59,46 @@ public class MyInterceptor implements HandlerInterceptor {
 		response.setHeader(UrlConstant.ALLOW_HEADERS_HEADER_STRING, UrlConstant.ALLOW_HEADERS_VALUE_STRING);
 		response.setHeader(UrlConstant.EXPOSE_HEADERS_HEADER_STRING, UrlConstant.HEADER_ALL_VALUE_STRING);
 
-		int begin = request.getRequestURL().toString().indexOf("/vblog");
-		int lenth = request.getRequestURL().toString().length();
-		String url = request.getRequestURL().toString().substring(begin, lenth);
+		String url = request.getRequestURI();
 		String ACCESS_TOKEN_STRING = request.getHeader(UrlConstant.ACCESS_TOKEN_STRING);
 		if (!url.startsWith(UrlConstant.NOT_AUTH_URL_STRING) && !url.contains(UrlConstant.DOC_URL_STRING)) {
 			if (!Objects.isNull(ACCESS_TOKEN_STRING)) {
 				if (!redisUtil.hasKey(ACCESS_TOKEN_STRING)) {
 					log.error(">>>无效请求：登录超时;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
-					response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
-					ApiResult result = new ApiResult(ResultEnum.TIME_OUT);
-					PrintWriter out = response.getWriter();
-					out.write(JSONObject.toJSONString(result));
-					out.close();
+					printJson(response, ResultEnum.TIME_OUT);
 					return false;
 				}
-				String userName = (String) redisUtil.get(ACCESS_TOKEN_STRING);
-				ReturnClass userByuserName = userService.getUserByuserName(false, userName);
-				if (!userByuserName.isSuccess()) {
-					log.error(">>>无效请求：用户不存在;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
-					response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
-					ApiResult result = new ApiResult(ResultEnum.USERINFO_ERROR);
-					PrintWriter out = response.getWriter();
-					out.write(JSONObject.toJSONString(result));
-					out.close();
-					return false;
-				}
-				UserDTO userDTO = (UserDTO) userByuserName.getData();
-				if (userDTO.getRoleType() == 2) {
-					String o = (String) redisUtil.get(UserConstant.ADMIN_AUTH_URL);
-					if (o.contains(url + ",")) {
-						log.error(">>>非法请求：普通用户请求管理员接口;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
-						response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
-						ApiResult result = new ApiResult(ResultEnum.NO_AUTH);
-						PrintWriter out = response.getWriter();
-						out.write(JSONObject.toJSONString(result));
-						out.close();
-						return false;
+				String userInfo = (String) redisUtil.get(ACCESS_TOKEN_STRING);
+				UserDTO userDTO = JSONObject.parseObject(userInfo, UserDTO.class);
+				if (Objects.nonNull(userDTO)&& StringUtils.isNotEmpty(userDTO.getUserName())) {
+					//判断是否是普通用户
+					if (userDTO.getRoleType() == 2) {
+						String o = (String) redisUtil.get(UserConstant.ADMIN_AUTH_URL);
+						if (o.contains(url + ",")) {
+							log.error(">>>非法请求：普通用户请求管理员接口;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
+							printJson(response, ResultEnum.NO_AUTH);
+							return false;
+						}
 					}
+					redisUtil.expire(ACCESS_TOKEN_STRING, ACTIVATION_TIME);
+					return true;
+				}else {
+					log.error(">>>无效请求：用户不存在;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
+					printJson(response, ResultEnum.USERINFO_ERROR);
+					return false;
 				}
-				redisUtil.expire(ACCESS_TOKEN_STRING, ACTIVATION_TIME);
-				redisUtil.expire(userName, ACTIVATION_TIME);
-				return true;
 			} else {
 				log.error(">>>非法请求：无token;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
-				response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
-				ApiResult result = new ApiResult(ResultEnum.ACCESTOKEN_NULL);
-				PrintWriter out = response.getWriter();
-				out.write(JSONObject.toJSONString(result));
-				out.close();
+				printJson(response, ResultEnum.ACCESTOKEN_NULL);
 				return false;
 			}
 		}
 		if (Objects.nonNull(ACCESS_TOKEN_STRING)) {
-
 			if (redisUtil.hasKey(ACCESS_TOKEN_STRING)) {
-				String userName = (String) redisUtil.get(ACCESS_TOKEN_STRING);
 				redisUtil.expire(ACCESS_TOKEN_STRING, ACTIVATION_TIME);
-				redisUtil.expire(userName, ACTIVATION_TIME);
 			}
-			//			else {
-			//				log.error(">>>无效请求：登录超时;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
-			//				response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
-			//				ApiResult result = new ApiResult(ResultEnum.TIME_OUT);
-			//				PrintWriter out = response.getWriter();
-			//				out.write(JSONObject.toJSONString(result));
-			//				out.close();
-			//				return false;
-			//			}
-
 		}
-		return flag;
+		return true;
 	}
 
 	/**
@@ -158,6 +128,19 @@ public class MyInterceptor implements HandlerInterceptor {
 	 */
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+	}
+
+	private void printJson(HttpServletResponse response, ResultEnum resultEnum) {
+		try {
+			response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
+			ApiResult result = new ApiResult(ResultEnum.NO_AUTH);
+			PrintWriter out = response.getWriter();
+			out.write(JSONObject.toJSONString(result));
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

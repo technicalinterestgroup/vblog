@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.service.LikeService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
@@ -43,6 +44,7 @@ public class LikeController {
 	@ApiOperation(value = "博客点赞", notes = "博客点赞")
 	@GetMapping(value = "/new/{articleId}")
 	@BlogOperation(value = "博客点赞")
+	@DistributeLock( key = "#articleId", timeout = 1, expire = 1, errMsg = "00000")
 	public ApiResult<String> addCollection(@PathVariable("articleId") Long articleId) {
 		ApiResult apiResult = new ApiResult();
 		ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();

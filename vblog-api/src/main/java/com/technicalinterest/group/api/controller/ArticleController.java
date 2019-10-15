@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.EditArticleContentParam;
 import com.technicalinterest.group.api.param.NewArticleContentParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
@@ -47,6 +48,7 @@ public class ArticleController {
 	@ApiOperation(value = "博客发布", notes = "博客发布")
 	@PostMapping(value = "/new")
 	@BlogOperation(value = "博客发布")
+	@DistributeLock( key = "#articleContentParam.title", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> saveArticle(@Valid @RequestBody NewArticleContentParam articleContentParam) {
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();

@@ -85,7 +85,7 @@ public class ViewController {
 	@ApiOperation(value = "新用户注册", notes = "新用户注册")
 	@PostMapping(value = "/user/new")
 	@BlogOperation(value = "新用户注册")
-	@DistributeLock(value = "saveUser", key = "#newUserParam.userName", timeout = 10, expire = 10, errMsg = "00000")
+	@DistributeLock(key = "#newUserParam.userName", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> saveUser(@Valid @RequestBody NewUserParam newUserParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO newUserDTO = new EditUserDTO();
@@ -148,6 +148,7 @@ public class ViewController {
 	@ApiOperation(value = "重置密码")
 	@PostMapping(value = "/user/reset/{key}")
 	@BlogOperation(value = "重置密码")
+	@DistributeLock( key = "#resetPassParam.userName", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> resetPassWord(@PathVariable("key") String key, @Validated @RequestBody ResetPassParam resetPassParam) {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();
@@ -157,6 +158,26 @@ public class ViewController {
 			apiResult.success(activationUser.getMsg(), null);
 		} else {
 			apiResult.fail(activationUser.getMsg());
+		}
+		return apiResult;
+	}
+
+	
+	/**
+	 * @Description: 获取验证码
+	 * @author: shuyu.wang
+	 * @date: 2019-10-11 11:24
+	 * @return null
+	*/
+	@ApiOperation(value = "获取验证码")
+	@GetMapping(value = "/captcha")
+	public ApiResult<ImagVerifi> captcha() {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass img = userService.createImage();
+		if (img.isSuccess()) {
+			apiResult.success(img.getData());
+		} else {
+			apiResult.setMsg(img.getMsg());
 		}
 		return apiResult;
 	}
@@ -221,7 +242,7 @@ public class ViewController {
 	 * @Description: 会员最新文章
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
-	 * @param
+	 * @param userName
 	 * @return null
 	 */
 	@ApiOperation(value = "会员最新文章列表", notes = "文章列表")
@@ -248,7 +269,7 @@ public class ViewController {
 	 * @Description: 会员热门文章
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
-	 * @param
+	 * @param userName
 	 * @return null
 	 */
 	@ApiOperation(value = "会员热门文章列表", notes = "文章列表")
@@ -275,7 +296,7 @@ public class ViewController {
 	 * @Description: 文章归档
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
-	 * @param
+	 * @param userName
 	 * @return null
 	 */
 	@ApiOperation(value = "会员文章归档", notes = "文章归档")
@@ -344,7 +365,7 @@ public class ViewController {
 	}
 
 	/**
-	 * 	 * @Description: 网站文章列表
+	 * @Description: 网站文章列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
 	 * @param queryArticleParam
@@ -380,7 +401,6 @@ public class ViewController {
 	 * @Description: 网站最新文章
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
-	 * @param
 	 * @return null
 	 */
 	@ApiOperation(value = "最新文章列表", notes = "文章列表")
@@ -408,7 +428,6 @@ public class ViewController {
 	 * @Description: 热门文章
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
-	 * @param
 	 * @return null
 	 */
 	@ApiOperation(value = "网站热门文章列表", notes = "文章列表")
@@ -483,18 +502,7 @@ public class ViewController {
 		return apiResult;
 	}
 
-	@ApiOperation(value = "获取验证码")
-	@GetMapping(value = "/captcha")
-	public ApiResult<ImagVerifi> captcha() {
-		ApiResult apiResult = new ApiResult();
-		ReturnClass img = userService.createImage();
-		if (img.isSuccess()) {
-			apiResult.success(img.getData());
-		} else {
-			apiResult.setMsg(img.getMsg());
-		}
-		return apiResult;
-	}
+	
 
 	//站点统计
 

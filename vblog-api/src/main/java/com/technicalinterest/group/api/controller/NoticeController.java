@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.PageBaseParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.vo.ApiResult;
@@ -114,6 +115,7 @@ public class NoticeController {
 	@ApiOperation(value = "查看评论通知", notes = "查看评论通知")
 	@GetMapping(value = "/like/view/{id}")
 	@BlogOperation(value = "查看评论通知")
+	@DistributeLock( key = "#id", timeout = 1, expire = 1, errMsg = "00000")
 	public ApiResult<PageBean<CommentNoticeVO>> viewLike(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass returnClass = noticeService.viewLike(id);

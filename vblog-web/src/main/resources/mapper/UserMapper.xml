@@ -66,7 +66,6 @@
         <set>
             <if test="pojo.nickName!=null">nick_name=#{pojo.nickName},</if>
             <if test="pojo.passWord != null">`pass_word` =  MD5(#{pojo.passWord}),</if>
-            <if test="pojo.email != null">`email` =#{pojo.email},</if>
             <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime},</if>
             <if test="pojo.photo != null">`photo` = #{pojo.photo},</if>
             <if test="pojo.integral != null">`integral` = integral+#{pojo.integral},</if>
@@ -101,7 +100,7 @@
     </select>
 
     <select id="queryUserRoleDTO" resultType="com.technicalinterest.group.dto.UserRoleDTO" parameterType="com.technicalinterest.group.dao.User">
-        SELECT t1.user_name AS userName,t1.nick_name AS nickName,t1.photo,t1.state,t1.is_del as isDel,t3.id as roleId,t3.`name` AS roleName,
+        SELECT  t1.id,t1.user_name AS userName,t1.nick_name AS nickName,t1.photo,t1.state,t1.is_del as isDel,t3.id as roleId,t3.`name` AS roleName,
         t3.type as roleType
         from v_user t1 INNER JOIN v_user_role t2 on t1.id=t2.user_id INNER JOIN v_role t3
         on t2.role_id=t3.id

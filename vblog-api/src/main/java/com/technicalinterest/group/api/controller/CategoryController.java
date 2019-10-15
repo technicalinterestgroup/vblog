@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.EditCategoryParam;
 import com.technicalinterest.group.api.param.NewCategoryParam;
 import com.technicalinterest.group.api.vo.ApiResult;
@@ -75,6 +76,7 @@ public class CategoryController {
 	@ApiOperation(value = "编辑博客分类", notes = "更新")
 	@PostMapping(value = "/edit")
 	@BlogOperation(value = "编辑博客分类")
+	@DistributeLock( key = "#editCategoryParam.id", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> editCategory(@Valid @RequestBody EditCategoryParam editCategoryParam) {
 		ApiResult apiResult = new ApiResult();
 		EditCategoryDTO editCategoryDTO = new EditCategoryDTO();
@@ -98,6 +100,7 @@ public class CategoryController {
 	@ApiOperation(value = "新增博客分类", notes = "新增")
 	@PostMapping(value = "/new")
 	@BlogOperation(value = "新增博客分类")
+	@DistributeLock( key = "#editCategoryParam.name", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> newCategory(@Valid @RequestBody NewCategoryParam newCategoryParam) {
 		ApiResult apiResult = new ApiResult();
 		EditCategoryDTO editCategoryDTO = new EditCategoryDTO();

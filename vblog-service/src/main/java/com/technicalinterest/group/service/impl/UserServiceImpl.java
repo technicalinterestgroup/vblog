@@ -71,12 +71,22 @@ public class UserServiceImpl implements UserService {
 
 	@Value("${reset_web_url}")
 	private String REST_WEB_URL;
-
-	private static final long activation_time = 60 * 60 * 24;
-
-	private static final long login_time = 60 * 30;
+	//邮件过期时间
+	private static final long ACTIVATION_TIME = 60 * 60 * 24;
+	//登录过期时间
+	private static final long LOGIN_TIME = 60 * 30;
 	//验证码过期时间
-	private static final long img_time = 60 * 5;
+	private static final long IMG_TIME = 60 * 5;
+
+	private int LOGIN_ERROR_TIMES = 6;
+
+	private static final String PASS_SALT = "3edc4rfv!@#";
+
+	private static final String LOGIN_ERROR_KEY = "login_error_";
+
+	private String LOCK_USER_KEY = "lock_user_";
+
+	private long LOCK_USER_TIME = 120;
 
 	/**
 	 * 登录
@@ -88,9 +98,14 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ReturnClass login(EditUserDTO userDTO) {
 		//验证码校验
-		ReturnClass returnClass = validImg(userDTO.getToken(), userDTO.getImg());
-		if (!returnClass.isSuccess()){
-			return returnClass;
+		//		ReturnClass returnClass = validImg(userDTO.getToken(), userDTO.getImg());
+		//		if (!returnClass.isSuccess()) {
+		//			return returnClass;
+		//		}
+		//判断登录错误次数
+		ReturnClass loginErrorTimes = loginErrorTimes(userDTO.getUserName());
+		if (!loginErrorTimes.isSuccess()) {
+			return loginErrorTimes;
 		}
 		User user = new User();
 		user.setUserName(userDTO.getUserName());
@@ -106,11 +121,18 @@ public class UserServiceImpl implements UserService {
 			return ReturnClass.fail(UserConstant.USER_DISABLE);
 		}
 		//密码判断
-		user.setPassWord(user.getPassWord());
+		user.setPassWord(userDTO.getPassWord() + PASS_SALT);
 		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
 		if (Objects.isNull(userRoleDTO)) {
+			//累加错误次数
+			ReturnClass returnClass1 = addErrorSum(userDTO.getUserName());
+			if (!returnClass1.isSuccess()) {
+				return returnClass1;
+			}
 			return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
 		}
+		//清除错误登录次数
+		redisUtil.del(LOGIN_ERROR_KEY + userDTO.getUserName());
 		//获取权限列表
 		List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 1);
 		if (userRoleDTO.getRoleType() == 1) {
@@ -140,8 +162,8 @@ public class UserServiceImpl implements UserService {
 			String o = (String) redisUtil.get(userName);
 			redisUtil.del(o);
 		}
-		redisUtil.set(userName, token, login_time);
-		redisUtil.set(token, userName, login_time);
+		redisUtil.set(userName, token, LOGIN_TIME);
+		redisUtil.set(token, userName, LOGIN_TIME);
 		return token;
 	}
 
@@ -157,7 +179,7 @@ public class UserServiceImpl implements UserService {
 	public ReturnClass addUser(EditUserDTO newUserDTO) {
 		//验证码校验
 		ReturnClass returnClass = validImg(newUserDTO.getToken(), newUserDTO.getImg());
-		if (!returnClass.isSuccess()){
+		if (!returnClass.isSuccess()) {
 			return returnClass;
 		}
 		User user = User.builder().userName(newUserDTO.getUserName()).build();
@@ -172,6 +194,7 @@ public class UserServiceImpl implements UserService {
 		}
 		BeanUtils.copyProperties(newUserDTO, user);
 		user.setNickName("小小程序员");
+		user.setPassWord(newUserDTO.getPassWord() + PASS_SALT);
 		int i = userMapper.insertSelective(user);
 		if (i != 1) {
 			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
@@ -186,7 +209,7 @@ public class UserServiceImpl implements UserService {
 			VSystemDTO vSystemDTO = VSystemDTO.builder().userName(newUserDTO.getUserName()).vStart(new Date()).build();
 			systemService.insertSelective(vSystemDTO);
 			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
-			redisUtil.set(key, String.valueOf(user.getId()), activation_time);
+			redisUtil.set(key, String.valueOf(user.getId()), ACTIVATION_TIME);
 			//发送邮件
 			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
 			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
@@ -214,6 +237,9 @@ public class UserServiceImpl implements UserService {
 		UserDTO userDTO = (UserDTO) userByToken.getData();
 		BeanUtils.copyProperties(editUserDTO, user);
 		user.setId(userDTO.getId());
+		if (StringUtils.isNotEmpty(editUserDTO.getPassWord())) {
+			user.setPassWord(editUserDTO.getPassWord() + PASS_SALT);
+		}
 		int update = userMapper.update(user);
 		if (update != 1) {
 			return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
@@ -356,10 +382,10 @@ public class UserServiceImpl implements UserService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass sendForgetPassMail(String userName,String email,String img,String token) {
+	public ReturnClass sendForgetPassMail(String userName, String email, String img, String token) {
 		//验证码校验
 		ReturnClass returnClass = validImg(token, img);
-		if (!returnClass.isSuccess()){
+		if (!returnClass.isSuccess()) {
 			return returnClass;
 		}
 		User user = new User();
@@ -372,11 +398,11 @@ public class UserServiceImpl implements UserService {
 		if (userByUser.getState() == 0) {
 			return ReturnClass.fail(UserConstant.NO_ACTIVATION);
 		}
-		if (!StringUtils.equals(email,userByUser.getEmail())){
+		if (!StringUtils.equals(email, userByUser.getEmail())) {
 			return ReturnClass.fail(UserConstant.MAIL_FAIL);
 		}
 		String key = userName + "_" + UUID.randomUUID().toString();
-		redisUtil.set(key, String.valueOf(userByUser.getId()), activation_time);
+		redisUtil.set(key, String.valueOf(userByUser.getId()), ACTIVATION_TIME);
 		//发送邮件
 		//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
 		mailService.sendHtmlMail(userByUser.getEmail(), UserConstant.FORGET_PASS_MAIL_TITLE,
@@ -441,7 +467,7 @@ public class UserServiceImpl implements UserService {
 			//该字符串传输至前端放入src即可显示图片，安卓可以去掉data:image/png;base64,
 			String src = "data:image/png;base64," + base64bytes;
 			String token = UUID.randomUUID().toString();
-			redisUtil.set(token, text, img_time);
+			redisUtil.set(token, text, IMG_TIME);
 			ImagVerifi imagVerifi = ImagVerifi.builder().img(src.replaceAll("[\\s*\t\n\r]", "")).token(token).build();
 			return ReturnClass.success(imagVerifi);
 		} catch (IOException e) {
@@ -449,14 +475,13 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
-
 	/**
 	 * @Description: 校验验证码
 	 * @author: shuyu.wang
 	 * @date: 2019-10-10 17:07
 	 * @param token
 	 * @return null
-	*/
+	 */
 	private ReturnClass validImg(String token, String img) {
 		if (redisUtil.hasKey(token)) {
 			String result = (String) redisUtil.get(token);
@@ -467,6 +492,42 @@ public class UserServiceImpl implements UserService {
 			return ReturnClass.fail(UserConstant.IMG_FAIL);
 		}
 		return ReturnClass.fail(UserConstant.IMG_TIME_OUT);
+	}
+
+	/**
+	 * @Description: 累加错误次数
+	 * @author: shuyu.wang
+	 * @date: 2019-10-11 18:27
+	 * @param userName
+	 * @return null
+	 */
+	private ReturnClass addErrorSum(String userName) {
+		String key = LOGIN_ERROR_KEY + userName;
+		if (redisUtil.hasKey(key)) {
+			long incr = redisUtil.incr(key, (long) 1);
+			if (incr >= LOGIN_ERROR_TIMES) {
+				redisUtil.set(LOCK_USER_KEY + userName, userName, LOCK_USER_TIME);
+				return ReturnClass.fail(UserConstant.LOGIN_ERROR_OVER_TIMES);
+			}
+		} else {
+			redisUtil.set(key, (long) 1, LOCK_USER_TIME);
+		}
+		return ReturnClass.success();
+	}
+
+	/**
+	 * @Description: 判断账号是否被锁定
+	 * @author: shuyu.wang
+	 * @date: 2019/10/11 21:45
+	 * @param userName
+	 * @return com.technicalinterest.group.service.dto.ReturnClass
+	 */
+	private ReturnClass loginErrorTimes(String userName) {
+		String key = LOCK_USER_KEY + userName;
+		if (redisUtil.hasKey(key)) {
+			return ReturnClass.fail(UserConstant.LOGIN_ERROR_OVER_TIMES);
+		}
+		return ReturnClass.success();
 	}
 
 }
