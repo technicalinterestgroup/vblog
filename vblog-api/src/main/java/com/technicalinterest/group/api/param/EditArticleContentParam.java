@@ -64,8 +64,8 @@ public class EditArticleContentParam {
 	/**
 	 * 文章状态 0：草稿，1：发布
 	 */
-	@ApiModelProperty(value = "文章状态",allowableValues = "0：草稿，1：发布")
-	private Short state;
+//	@ApiModelProperty(value = "文章状态",allowableValues = "0：草稿，1：发布")
+//	private Short state;
 
 	public String getContentMD() {
 		return contentMD;

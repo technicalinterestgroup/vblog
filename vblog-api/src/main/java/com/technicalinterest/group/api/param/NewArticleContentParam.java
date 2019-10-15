@@ -22,6 +22,12 @@ public class NewArticleContentParam {
 	/**
 	 * 标题
 	 */
+	@ApiModelProperty(value = "id")
+	private Long id;
+
+	/**
+	 * 标题
+	 */
 	@ApiModelProperty(value = "文章标题")
 	@NotBlank(message = "文章标题不能为空！")
 	private String title;

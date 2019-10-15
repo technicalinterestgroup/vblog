@@ -63,7 +63,7 @@ public class ViewController {
 		ReturnClass login = userService.login(userDTO);
 		if (login.isSuccess()) {
 			UserVO userVO = new UserVO();
-			UserDTO resultUser = (UserDTO) login.getData();
+			UserJWTDTO resultUser = (UserJWTDTO) login.getData();
 			BeanUtils.copyProperties(resultUser, userVO);
 			List list = ListBeanUtils.copyProperties(resultUser.getAuthList(), RoleAuthVO.class);
 			userVO.setAuthList(list);

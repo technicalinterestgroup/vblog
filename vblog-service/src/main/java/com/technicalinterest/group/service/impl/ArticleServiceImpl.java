@@ -21,6 +21,7 @@ import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.HtmlUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
+import com.technicalinterest.group.service.util.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -84,6 +85,16 @@ public class ArticleServiceImpl implements ArticleService {
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
+		if (articleContentDTO.getId()!=null){
+			ArticleServiceImpl articleService=SpringContextUtil.getBean(ArticleServiceImpl.class);
+			ReturnClass returnClass = articleService.editArticle(articleContentDTO);
+			if (articleContentDTO.getState()==1){
+				returnClass.setMsg(ArticleConstant.SUS_ADD);
+			}else {
+				returnClass.setMsg(ArticleConstant.SUS_DRAFT);
+			}
+			return returnClass;
+		}
 		//文章摘要
 		String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContent());
 		article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
@@ -100,16 +111,23 @@ public class ArticleServiceImpl implements ArticleService {
 			}
 			//增加积分
 			if (articleContentDTO.getState() == 1) {
-				User user = User.builder().integral(JF).build();
-				user.setId(userId);
-				int update = userMapper.update(user);
-				if (update < 1) {
-					log.error("博客发布增加积分失败，userName={},ArticleId={}", article.getUserName(), article.getId());
-				}
+				ArticleServiceImpl articleService=SpringContextUtil.getBean(ArticleServiceImpl.class);
+                articleService.addJF(userId,article.getUserName(),article.getId());
 			}
-			return ReturnClass.success(ArticleConstant.SUS_ADD);
+			return ReturnClass.success(ArticleConstant.SUS_ADD,article.getId());
 		}
 		return ReturnClass.fail(ArticleConstant.FAIL_ADD);
+	}
+
+	@Async
+	public void addJF(Long userId,String userName,Long articleId){
+		User user = User.builder().integral(JF).build();
+		user.setId(userId);
+		int update = userMapper.update(user);
+		if (update < 1) {
+			log.error("博客发布增加积分失败，userName={},ArticleId={}",userName,articleId);
+		}
+
 	}
 
 	/**
@@ -120,6 +138,7 @@ public class ArticleServiceImpl implements ArticleService {
 	 * @return ReturnClass
 	 */
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public ReturnClass editArticle(ArticleContentDTO articleContentDTO) {
 		Article article = new Article();
 		BeanUtils.copyProperties(articleContentDTO, article);
@@ -128,18 +147,26 @@ public class ArticleServiceImpl implements ArticleService {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 		//数据是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId(), null);
-		if (Objects.isNull(articleInfo)) {
+		Article param = new Article();
+		param.setId(articleContentDTO.getId());
+		Article articleResult = articleMapper.query(param);
+		if (Objects.isNull(articleResult)) {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
 		//判断是否是本人操作
 		UserDTO userDTO = (UserDTO) userByToken.getData();
-		if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
+		if (!StringUtils.equals(articleResult.getUserName(), userDTO.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
 		//文章摘要
 		String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContent());
 		article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
+
+		if (articleContentDTO.getState()==1&&articleResult.getState()==0){
+			ArticleServiceImpl articleService=SpringContextUtil.getBean(ArticleServiceImpl.class);
+			articleService.addJF(userDTO.getId(),article.getUserName(),article.getId());
+			article.setCreateTime(new Date());
+		}
 		articleMapper.update(article);
 		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
 			Content content = new Content();
@@ -151,7 +178,7 @@ public class ArticleServiceImpl implements ArticleService {
 			if (i < 1) {
 				throw new VLogException(ArticleConstant.FAIL_EDIT);
 			}
-			return ReturnClass.success(ArticleConstant.SUS_EDIT);
+			return ReturnClass.success(ArticleConstant.SUS_EDIT,article.getId());
 		}
 		return ReturnClass.fail(ArticleConstant.FAIL_EDIT);
 	}
@@ -189,23 +216,19 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public ReturnClass articleDetail(Boolean authCheck, Long id) {
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
-		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		String userName = null;
-		if (!authCheck) {
-			if (Objects.nonNull(accessToken)) {
-				if (redisUtil.hasKey(accessToken)) {
-					userName = (String) redisUtil.get(accessToken);
-				}
-			}
+		//获取请求用户信息
+		ReturnClass userByToken = userService.getUserByToken();
+		if (!userByToken.isSuccess()) {
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, userName);
+		UserDTO userDTO = (UserDTO) userByToken.getData();
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, userDTO.getUserName());
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
 		//获取数据是否是当前用户校验
 		if (authCheck) {
-			ReturnClass returnClass = userService.userNameIsLoginUser(articleInfo.getUserName());
-			if (!returnClass.isSuccess()) {
+			if (!StringUtils.equals(userDTO.getUserName(), articleInfo.getUserName())) {
 				throw new VLogException(ResultEnum.NO_AUTH);
 			}
 		}
@@ -257,7 +280,7 @@ public class ArticleServiceImpl implements ArticleService {
 				throw new VLogException(ResultEnum.NO_URL);
 			}
 		}
-		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName,ARTICLE_LIMIT);
+		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName, ARTICLE_LIMIT);
 		if (articlesDTOS.isEmpty()) {
 			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}

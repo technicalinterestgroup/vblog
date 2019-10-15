@@ -76,7 +76,7 @@ public class SystemController {
 	@PostMapping(value = "/edit")
 	@BlogOperation(value = "更新系统设置参数")
 	@DistributeLock( key = "#editVSystemParam.userName", timeout = 2, expire = 1, errMsg = "00000")
-	public ApiResult<String> detail(@Valid @RequestBody EditVSystemParam editVSystemParam) {
+	public ApiResult<String> edit(@Valid @RequestBody EditVSystemParam editVSystemParam) {
 		ApiResult apiResult = new ApiResult();
 		VSystemDTO vSystemDTO = new VSystemDTO();
 		BeanUtils.copyProperties(editVSystemParam, vSystemDTO);

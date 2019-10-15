@@ -1,5 +1,6 @@
 package com.technicalinterest.group.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.dao.UserRole;
@@ -17,6 +18,7 @@ import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.*;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.exception.VLogException;
+import com.technicalinterest.group.service.util.JWTUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -71,14 +73,31 @@ public class UserServiceImpl implements UserService {
 
 	@Value("${reset_web_url}")
 	private String REST_WEB_URL;
-	//邮件过期时间
-	private static final long ACTIVATION_TIME = 60 * 60 * 24;
-	//登录过期时间
-	private static final long LOGIN_TIME = 60 * 30;
-	//验证码过期时间
-	private static final long IMG_TIME = 60 * 5;
-
-	private int LOGIN_ERROR_TIMES = 6;
+	/**
+	*
+	*/
+	@Value("${activation_time}")
+	private Long ACTIVATION_TIME;
+	/**
+	* 登录过期时间
+	*/
+	@Value("${login_time}")
+	private Long LOGIN_TIME;
+	/**
+	* 验证码过期时间
+	*/
+	@Value("${img_time}")
+	private Long IMG_TIME;
+	/**
+	 * 登录错误次数
+	 */
+	@Value("${login_error_times}")
+	private Integer LOGIN_ERROR_TIMES;
+	/**
+	 * 用户锁住时间
+	 */
+	@Value("${lock_user_time}")
+	private Long LOCK_USER_TIME;
 
 	private static final String PASS_SALT = "3edc4rfv!@#";
 
@@ -86,7 +105,6 @@ public class UserServiceImpl implements UserService {
 
 	private String LOCK_USER_KEY = "lock_user_";
 
-	private long LOCK_USER_TIME = 120;
 
 	/**
 	 * 登录
@@ -147,23 +165,19 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		//生成token
-		UserDTO userVO = new UserDTO();
-		userVO.setUserToken(setToken(userRoleDTO.getUserName()));
+		UserJWTDTO userVO = new UserJWTDTO();
 		userVO.setUserName(userRoleDTO.getUserName());
 		userVO.setNickName(userRoleDTO.getNickName());
 		userVO.setRoleType(userRoleDTO.getRoleType());
+		userVO.setPhoto(userRoleDTO.getPhoto());
 		userVO.setAuthList(roleAuthDTOS);
+		userVO.setUserToken(setToken(userVO,userRoleDTO));
 		return ReturnClass.success(UserConstant.LOGIN_SUCCESS, userVO);
 	}
 
-	private String setToken(String userName) {
-		String token = UUID.randomUUID().toString().replaceAll("-", "");
-		if (redisUtil.hasKey(userName)) {
-			String o = (String) redisUtil.get(userName);
-			redisUtil.del(o);
-		}
-		redisUtil.set(userName, token, LOGIN_TIME);
-		redisUtil.set(token, userName, LOGIN_TIME);
+	private String setToken(UserJWTDTO userVO,UserRoleDTO userRoleDTO) {
+		String token = JWTUtil.generateToken(userVO);
+		redisUtil.set(token, JSONObject.toJSONString(userRoleDTO), LOGIN_TIME);
 		return token;
 	}
 
@@ -257,9 +271,8 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public ReturnClass logout(String token) {
-		Object o = redisUtil.get(token);
-		if (!Objects.isNull(o)) {
-			redisUtil.del(token, o.toString());
+		if (redisUtil.hasKey(token)) {
+			redisUtil.del(token);
 		}
 		return ReturnClass.success();
 	}
@@ -301,12 +314,10 @@ public class UserServiceImpl implements UserService {
 		if (!redisUtil.hasKey(accessToken)) {
 			throw new VLogException(ResultEnum.TIME_OUT);
 		}
-		String userName = (String) redisUtil.get(accessToken);
-		User user = User.builder().userName(userName).build();
-		User userByUser = userMapper.getUserByUser(user);
-		if (Objects.nonNull(userByUser)) {
-			UserDTO userDTO = new UserDTO();
-			BeanUtils.copyProperties(userByUser, userDTO);
+		String userInfo = (String) redisUtil.get(accessToken);
+		log.info("getUserByToken>>>  token={},userInfo={}",accessToken,userInfo);
+		UserDTO userDTO = JSONObject.parseObject(userInfo, UserDTO.class);
+		if (Objects.nonNull(userDTO)) {
 			return ReturnClass.success(userDTO);
 		}
 		return ReturnClass.fail();
@@ -326,6 +337,8 @@ public class UserServiceImpl implements UserService {
 			ReturnClass returnClass = userNameIsLoginUser(userName);
 			if (!returnClass.isSuccess()) {
 				throw new VLogException(ResultEnum.NO_AUTH);
+			}else {
+				return returnClass;
 			}
 		}
 		User user = User.builder().userName(userName).build();
@@ -351,9 +364,10 @@ public class UserServiceImpl implements UserService {
 		if (!redisUtil.hasKey(accessToken)) {
 			throw new VLogException(ResultEnum.TIME_OUT);
 		}
-		String userNameLogin = (String) redisUtil.get(accessToken);
-		if (StringUtils.equals(userName, userNameLogin)) {
-			return ReturnClass.success();
+		String userInfo = (String) redisUtil.get(accessToken);
+		UserDTO userDTO=JSONObject.parseObject(userInfo,UserDTO.class);
+		if (Objects.nonNull(userDTO)&&StringUtils.equals(userName, userDTO.getUserName())) {
+			return ReturnClass.success(userDTO);
 		}
 		return ReturnClass.fail();
 	}
