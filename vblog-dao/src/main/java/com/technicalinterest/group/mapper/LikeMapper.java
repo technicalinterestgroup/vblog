@@ -22,7 +22,7 @@ public interface LikeMapper {
     Integer del(@Param("id")Long id);
 
 
-    List<LikeNoticeDTO> queryListLikeNotice(@Param("userName")String userName);
+    List<LikeNoticeDTO> queryListLikeNotice(@Param("userName")String userName,@Param("isView")Short isView);
 
-    Integer queryCountLikeNotice(@Param("userName")String userName);
+    Integer queryCountLikeNotice(@Param("userName")String userName,@Param("isView")Short isView);
 }

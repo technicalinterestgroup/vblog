@@ -90,7 +90,6 @@ public class NoticeController {
 	@BlogOperation(value = "点赞通知列表")
 	public ApiResult<PageBean<LikeNoticeVO>> listLikeNotic(@PathVariable("userName") String userName, @Valid PageBaseParam pageBaseParam) {
 		ApiResult apiResult = new ApiResult();
-
 		PageBase pageBase = new PageBase();
 		BeanUtils.copyProperties(pageBaseParam, pageBase);
 		ReturnClass listArticle = noticeService.queryLikeNotice(userName, pageBase);
@@ -115,8 +114,7 @@ public class NoticeController {
 	@ApiOperation(value = "查看评论通知", notes = "查看评论通知")
 	@GetMapping(value = "/like/view/{id}")
 	@BlogOperation(value = "查看评论通知")
-	@DistributeLock( key = "#id", timeout = 1, expire = 1, errMsg = "00000")
-	public ApiResult<PageBean<CommentNoticeVO>> viewLike(@PathVariable("id") Long id) {
+	public ApiResult<String> viewLike(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass returnClass = noticeService.viewLike(id);
 		if (returnClass.isSuccess()) {
@@ -126,5 +124,20 @@ public class NoticeController {
 		}
 		return apiResult;
 	}
+
+	@ApiOperation(value = "查看未读通知消息数")
+	@GetMapping(value = "/count/{userName}")
+	@BlogOperation(value = "查看未读通知消息数")
+	public ApiResult<String> noViewVount(@PathVariable("userName") String userName) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass returnClass = noticeService.queryNoticeCount(userName);
+		if (returnClass.isSuccess()) {
+			apiResult.success(returnClass.getData());
+		} else {
+			apiResult.setMsg(returnClass.getMsg());
+		}
+		return apiResult;
+	}
+
 
 }
