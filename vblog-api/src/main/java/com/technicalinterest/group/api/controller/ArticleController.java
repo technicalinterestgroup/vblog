@@ -55,7 +55,7 @@ public class ArticleController {
 		BeanUtils.copyProperties(articleContentParam, articleContentDTO);
 		ReturnClass saveArticle = articleService.saveArticle(articleContentDTO);
 		if (saveArticle.isSuccess()) {
-			apiResult.success(saveArticle.getMsg(), null);
+			apiResult.success(saveArticle.getMsg(), saveArticle.getData());
 		} else {
 			apiResult.fail(saveArticle.getMsg());
 		}

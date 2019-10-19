@@ -12,6 +12,8 @@ import lombok.Data;
  **/
 @Data
 public class UserRoleDTO {
+
+	private Long id;
 	/**
 	 * 用户名
 	 */

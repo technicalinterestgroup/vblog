@@ -51,4 +51,13 @@ public interface NoticeService {
 	 * @return null
 	 */
 	ReturnClass viewLike(Long id);
+
+    /**
+     * @Description: 获取未读消息数量
+     * @author: shuyu.wang
+     * @date: 2019-10-16 17:58
+     * @param userName
+     * @return null
+    */
+	ReturnClass queryNoticeCount(String userName);
 }

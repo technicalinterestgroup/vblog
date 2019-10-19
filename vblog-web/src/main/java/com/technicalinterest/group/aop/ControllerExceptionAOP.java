@@ -234,18 +234,18 @@ public class ControllerExceptionAOP {
 	}
 
 	/**
-	 * @Description:数据库唯一key重复
+	 * @Description:url判断
 	 * @author: shuyu.wang
 	 * @date: 2019-08-06 13:07
 	 * @param e
 	 * @return null
 	 */
-	@ExceptionHandler(NoHandlerFoundException.class)
-	@ResponseBody
-	public ApiResult handleNoHandlerFoundException(HttpServletRequest req, NoHandlerFoundException e) {
-		log.info("url无效={}", req.getRequestURI());
-		return new ApiResult(ResultEnum.NO_URL);
-	}
+//	@ExceptionHandler(NoHandlerFoundException.class)
+//	@ResponseBody
+//	public ApiResult handleNoHandlerFoundException(HttpServletRequest req, NoHandlerFoundException e) {
+//		log.info("url无效={}", req.getRequestURI());
+//		return new ApiResult(ResultEnum.NO_URL);
+//	}
 
 	/**
 	 * @Description: 文件超过最大限制

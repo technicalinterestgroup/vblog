@@ -11,8 +11,10 @@ import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.ReturnClass;
+import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
+import com.technicalinterest.group.service.util.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
@@ -22,6 +24,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -56,6 +59,16 @@ public class BlogLogAspect {
 	@AfterReturning(value = "logPoinCut()", returning = "result")
 	public void doAfterReturningAdvice1(JoinPoint joinPoint, ApiResult result) {
 		log.info(">>>日志拦截AOP开始");
+		//获取用户ip地址
+		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+		BlogLogAspect blogLogAspect=SpringContextUtil.getBean(BlogLogAspect.class);
+		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+		blogLogAspect.analisy(joinPoint,result,request.getRequestURL().toString(),IpAdrressUtil.getIpAdrress(request),accessToken);
+		log.info(">>>日志拦截AOP结束");
+	}
+    @Async
+	public void analisy(JoinPoint joinPoint, ApiResult result,String url,String ip,String token){
+        log.info("异步报错AOP日志");
 		//从切面织入点处通过反射机制获取织入点处的方法
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		//获取切入点所在的方法
@@ -80,24 +93,20 @@ public class BlogLogAspect {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//获取用户ip地址
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-
-		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		String userName = (String) redisUtil.get(accessToken);
-		if (Objects.nonNull(userName)) {
-			log.info(">>>url:【{}】,ip:【{}】,userName:【{}】,classMethod:【{}】,operation:【{}】,params:【{}】", request.getRequestURL().toString(), IpAdrressUtil.getIpAdrress(request),
-					userName, methodStr, operationName, params);
+		String userInfo = (String) redisUtil.get(token);
+		UserDTO userDTO = JSONObject.parseObject(userInfo, UserDTO.class);
+		if (Objects.nonNull(userDTO)){
+			log.info(">>>url:【{}】,ip:【{}】,userName:【{}】,classMethod:【{}】,operation:【{}】,params:【{}】", url, ip,
+					userDTO.getUserName(), methodStr, operationName, params);
 		}
 		log.info(">>>请求返回结果：{}", JSONObject.toJSON(result));
 		try {
-			Log log = Log.builder().url(request.getRequestURL().toString()).ip(IpAdrressUtil.getIpAdrress(request)).userName(userName).classMethod(methodStr)
+			Log log = Log.builder().url(url).ip(ip).userName(userDTO==null?"":userDTO.getUserName()).classMethod(methodStr)
 					.operation(operationName).params(params).result(result.getMsg()).build();
 			logService.insert(log);
 		} catch (Exception e) {
 			log.error("日志保存异常", e);
 		}
-
 	}
 
 }

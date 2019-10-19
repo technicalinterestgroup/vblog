@@ -56,19 +56,7 @@ public class CategoryServiceImpl implements CategoryService {
 	public ReturnClass update(EditCategoryDTO pojo) {
 		Category category = new Category();
 		category.setId(pojo.getId());
-		//数据是否存在
-		Category category1 = categoryMapper.queryCategory(category);
-		if (Objects.isNull(category1)) {
-			throw new VLogException(ResultEnum.NO_DATA);
-		}
-		BeanUtils.copyProperties(pojo, category);
-		//名称是否重复
-		Category category2 = categoryMapper.queryCategory(Category.builder().name(category.getName()).userName(category.getUserName()).build());
-		if (Objects.nonNull(category2)) {
-			if (!StringUtils.equals(category2.getName(), pojo.getName())) {
-				return ReturnClass.fail(CategoryConstant.CATEGORY_REPEAT);
-			}
-		}
+
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
 			UserDTO userDTO = (UserDTO) userByToken.getData();
@@ -77,9 +65,24 @@ public class CategoryServiceImpl implements CategoryService {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
 
+		//数据是否存在
+		Category category1 = categoryMapper.queryCategory(category);
+		if (Objects.isNull(category1)) {
+			throw new VLogException(ResultEnum.NO_DATA);
+		}
+		BeanUtils.copyProperties(pojo, category);
+
+
 		//是否是本人操作
 		if (!StringUtils.equals(category1.getUserName(), category.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
+		}
+		//名称是否重复
+		Category category2 = categoryMapper.queryCategory(Category.builder().name(category.getName()).userName(category.getUserName()).build());
+		if (Objects.nonNull(category2)) {
+			if (!StringUtils.equals(category2.getName(), pojo.getName())) {
+				return ReturnClass.fail(CategoryConstant.CATEGORY_REPEAT);
+			}
 		}
 		Integer flag = categoryMapper.update(category);
 		if (flag > 0) {
@@ -105,17 +108,18 @@ public class CategoryServiceImpl implements CategoryService {
 	public ReturnClass delCategory(Long id) {
 		Category category = new Category();
 		category.setId(id);
-		//数据是否存在
-		Category category1 = categoryMapper.queryCategory(category);
-		if (Objects.isNull(category1)) {
-			throw new VLogException(ResultEnum.NO_DATA);
-		}
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
 			UserDTO userDTO = (UserDTO) userByToken.getData();
 			category.setUserName(userDTO.getUserName());
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
+		}
+
+		//数据是否存在
+		Category category1 = categoryMapper.queryCategory(category);
+		if (Objects.isNull(category1)) {
+			throw new VLogException(ResultEnum.NO_DATA);
 		}
 		//是否是本人操作
 		if (!StringUtils.equals(category1.getUserName(), category.getUserName())) {

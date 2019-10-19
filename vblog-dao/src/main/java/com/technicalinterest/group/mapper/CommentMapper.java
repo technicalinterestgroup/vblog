@@ -33,7 +33,7 @@ public interface CommentMapper {
      * @param userName
      * @return null
     */
-    List<CommentNoticeDTO> queryListCommentNotice(@Param("userName")String userName);
+    List<CommentNoticeDTO> queryListCommentNotice(@Param("userName")String userName,@Param("isView")Short isView);
 
     /**
      * @Description: 查询评论消息通知
@@ -42,6 +42,6 @@ public interface CommentMapper {
      * @param userName
      * @return null
      */
-    Integer queryCountCommentNotice(@Param("userName")String userName);
+    Integer queryCountCommentNotice(@Param("userName")String userName,@Param("isView")Short isView);
 
 }

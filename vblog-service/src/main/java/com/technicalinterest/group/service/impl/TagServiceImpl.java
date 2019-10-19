@@ -57,10 +57,22 @@ public class TagServiceImpl implements TagService {
 	public ReturnClass update(EditTagDTO pojo) {
 		Tag tag = new Tag();
 		tag.setId(pojo.getId());
+		ReturnClass userByToken = userService.getUserByToken();
+		if (userByToken.isSuccess()) {
+			UserDTO userDTO = (UserDTO) userByToken.getData();
+			tag.setUserName(userDTO.getUserName());
+		} else {
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
+		}
+
 		//数据是否存在
 		Tag tag1 = tagMapper.queryTag(tag);
 		if (Objects.isNull(tag1)) {
 			throw new VLogException(ResultEnum.NO_DATA);
+		}
+		//是否是本人操作
+		if (!StringUtils.equals(tag1.getUserName(), tag.getUserName())) {
+			throw new VLogException(ResultEnum.NO_AUTH);
 		}
 		//名称是否重复
 		BeanUtils.copyProperties(pojo, tag);
@@ -71,18 +83,6 @@ public class TagServiceImpl implements TagService {
 			}
 		}
 
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
-			tag.setUserName(userDTO.getUserName());
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-
-		//是否是本人操作
-		if (!StringUtils.equals(tag1.getUserName(), tag.getUserName())) {
-			throw new VLogException(ResultEnum.NO_AUTH);
-		}
 		Integer flag = tagMapper.update(tag);
 		if (flag > 0) {
 			return ReturnClass.success(TagConstant.SUS_EDITE);
@@ -115,12 +115,6 @@ public class TagServiceImpl implements TagService {
 	public ReturnClass delTag(Long id) {
 		Tag tag = new Tag();
 		tag.setId(id);
-		//数据是否存在
-		Tag tag1 = tagMapper.queryTag(tag);
-		if (Objects.isNull(tag1)) {
-			throw new VLogException(ResultEnum.NO_DATA);
-		}
-
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
 			UserDTO userDTO = (UserDTO) userByToken.getData();
@@ -128,7 +122,11 @@ public class TagServiceImpl implements TagService {
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-
+		//数据是否存在
+		Tag tag1 = tagMapper.queryTag(tag);
+		if (Objects.isNull(tag1)) {
+			throw new VLogException(ResultEnum.NO_DATA);
+		}
 		//是否是本人操作
 		if (!StringUtils.equals(tag1.getUserName(), tag.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);

@@ -28,10 +28,9 @@
         `tag_id`,
         `user_name`,
         `id`,
-        `is_del`,
         `create_time`,
         `update_time`,
-        `state`,
+        `state`
 </sql>
 
     <!--auto generated Code-->
@@ -145,6 +144,16 @@
         WHERE id = #{pojo.id}
     </update>
 
+    <select id="query" parameterType="com.technicalinterest.group.dao.Article" resultMap="AllColumnMap">
+        select <include refid="all_column"/> from v_article
+        <where>
+            <if test="pojo.id != null ">and id=#{pojo.id}</if>
+            <if test="pojo.userName != null and pojo.userName != ''">and user_name=#{pojo.userName}</if>
+            <if test="pojo.state != null">and state=#{pojo.state}</if>
+        </where>
+
+    </select>
+
     <select id="queryArticleList" resultType="com.technicalinterest.group.dto.ArticlesDTO" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
         select t1.id,title,t1.user_name as userName,t1.submit,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
         t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount,
@@ -155,7 +164,7 @@
             <if test="pojo.state != null">and t1.state=#{pojo.state}</if>
             <if test="pojo.condition != null and pojo.condition !=''">and t1.title like CONCAT('%',#{pojo.condition},'%')</if>
             <if test="pojo.condition != null and pojo.condition !=''">and t1.submit like CONCAT('%',#{pojo.condition},'%')</if>
-            <if test="pojo.archiveTime != null and pojo.condition !=''">and date_format(t1.create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
+            <if test="pojo.archiveTime != null ">and date_format(t1.create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
         order by
         <if test="pojo.userName != null and pojo.userName != ''">t1.is_top,</if>
         t1.id desc
@@ -168,7 +177,7 @@
             <if test="pojo.state != null">and state=#{pojo.state}</if>
             <if test="pojo.condition != null and pojo.condition !=''">and title like CONCAT('%',#{pojo.condition},'%')</if>
             <if test="pojo.condition != null and pojo.condition !=''">and submit like CONCAT('%',#{pojo.condition},'%')</if>
-            <if test="pojo.archiveTime != null and pojo.condition !=''">and date_format(create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
+            <if test="pojo.archiveTime != null ">and date_format(create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
     </select>
 
     <select id="getArticleInfo" resultType="com.technicalinterest.group.dto.ArticlesDTO">
@@ -220,8 +229,8 @@
         <if test="pojo.state != null">and t1.state=#{pojo.state}</if>
         <if test="pojo.condition != null and pojo.condition !=''">and t1.title like CONCAT('%',#{pojo.condition},'%')</if>
         <if test="pojo.condition != null and pojo.condition !=''">and t1.submit like CONCAT('%',#{pojo.condition},'%')</if>
-        <if test="pojo.archiveTime != null and pojo.condition !=''">and date_format(t1.create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
-        order by t1.id desc
+        <if test="pojo.archiveTime != null ">and date_format(t1.create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
+        order by t1.create_time desc
 
     </select>
 
@@ -231,7 +240,7 @@
         <if test="pojo.state != null">and state=#{pojo.state}</if>
         <if test="pojo.condition != null and pojo.condition !=''">and title like CONCAT('%',#{pojo.condition},'%')</if>
         <if test="pojo.condition != null and pojo.condition !=''">and submit like CONCAT('%',#{pojo.condition},'%')</if>
-        <if test="pojo.archiveTime != null and pojo.condition !=''">and date_format(create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
+        <if test="pojo.archiveTime != null">and date_format(create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
     </select>
 </mapper>
 

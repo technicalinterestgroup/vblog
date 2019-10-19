@@ -15,6 +15,7 @@ public class ArticleConstant {
 
 	public static final String SUS_ADD="博客发布成功！";
 
+	public static final String SUS_DRAFT="博客保存草稿成功！";
 
 	public static final String FAIL_EDIT="博客编辑失败！";
 

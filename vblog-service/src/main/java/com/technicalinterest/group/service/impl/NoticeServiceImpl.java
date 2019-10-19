@@ -13,6 +13,7 @@ import com.technicalinterest.group.service.NoticeService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.NoticeConstant;
 import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.dto.NoticeCount;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
@@ -53,12 +54,12 @@ public class NoticeServiceImpl implements NoticeService {
 		if (!returnClass.isSuccess()) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		Integer integer = commentMapper.queryCountCommentNotice(userName);
+		Integer integer = commentMapper.queryCountCommentNotice(userName,null);
 		if (integer < 1) {
 			return ReturnClass.fail(NoticeConstant.NO_COMMENT);
 		}
 		PageHelper.startPage(pageBase.getPageNum(), pageBase.getPageSize());
-		List<CommentNoticeDTO> commentNoticeDTOS = commentMapper.queryListCommentNotice(userName);
+		List<CommentNoticeDTO> commentNoticeDTOS = commentMapper.queryListCommentNotice(userName,null);
 		PageBean<CommentNoticeDTO> pageBean = new PageBean<>(commentNoticeDTOS, pageBase.getPageNum(), pageBase.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
@@ -100,12 +101,12 @@ public class NoticeServiceImpl implements NoticeService {
 		if (!returnClass.isSuccess()) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		Integer integer = likeMapper.queryCountLikeNotice(userName);
+		Integer integer = likeMapper.queryCountLikeNotice(userName,null);
 		if (integer < 1) {
 			return ReturnClass.fail(NoticeConstant.NO_LIKE);
 		}
 		PageHelper.startPage(pageBase.getPageNum(), pageBase.getPageSize());
-		List<LikeNoticeDTO> likeNoticeDTOS = likeMapper.queryListLikeNotice(userName);
+		List<LikeNoticeDTO> likeNoticeDTOS = likeMapper.queryListLikeNotice(userName,null);
 		PageBean<LikeNoticeDTO> pageBean = new PageBean<>(likeNoticeDTOS, pageBase.getPageNum(), pageBase.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
@@ -132,5 +133,28 @@ public class NoticeServiceImpl implements NoticeService {
 			return ReturnClass.success();
 		}
 		return ReturnClass.fail();
+	}
+
+	/**
+	 * @Description: 获取未读消息数量
+	 * @author: shuyu.wang
+	 * @date: 2019-10-16 17:58
+	 * @param userName
+	 * @return null
+	 */
+	@Override
+	public ReturnClass queryNoticeCount(String userName) {
+		ReturnClass returnClass = userService.userNameIsLoginUser(userName);
+		if (!returnClass.isSuccess()) {
+			throw new VLogException(ResultEnum.NO_URL);
+		}
+		//未查看评论通知数
+		Integer countComment = commentMapper.queryCountCommentNotice(userName,(short)0);
+
+		Integer countLike = likeMapper.queryCountLikeNotice(userName,(short)0);
+
+		NoticeCount noticeCount=NoticeCount.builder().comentCount(countComment).likeCount(countLike).build();
+
+		return ReturnClass.success(noticeCount);
 	}
 }

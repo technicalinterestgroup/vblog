@@ -18,6 +18,7 @@ public interface ArticleMapper {
 
     Integer update(@Param("pojo") Article pojo);
 
+    Article query(@Param("pojo") Article pojo);
     
     /**
      * @Description: 列表+摘要

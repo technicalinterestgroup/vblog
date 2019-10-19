@@ -40,7 +40,7 @@ public class CollectionServiceImpl implements CollectionService {
 		if (!userByToken.isSuccess()) {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleId,null);
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleId, null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
@@ -70,10 +70,9 @@ public class CollectionServiceImpl implements CollectionService {
 		if (Objects.isNull(collection)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		//		ReturnClass returnClass = userService.userNameIsLoginUser(collection.getUserName());
-		//		if (!returnClass.isSuccess()){
-		//			throw new VLogException(ResultEnum.NO_AUTH);
-		//		}
+		if (!StringUtils.equals(userDTO.getUserName(), collection.getUserName())) {
+			throw new VLogException(ResultEnum.NO_AUTH);
+		}
 		Integer integer = collectionMapper.delCollection(collection.getId());
 		if (integer > 0) {
 			return ReturnClass.success(CollectionConstant.SUS_DEL);

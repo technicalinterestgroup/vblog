@@ -56,15 +56,15 @@
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
         INSERT INTO v_like
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="pojo.userName!=null"> `user_name`,</if>
-            <if test="pojo.ipAddress!=null"> `ip_address`,</if>
-            <if test="pojo.type!=null"> `type`,</if>
-            <if test="pojo.sourceId!=null"> `source_id`,</if>
-            <if test="pojo.isView!=null"> `is_view`,</if>
-            <if test="pojo.id!=null"> `id`,</if>
-            <if test="pojo.isDel!=null"> `is_del`,</if>
-            <if test="pojo.createTime!=null"> `create_time`,</if>
-            <if test="pojo.updateTime!=null"> `update_time`,</if>
+            <if test="pojo.userName!=null">`user_name`,</if>
+            <if test="pojo.ipAddress!=null">`ip_address`,</if>
+            <if test="pojo.type!=null">`type`,</if>
+            <if test="pojo.sourceId!=null">`source_id`,</if>
+            <if test="pojo.isView!=null">`is_view`,</if>
+            <if test="pojo.id!=null">`id`,</if>
+            <if test="pojo.isDel!=null">`is_del`,</if>
+            <if test="pojo.createTime!=null">`create_time`,</if>
+            <if test="pojo.updateTime!=null">`update_time`,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -104,21 +104,23 @@
     <update id="update">
         UPDATE v_like
         <set>
-            <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
-            <if test="pojo.ipAddress != null"> `ip_address` = #{pojo.ipAddress}, </if>
-            <if test="pojo.type != null"> `type` = #{pojo.type}, </if>
-            <if test="pojo.sourceId != null"> `source_id` = #{pojo.sourceId}, </if>
-            <if test="pojo.isView != null"> `is_view` = #{pojo.isView}, </if>
-            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
-            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
-            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
-            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+            <if test="pojo.userName != null">`user_name` = #{pojo.userName},</if>
+            <if test="pojo.ipAddress != null">`ip_address` = #{pojo.ipAddress},</if>
+            <if test="pojo.type != null">`type` = #{pojo.type},</if>
+            <if test="pojo.sourceId != null">`source_id` = #{pojo.sourceId},</if>
+            <if test="pojo.isView != null">`is_view` = #{pojo.isView},</if>
+            <if test="pojo.id != null">`id` = #{pojo.id},</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
+            <if test="pojo.createTime != null">`create_time` = #{pojo.createTime},</if>
+            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime}</if>
         </set>
         WHERE id = #{pojo.id}
     </update>
 
     <select id="queryLike" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Like">
-        select <include refid="all_column"/> from v_like
+        select
+        <include refid="all_column"/>
+        from v_like
         <where>
             <if test="pojo.id!=null">and id=#{pojo.id}</if>
             <if test="pojo.sourceId!=null">and source_id=#{pojo.sourceId}</if>
@@ -134,16 +136,23 @@
         SELECT t1.title,t2.id,t2.source_id as sourceId,t2.user_name as userName,t2.create_time as createTime,t2.is_view as isView,
         t2.type
         FROM v_article t1 INNER JOIN v_like t2 on t1.id=t2.source_id
-	    AND t2.type=1 WHERE t1.user_name=#{userName}  order by t2.create_time desc
+	    AND t2.type=1
+	    <where>
+            <if test="userName!=null">and t1.user_name=#{userName}</if>
+            <if test="isView != null">and t2.is_view = #{isView}</if>
+        </where>
+          order by t2.create_time desc
     </select>
 
     <select id="queryCountLikeNotice" resultType="java.lang.Integer">
-         SELECT count(1)
+        SELECT count(1)
         FROM v_article t1 INNER JOIN v_like t2 on t1.id=t2.source_id
-	    AND t2.type=1 WHERE t1.user_name=#{userName}
+        AND t2.type=1
+        <where>
+            <if test="userName!=null">and t1.user_name=#{userName}</if>
+            <if test="isView != null">and t2.is_view = #{isView}</if>
+        </where>
     </select>
-
-
 
 
 </mapper>

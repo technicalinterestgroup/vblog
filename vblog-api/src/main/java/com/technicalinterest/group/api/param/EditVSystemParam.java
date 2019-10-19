@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.param;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,55 +23,59 @@ public class EditVSystemParam {
 	 * 用户名
 	 */
 	@ApiModelProperty(value = "用户名")
-	@NotBlank(message = "userName不能为空")
+	@NotBlank(message = "不能为空")
 	private String userName;
 	/**
 	 * 博客名
 	 */
 	@ApiModelProperty(value = "博客名")
-	@NotBlank(message = "vTitle不能为空")
+	@NotBlank(message = "不能为空")
+	@JsonProperty("vTitle")
 	private String vTitle;
 	/**
 	 * icon url
 	 */
 	@ApiModelProperty(value = "icon")
-	@NotBlank(message = "vIcon不能为空")
+	@NotBlank(message = "不能为空")
+	@JsonProperty("vIcon")
 	private String vIcon;
-
 	/**
 	 *seo 关键词
 	 */
 	@ApiModelProperty(value = "seo 关键词")
-	@NotBlank(message = " seoKeyWords不能为空")
+	@NotBlank(message = " 不能为空")
+	@JsonProperty("seoKeyWords")
 	private String seoKeyWords;
 	/**
 	 * footer info
 	 */
 	@ApiModelProperty(value = "footer info")
-	@NotBlank(message = "vFooterInfo不能为空")
+	@NotBlank(message = "不能为空")
+	@JsonProperty("vFooterInfo")
 	private String vFooterInfo;
 	/**
 	 * 博客介绍
 	 */
 	@ApiModelProperty(value = "博客介绍")
-	@NotBlank(message = "vIntroduct不能为空")
+	@NotBlank(message = "不能为空")
+	@JsonProperty("vIntroduct")
 	private String vIntroduct;
 	/**
 	 * 模块配置
 	 */
 	@ApiModelProperty(value = "模块配置")
-	@NotBlank(message = "module不能为空")
+	@NotBlank(message = "不能为空")
 	private String module;
 	/**
 	 * 通知开关
 	 */
 	@ApiModelProperty(value = "通知开关")
-	@NotBlank(message = "noticeSwitch不能为空")
+	@NotBlank(message = "不能为空")
 	private String noticeSwitch;
 	/**
 	 * 评论开关
 	 */
 	@ApiModelProperty(value = "评论开关")
-	@NotBlank(message = "commentSwitch不能为空")
+	@NotBlank(message = "不能为空")
 	private String commentSwitch;
 }

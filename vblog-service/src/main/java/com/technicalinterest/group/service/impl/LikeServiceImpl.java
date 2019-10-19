@@ -14,6 +14,7 @@ import com.technicalinterest.group.service.dto.LikeDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.exception.VLogException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -83,10 +84,9 @@ public class LikeServiceImpl implements LikeService {
 		if (Objects.isNull(likeResult)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		//		ReturnClass returnClass = userService.userNameIsLoginUser(collection.getUserName());
-		//		if (!returnClass.isSuccess()){
-		//			throw new VLogException(ResultEnum.NO_AUTH);
-		//		}
+		if (StringUtils.equals(userDTO.getUserName(),likeResult.getUserName())){
+			throw new VLogException(ResultEnum.NO_AUTH);
+		}
 		Integer integer = likeMapper.del(likeResult.getId());
 		if (integer > 0) {
 			return ReturnClass.success(LikeConstant.SUS_DEL);
