@@ -11,6 +11,7 @@ import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.dto.*;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.ListBeanUtils;
+import com.technicalinterest.group.service.util.WebSocketUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -502,6 +504,15 @@ public class ViewController {
 		return apiResult;
 	}
 
+	@ApiOperation(value = "获取网站排名前4位的博主信息", notes = "博主信息")
+	@GetMapping(value = "/socket")
+	public ApiResult<List<BlogUserVO>> test(@RequestParam("userName")String userName,@RequestParam(value = "msg")String msg) {
+
+		WebSocketUtils.sendToUser(userName,WebSocketMessage.builder().message(msg).build());
+		ApiResult apiResult = new ApiResult();
+
+		return apiResult;
+	}
 	
 
 	//站点统计

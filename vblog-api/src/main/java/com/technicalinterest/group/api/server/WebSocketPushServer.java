@@ -17,9 +17,9 @@ import javax.websocket.server.ServerEndpoint;
  * @since: 0.1
  **/
 @Slf4j
-@ServerEndpoint("/chat/{userName}")
+@ServerEndpoint("/notic/{userName}")
 @Component
-public class WebSocketServer {
+public class WebSocketPushServer {
 	/**
 	 *New Connected
 	 */
