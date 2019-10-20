@@ -1,6 +1,5 @@
 package com.technicalinterest.group.api.server;
 
-import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.service.util.WebSocketUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
