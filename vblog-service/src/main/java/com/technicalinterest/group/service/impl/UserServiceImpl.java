@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
 		userVO.setRoleType(userRoleDTO.getRoleType());
 		userVO.setPhoto(userRoleDTO.getPhoto());
 		userVO.setAuthList(roleAuthDTOS);
-		userVO.setUserToken(userRoleDTO.getUserName());
+		userVO.setUserToken(setToken(userRoleDTO.getUserName()));
 		return ReturnClass.success(UserConstant.LOGIN_SUCCESS, userVO);
 	}
 
