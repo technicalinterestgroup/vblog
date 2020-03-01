@@ -68,7 +68,7 @@ public class BlogLogAspect {
 	}
     @Async
 	public void analisy(JoinPoint joinPoint, ApiResult result,String url,String ip,String token){
-        log.info("异步报错AOP日志");
+        log.info("异步AOP日志");
 		//从切面织入点处通过反射机制获取织入点处的方法
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		//获取切入点所在的方法

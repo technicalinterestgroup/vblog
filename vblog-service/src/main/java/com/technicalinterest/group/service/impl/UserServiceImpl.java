@@ -171,7 +171,7 @@ public class UserServiceImpl implements UserService {
 		userVO.setRoleType(userRoleDTO.getRoleType());
 		userVO.setPhoto(userRoleDTO.getPhoto());
 		userVO.setAuthList(roleAuthDTOS);
-		userVO.setUserToken(setToken(userVO,userRoleDTO));
+		userVO.setUserToken(userRoleDTO.getUserName());
 		return ReturnClass.success(UserConstant.LOGIN_SUCCESS, userVO);
 	}
 
@@ -180,7 +180,16 @@ public class UserServiceImpl implements UserService {
 		redisUtil.set(token, JSONObject.toJSONString(userRoleDTO), LOGIN_TIME);
 		return token;
 	}
-
+	private String setToken(String userName) {
+		String token = UUID.randomUUID().toString().replaceAll("-", "");
+		if (redisUtil.hasKey(userName)) {
+			String o = (String) redisUtil.get(userName);
+			redisUtil.del(o);
+		}
+		redisUtil.set(userName, token, LOGIN_TIME);
+		redisUtil.set(token, userName, LOGIN_TIME);
+		return token;
+	}
 	/**
 	 * 注册新用户
 	 * @author: shuyu.wang
