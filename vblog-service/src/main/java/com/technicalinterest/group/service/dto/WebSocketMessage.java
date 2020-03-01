@@ -31,4 +31,6 @@ public class WebSocketMessage {
 	 * 消息内容
 	 */
 	private String message;
+
+	private Object t;
 }

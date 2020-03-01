@@ -504,7 +504,7 @@ public class ViewController {
 		return apiResult;
 	}
 
-	@ApiOperation(value = "获取网站排名前4位的博主信息", notes = "博主信息")
+	@ApiOperation(value = "测试ws")
 	@GetMapping(value = "/socket")
 	public ApiResult<List<BlogUserVO>> test(@RequestParam("userName")String userName,@RequestParam(value = "msg")String msg) {
 

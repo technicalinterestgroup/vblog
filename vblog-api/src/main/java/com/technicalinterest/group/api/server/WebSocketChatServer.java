@@ -19,7 +19,7 @@ import javax.websocket.server.ServerEndpoint;
 @Slf4j
 @ServerEndpoint("/chat/{userName}")
 @Component
-public class WebSocketServer {
+public class WebSocketChatServer {
 	/**
 	 *New Connected
 	 */
@@ -27,6 +27,8 @@ public class WebSocketServer {
 	public void onOpen(@PathParam("userName") String userName, Session session) {
 		log.info("[WebSocketServer] Connected : userName = " + userName);
 		WebSocketUtils.add(userName, session);
+		WebSocketUtils.sendUserList(userName);
+
 	}
 
 	/**
@@ -36,7 +38,7 @@ public class WebSocketServer {
 	public void onMessage(@PathParam("userName") String userName, String message) {
 		log.info("[WebSocketServer] Received Message : userName = " + userName + " , message = " + message);
 		if (message.equals("&")) {
-			//			return "&";
+//			WebSocketUtils.sendMessage(userName, userName, JSONObject.toJSONString(WebSocketUtils.getUserList(userName)));
 		} else {
 			if (message.contains("@")) {
 				String[] split = message.split("@");

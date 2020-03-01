@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.websocket.Session;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -113,6 +115,26 @@ public class WebSocketUtils {
 		}
 		return true;
 
+	}
+
+	/**
+	 *获取在线用户
+	 */
+	public static boolean sendUserList(String userName){
+		List<String> users=new ArrayList<>();
+		if (clients.size() == 0) {
+			log.info("当前没有用户在线！");
+			return false;
+		}
+
+		for (String key : clients.keySet()) {
+			if (StringUtils.equals(userName,key)){
+				continue;
+			}
+			users.add(key);
+		}
+		clients.get(userName).getAsyncRemote().sendText(JSONObject.toJSONString(WebSocketMessage.builder().type(2).message(clients.size()+"").t(users).build()));
+		return true;
 	}
 
 }
