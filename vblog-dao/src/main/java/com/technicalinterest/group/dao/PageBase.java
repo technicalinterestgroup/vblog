@@ -15,7 +15,7 @@ public class PageBase {
 	/**
 	* 页数
 	*/
-	private Integer pageNum=1;
+	private Integer currentPage=1;
 	/**
 	 * 每页条数
 	 */

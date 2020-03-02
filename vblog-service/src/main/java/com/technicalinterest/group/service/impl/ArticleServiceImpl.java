@@ -200,9 +200,9 @@ public class ArticleServiceImpl implements ArticleService {
 		if (integer < 1) {
 			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
-		PageHelper.startPage(queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize());
+		PageHelper.startPage(queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize());
 		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
-		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize(), integer);
+		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 
@@ -259,9 +259,9 @@ public class ArticleServiceImpl implements ArticleService {
 		if (integer < 1) {
 			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
-		PageHelper.startPage(queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize());
+		PageHelper.startPage(queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize());
 		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
-		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize(), integer);
+		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 

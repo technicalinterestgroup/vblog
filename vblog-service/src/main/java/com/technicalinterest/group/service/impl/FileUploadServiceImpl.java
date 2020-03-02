@@ -87,9 +87,9 @@ public class FileUploadServiceImpl implements FileUploadService {
 		if (integer < 1) {
 			return ReturnClass.fail(FileConstant.NO_FILE);
 		}
-		PageHelper.startPage(queryFileDTO.getPageNum(), queryFileDTO.getPageSize());
+		PageHelper.startPage(queryFileDTO.getCurrentPage(), queryFileDTO.getPageSize());
 		List<FileDTO> fileDTOS = fileUploadMpper.queryListFile(queryFileDTO);
-		PageBean<FileDTO> pageBean = new PageBean<>(fileDTOS, queryFileDTO.getPageNum(), queryFileDTO.getPageSize(), integer);
+		PageBean<FileDTO> pageBean = new PageBean<>(fileDTOS, queryFileDTO.getCurrentPage(), queryFileDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 }

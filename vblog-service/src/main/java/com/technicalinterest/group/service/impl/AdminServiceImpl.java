@@ -66,10 +66,10 @@ public class AdminServiceImpl implements AdminService {
 		if (integer < 1) {
 			return ReturnClass.fail(ArticleConstant.NO_BLOG);
 		}
-		PageHelper.startPage(queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize());
+		PageHelper.startPage(queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize());
 		queryArticleDTO.setState((short) 1);
 		List<ArticlesDTO> articlesDTOS = articleMapper.allArticleList(queryArticleDTO);
-		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getPageNum(), queryArticleDTO.getPageSize(), integer);
+		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 
@@ -86,9 +86,9 @@ public class AdminServiceImpl implements AdminService {
 		if (integer < 1) {
 			return ReturnClass.fail(FileConstant.NO_FILE);
 		}
-		PageHelper.startPage(queryFileDTO.getPageNum(), queryFileDTO.getPageSize());
+		PageHelper.startPage(queryFileDTO.getCurrentPage(), queryFileDTO.getPageSize());
 		List<FileDTO> fileDTOS = fileUploadMpper.allFileList(queryFileDTO);
-		PageBean<FileDTO> pageBean = new PageBean<>(fileDTOS, queryFileDTO.getPageNum(), queryFileDTO.getPageSize(), integer);
+		PageBean<FileDTO> pageBean = new PageBean<>(fileDTOS, queryFileDTO.getCurrentPage(), queryFileDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 
@@ -105,9 +105,9 @@ public class AdminServiceImpl implements AdminService {
 //		if (integer < 1) {
 //			return ReturnClass.fail(FileConstant.NO_FILE);
 //		}
-		PageHelper.startPage(queryLogDTO.getPageNum(), queryLogDTO.getPageSize());
+		PageHelper.startPage(queryLogDTO.getCurrentPage(), queryLogDTO.getPageSize());
 		List<Log> logs = logMapper.allLogList(queryLogDTO);
-		PageBean<Log> pageBean = new PageBean<>(logs, queryLogDTO.getPageNum(), queryLogDTO.getPageSize(), integer);
+		PageBean<Log> pageBean = new PageBean<>(logs, queryLogDTO.getCurrentPage(), queryLogDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 }

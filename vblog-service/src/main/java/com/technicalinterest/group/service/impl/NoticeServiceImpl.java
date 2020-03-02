@@ -58,9 +58,9 @@ public class NoticeServiceImpl implements NoticeService {
 		if (integer < 1) {
 			return ReturnClass.fail(NoticeConstant.NO_COMMENT);
 		}
-		PageHelper.startPage(pageBase.getPageNum(), pageBase.getPageSize());
+		PageHelper.startPage(pageBase.getCurrentPage(), pageBase.getPageSize());
 		List<CommentNoticeDTO> commentNoticeDTOS = commentMapper.queryListCommentNotice(userName,null);
-		PageBean<CommentNoticeDTO> pageBean = new PageBean<>(commentNoticeDTOS, pageBase.getPageNum(), pageBase.getPageSize(), integer);
+		PageBean<CommentNoticeDTO> pageBean = new PageBean<>(commentNoticeDTOS, pageBase.getCurrentPage(), pageBase.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 
@@ -105,9 +105,9 @@ public class NoticeServiceImpl implements NoticeService {
 		if (integer < 1) {
 			return ReturnClass.fail(NoticeConstant.NO_LIKE);
 		}
-		PageHelper.startPage(pageBase.getPageNum(), pageBase.getPageSize());
+		PageHelper.startPage(pageBase.getCurrentPage(), pageBase.getPageSize());
 		List<LikeNoticeDTO> likeNoticeDTOS = likeMapper.queryListLikeNotice(userName,null);
-		PageBean<LikeNoticeDTO> pageBean = new PageBean<>(likeNoticeDTOS, pageBase.getPageNum(), pageBase.getPageSize(), integer);
+		PageBean<LikeNoticeDTO> pageBean = new PageBean<>(likeNoticeDTOS, pageBase.getCurrentPage(), pageBase.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 

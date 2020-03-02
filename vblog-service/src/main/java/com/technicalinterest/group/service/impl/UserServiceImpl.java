@@ -116,10 +116,10 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ReturnClass login(EditUserDTO userDTO) {
 		//验证码校验
-		//		ReturnClass returnClass = validImg(userDTO.getToken(), userDTO.getImg());
-		//		if (!returnClass.isSuccess()) {
-		//			return returnClass;
-		//		}
+		ReturnClass returnClass = validImg(userDTO.getToken(), userDTO.getImg());
+		if (!returnClass.isSuccess()) {
+			return returnClass;
+		}
 		//判断登录错误次数
 		ReturnClass loginErrorTimes = loginErrorTimes(userDTO.getUserName());
 		if (!loginErrorTimes.isSuccess()) {

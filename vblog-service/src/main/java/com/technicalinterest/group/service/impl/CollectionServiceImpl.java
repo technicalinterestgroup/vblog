@@ -95,9 +95,9 @@ public class CollectionServiceImpl implements CollectionService {
 		}
 		Integer integer = collectionMapper.queryCountCollectionByUserName(userName);
 		if (integer > 0) {
-			PageHelper.startPage(pageBase.getPageNum(), pageBase.getPageSize());
+			PageHelper.startPage(pageBase.getCurrentPage(), pageBase.getPageSize());
 			List<CollectionDTO> collectionDTOS = collectionMapper.queryListCollectionByUserName(userName);
-			PageBean<CollectionDTO> pageBean = new PageBean<>(collectionDTOS, pageBase.getPageNum(), pageBase.getPageSize(), integer);
+			PageBean<CollectionDTO> pageBean = new PageBean<>(collectionDTOS, pageBase.getCurrentPage(), pageBase.getPageSize(), integer);
 			return ReturnClass.success(pageBean);
 		}
 		return ReturnClass.fail(CollectionConstant.NO_DATA);
