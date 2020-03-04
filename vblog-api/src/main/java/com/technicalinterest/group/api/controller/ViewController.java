@@ -406,7 +406,7 @@ public class ViewController {
 	 * @return null
 	 */
 	@ApiOperation(value = "最新文章列表", notes = "文章列表")
-	@GetMapping(value = "/article/hot")
+	@GetMapping(value = "/article/new")
 	public ApiResult<ArticleTitleVO> listArticleHot() {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, 1);
@@ -433,10 +433,36 @@ public class ViewController {
 	 * @return null
 	 */
 	@ApiOperation(value = "网站热门文章列表", notes = "文章列表")
-	@GetMapping(value = "/article/new")
+	@GetMapping(value = "/article/hot")
 	public ApiResult<ArticleTitleVO> listArticleNew() {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, 2);
+		if (listArticle.isSuccess()) {
+			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
+			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
+			for (ArticlesDTO entity : articlesDTOS) {
+				ArticleTitleVO articleTitleVO = new ArticleTitleVO();
+				BeanUtils.copyProperties(entity, articleTitleVO);
+				list.add(articleTitleVO);
+			}
+			apiResult.success(list);
+		} else {
+			apiResult.setMsg(listArticle.getMsg());
+		}
+		return apiResult;
+	}
+
+	/**
+	 * @Description: 热门文章
+	 * @author: shuyu.wang
+	 * @date: 2019-08-13 12:37
+	 * @return null
+	 */
+	@ApiOperation(value = "推荐阅读文章列表", notes = "文章列表")
+	@GetMapping(value = "/article/recommend")
+	public ApiResult<ArticleTitleVO> listArticleRecommend() {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, 3);
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
