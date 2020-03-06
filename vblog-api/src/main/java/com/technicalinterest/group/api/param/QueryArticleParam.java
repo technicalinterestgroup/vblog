@@ -20,9 +20,20 @@ public class QueryArticleParam extends PageBaseParam {
 	@ApiModelProperty(value = "搜索条件")
 	private String condition;
 	@ApiModelProperty(value = "文章分类id")
-	private String categoryId;
+	private Long categoryId;
+
 	@ApiModelProperty(value = "文章标签id")
-	private String  tagId;
+	private Long  tagId;
+
 	@ApiModelProperty(value = "归档时间")
 	private String archiveTime;
+
+	@ApiModelProperty(value = "最新")
+	private Boolean newTime;
+	@ApiModelProperty(value = "阅读量最高")
+	private Boolean hot;
+	@ApiModelProperty(value = "点赞最好")
+	private Boolean like;
+	@ApiModelProperty(value = "评论最高")
+	private Boolean comment;
 }

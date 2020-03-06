@@ -30,6 +30,9 @@ public class ArticlesVO {
 	@ApiModelProperty(value = "是否置顶")
 	private Short isTop;
 
+	@ApiModelProperty(value = "是否推荐")
+	private Short isRecommend;
+
 	@ApiModelProperty(value = "分类id")
 	private Long categoryId;
 
@@ -50,7 +53,10 @@ public class ArticlesVO {
 	private Long readCount;
 
 	@ApiModelProperty(value = "评论数")
-	private Integer commentNum;
+	private Integer commentCount;
+
+	@ApiModelProperty(value = "点赞数")
+	private Integer likeCount;
 
 	@ApiModelProperty(value = "发布时间")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

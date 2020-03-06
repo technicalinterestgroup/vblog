@@ -83,5 +83,11 @@
     <select id="getArticleCountTag" resultType="java.lang.Integer">
         select count(1) from v_article where tag_id=#{id}
     </select>
+
+    <select id="allTagList" resultType="com.technicalinterest.group.dto.TagDTO">
+         SELECT t1.id,t1.name,COUNT(t2.id)as articleNum FROM v_tag t1 LEFT JOIN v_article t2 ON t1.id=t2.`tag_id`
+         <if test="userName !=null"> WHERE t2.`user_name`=#{userName}</if>
+        GROUP BY t1.id
+    </select>
 </mapper>
 

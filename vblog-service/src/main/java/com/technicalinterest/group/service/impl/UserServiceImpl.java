@@ -231,13 +231,13 @@ public class UserServiceImpl implements UserService {
 			}
 			VSystemDTO vSystemDTO = VSystemDTO.builder().userName(newUserDTO.getUserName()).vStart(new Date()).build();
 			systemService.insertSelective(vSystemDTO);
-			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
-			redisUtil.set(key, String.valueOf(user.getId()), ACTIVATION_TIME);
-			//发送邮件
-			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
-			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
-					"<p>欢迎!&nbsp" + newUserDTO.getUserName() + "<br>" + "感谢您在技术兴趣博客网站的注册，请点击这里激活您的账号:<br></p>" + "<a href=\"" + ACTIVATION_WEB_URL + UserConstant.ACTIVATION_URL
-							+ key + "\">" + SERVER + UserConstant.ACTIVATION_URL + key + "</a><br>" + "<p>祝您使用愉快，使用过程中您有任何问题请及时联系我们。</p>");
+//			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
+//			redisUtil.set(key, String.valueOf(user.getId()), ACTIVATION_TIME);
+//			//发送邮件
+//			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
+//			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
+//					"<p>欢迎!&nbsp" + newUserDTO.getUserName() + "<br>" + "感谢您在技术兴趣博客网站的注册，请点击这里激活您的账号:<br></p>" + "<a href=\"" + ACTIVATION_WEB_URL + UserConstant.ACTIVATION_URL
+//							+ key + "\">" + SERVER + UserConstant.ACTIVATION_URL + key + "</a><br>" + "<p>祝您使用愉快，使用过程中您有任何问题请及时联系我们。</p>");
 
 			return ReturnClass.success(UserConstant.ADD_EMAIL_SEND);
 		}
@@ -281,7 +281,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public ReturnClass logout(String token) {
 		if (redisUtil.hasKey(token)) {
+			Object o = redisUtil.get(token);
 			redisUtil.del(token);
+			redisUtil.del(o.toString());
 		}
 		return ReturnClass.success();
 	}
@@ -496,6 +498,22 @@ public class UserServiceImpl implements UserService {
 		} catch (IOException e) {
 			throw new VLogException(UserConstant.CREAT_IMG_FAIL);
 		}
+	}
+
+	/**
+	 * 查询用户信息
+	 *
+	 * @param userName
+	 * @return
+	 */
+	@Override
+	public ReturnClass getUserInfo(String userName) {
+		User user = User.builder().userName(userName).build();
+		User userByUser = userMapper.getUserByUser(user);
+		if (Objects.isNull(userByUser)){
+			throw new VLogException(ResultEnum.NO_URL);
+		}
+		return ReturnClass.success(userByUser);
 	}
 
 	/**

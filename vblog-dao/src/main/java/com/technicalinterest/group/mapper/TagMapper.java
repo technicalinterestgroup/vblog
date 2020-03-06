@@ -29,4 +29,10 @@ public interface TagMapper {
     */
     Integer getArticleCountTag(@Param("id")Long id);
 
+    /**
+     * 查询全部标签
+     * @return
+     */
+    List<TagDTO> allTagList(@Param("userName")String userName);
+
 }

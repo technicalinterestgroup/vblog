@@ -32,7 +32,7 @@ public class IpUrlLimitInterceptor implements HandlerInterceptor {
 		return  SpringContextUtil.getBean(RedisUtil.class);
 	}
 
-	private static final String LOCK_IP_URL_KEY="lock_ip_";
+	private static final String LOCK_IP_KEY="lock_ip_";
 
 	private static final String IP_URL_REQ_TIME="ip_url_times_";
 	/**
@@ -83,7 +83,7 @@ public class IpUrlLimitInterceptor implements HandlerInterceptor {
 	 */
 	private Boolean ipIsLock(String ip){
 		RedisUtil redisUtil=getRedisUtil();
-		if(redisUtil.hasKey(LOCK_IP_URL_KEY+ip)){
+		if(redisUtil.hasKey(LOCK_IP_KEY+ip)){
 			return true;
 		}
 		return false;
@@ -102,7 +102,8 @@ public class IpUrlLimitInterceptor implements HandlerInterceptor {
 		if (redisUtil.hasKey(key)){
 			long time=redisUtil.incr(key,(long)1);
 			if (time>=LIMIT_TIMES){
-				redisUtil.getLock(LOCK_IP_URL_KEY+ip,ip,IP_LOCK_TIME);
+				redisUtil.getLock(LOCK_IP_KEY+ip,ip,IP_LOCK_TIME);
+				redisUtil.del(key);
 				return false;
 			}
 		}else {

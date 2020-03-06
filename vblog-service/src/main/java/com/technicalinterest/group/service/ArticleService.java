@@ -2,8 +2,10 @@ package com.technicalinterest.group.service;
 
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
+import com.technicalinterest.group.dto.UserBlogDTO;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -111,5 +113,12 @@ public interface ArticleService {
 	 * @return null
 	*/
 	ReturnClass addReadCount(Long id);
+
+	/**
+	 * 查询用户博客数据
+	 * @param userName
+	 * @return
+	 */
+	ReturnClass getBlogInfoByUser(String userName);
 
 }

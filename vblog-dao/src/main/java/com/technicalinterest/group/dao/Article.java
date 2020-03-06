@@ -42,13 +42,31 @@ public class Article extends BaseDao {
 	*/ 
 	private String userName;
 	/**
+	 * 文章描述
+	 */
+	private String description;
+	/**
 	 * 文章状态 0：草稿，1：发布
 	 */
 	private Short state;
 	/**
+	 * 是否为系统推荐文章 0：不是，1：是
+	 */
+	private Short recommend;
+	/**
 	 * 文章状态阅量
 	 */
-	private Long readCount;
+	private Integer readCount;
+
+	/**
+	 * 文章点赞量
+	 */
+	private Integer likeCount;
+
+	/**
+	 * 文章评论量
+	 */
+	private Integer commentCount;
 
 
 	

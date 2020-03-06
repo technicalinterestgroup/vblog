@@ -29,6 +29,10 @@ public class ArticlesDTO {
 	 */
 	private Short isTop;
 	/**
+	 * 是否推荐
+	 */
+	private Short isRecommend;
+	/**
 	 * 分类id
 	 */
 	private Long categoryId;
@@ -74,7 +78,7 @@ public class ArticlesDTO {
 	/**
 	 * 评论数
 	 */
-	private Integer commentNum;
+	private Integer commentCount;
 	/**
 	 * 是否收藏 1是
 	 */

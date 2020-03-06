@@ -6,6 +6,7 @@ import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dao.Content;
 import com.technicalinterest.group.dto.QueryArticleDTO;
+import com.technicalinterest.group.dto.UserBlogDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.ContentMapper;
 import com.technicalinterest.group.mapper.UserMapper;
@@ -216,18 +217,18 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public ReturnClass articleDetail(Boolean authCheck, Long id) {
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
-		//获取请求用户信息
-		ReturnClass userByToken = userService.getUserByToken();
-		if (!userByToken.isSuccess()) {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-		UserDTO userDTO = (UserDTO) userByToken.getData();
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, userDTO.getUserName());
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
 		//获取数据是否是当前用户校验
 		if (authCheck) {
+			//获取请求用户信息
+			ReturnClass userByToken = userService.getUserByToken();
+			if (!userByToken.isSuccess()) {
+				throw new VLogException(ResultEnum.USERINFO_ERROR);
+			}
+			UserDTO userDTO = (UserDTO) userByToken.getData();
 			if (!StringUtils.equals(userDTO.getUserName(), articleInfo.getUserName())) {
 				throw new VLogException(ResultEnum.NO_AUTH);
 			}
@@ -255,6 +256,7 @@ public class ArticleServiceImpl implements ArticleService {
 	@Override
 	public ReturnClass allListArticle(QueryArticleDTO queryArticleDTO) {
 		queryArticleDTO.setState((short) 1);
+
 		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
 		if (integer < 1) {
 			return ReturnClass.fail(ArticleConstant.NO_BLOG);
@@ -394,5 +396,17 @@ public class ArticleServiceImpl implements ArticleService {
 			log.info("文章阅读数累加失败！");
 		}
 		return ReturnClass.success();
+	}
+
+	/**
+	 * 查询用户博客数据
+	 *
+	 * @param userName
+	 * @return
+	 */
+	@Override
+	public ReturnClass getBlogInfoByUser(String userName) {
+		UserBlogDTO blogInfoByUser = articleMapper.getBlogInfoByUser(userName);
+		return ReturnClass.success(blogInfoByUser);
 	}
 }

@@ -1,10 +1,13 @@
 package com.technicalinterest.group.api.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.*;
+import com.technicalinterest.group.api.util.IndexOrderByUtil;
 import com.technicalinterest.group.api.vo.*;
 import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.*;
+import com.technicalinterest.group.service.Enum.ArticleOrderEnum;
 import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.annotation.VBlogReadCount;
 import com.technicalinterest.group.service.constant.ResultEnum;
@@ -14,6 +17,7 @@ import com.technicalinterest.group.service.util.ListBeanUtils;
 import com.technicalinterest.group.service.util.WebSocketUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -35,6 +39,7 @@ import java.util.List;
 @Api(tags = "前端系统接口")
 @RestController
 @RequestMapping("view")
+@Slf4j
 public class ViewController {
 	@Autowired
 	private ArticleService articleService;
@@ -46,6 +51,8 @@ public class ViewController {
 	private CategoryService categoryService;
 	@Autowired
 	private CommentService commentService;
+	@Autowired
+	private TagService tagService;
 
 	private static final Boolean authCheck = false;
 
@@ -87,8 +94,9 @@ public class ViewController {
 	@ApiOperation(value = "新用户注册", notes = "新用户注册")
 	@PostMapping(value = "/user/new")
 	@BlogOperation(value = "新用户注册")
-	@DistributeLock(key = "#newUserParam.userName", timeout = 2, expire = 1, errMsg = "00000")
-	public ApiResult<String> saveUser(@Valid @RequestBody NewUserParam newUserParam) {
+	@DistributeLock(key = "#newUserParam.userName", timeout = 1, expire = 1, errMsg = "00000")
+	public ApiResult<String> saveUser( @RequestBody NewUserParam newUserParam) {
+		log.info("注册用户数据：{}", JSONObject.toJSON(newUserParam));
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO newUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(newUserParam, newUserDTO);
@@ -191,13 +199,15 @@ public class ViewController {
 	 * @date: 2019-07-14 19:24
 	 */
 	@ApiOperation(value = "会员用户信息", notes = "用户信息")
-	@GetMapping(value = "/user/detail/{userName}")
-	public ApiResult<UserVO> detail(@PathVariable("userName") String userName) {
+	@GetMapping(value = "/user/info/{userName}")
+	public ApiResult<UserBlogInfoVO> userInfo(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass getUserByuserName = userService.getUserByuserName(authCheck, userName);
-		if (getUserByuserName.isSuccess()) {
-			UserVO userVO = new UserVO();
-			BeanUtils.copyProperties(getUserByuserName.getData(), userVO);
+		ReturnClass userInfo = userService.getUserInfo(userName);
+		if (userInfo.isSuccess()) {
+			ReturnClass blogUserInfo = articleService.getBlogInfoByUser(userName);
+			UserBlogInfoVO userVO = new UserBlogInfoVO();
+			BeanUtils.copyProperties(userInfo.getData(), userVO);
+			BeanUtils.copyProperties(blogUserInfo.getData(), userVO);
 			apiResult.success(userVO);
 		} else {
 			throw new VLogException(ResultEnum.NO_URL);
@@ -251,7 +261,7 @@ public class ViewController {
 	@GetMapping(value = "/article/new/{userName}")
 	public ApiResult<ArticleTitleVO> listArticleHotByUser(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, userName, 1);
+		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, userName, ArticleOrderEnum.NEW.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -274,11 +284,37 @@ public class ViewController {
 	 * @param userName
 	 * @return null
 	 */
-	@ApiOperation(value = "会员热门文章列表", notes = "文章列表")
+	@ApiOperation(value = "会员热门文章列表")
 	@GetMapping(value = "/article/hot/{userName}")
 	public ApiResult<ArticleTitleVO> listArticleNewByUser(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, userName, 2);
+		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, userName, ArticleOrderEnum.HOT.getOrderByFlag());
+		if (listArticle.isSuccess()) {
+			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
+			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
+			for (ArticlesDTO entity : articlesDTOS) {
+				ArticleTitleVO articleTitleVO = new ArticleTitleVO();
+				BeanUtils.copyProperties(entity, articleTitleVO);
+				list.add(articleTitleVO);
+			}
+			apiResult.success(list);
+		} else {
+			apiResult.setMsg(listArticle.getMsg());
+		}
+		return apiResult;
+	}
+
+	/**
+	 * @Description: 用户推荐文章 按点赞数量排序
+	 * @author: shuyu.wang
+	 * @date: 2019-08-13 12:37
+	 * @return null
+	 */
+	@ApiOperation(value = "用户推荐阅读文章列表")
+	@GetMapping(value = "/article/recommend/{userName}")
+	public ApiResult<ArticleTitleVO> listArticleRecommendByUser(@PathVariable("userName") String userName) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, userName, ArticleOrderEnum.Recommend.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -322,7 +358,7 @@ public class ViewController {
 	}
 
 	@ApiOperation(value = "会员文章分类", notes = "文章分类")
-	@GetMapping(value = "/category/{userName}")
+	@GetMapping(value = "/article/category/{userName}")
 	public ApiResult<ArticleTitleVO> listArticleCategory(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 
@@ -338,6 +374,23 @@ public class ViewController {
 			apiResult.success(list);
 		} else {
 			apiResult.setMsg(listCategory.getMsg());
+		}
+		return apiResult;
+	}
+	@ApiOperation(value = "用户文章标签")
+	@GetMapping(value = "/article/tags/{userName}")
+	public ApiResult<List<TagVO>> allTagListByUser(@PathVariable("userName") String userName){
+		ApiResult apiResult = new ApiResult();
+		ReturnClass returnClass = tagService.allTagList(userName);
+		if (returnClass.isSuccess()) {
+			List<TagVO> list = new ArrayList<>();
+			List<TagDTO> articlesDTOS = (List<TagDTO>) returnClass.getData();
+			for (TagDTO entity : articlesDTOS) {
+				TagVO tagVO = new TagVO();
+				BeanUtils.copyProperties(entity, tagVO);
+				list.add(tagVO);
+			}
+			apiResult.success(list);
 		}
 		return apiResult;
 	}
@@ -365,7 +418,7 @@ public class ViewController {
 		}
 		return apiResult;
 	}
-
+//-------------------------------------------------------------------
 	/**
 	 * @Description: 网站文章列表
 	 * @author: shuyu.wang
@@ -379,6 +432,7 @@ public class ViewController {
 		ApiResult apiResult = new ApiResult();
 		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
 		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
+		queryArticleDTO.setOrderBy(IndexOrderByUtil.getOrderByFlage(queryArticleParam));
 		ReturnClass listArticle = articleService.allListArticle(queryArticleDTO);
 		if (listArticle.isSuccess()) {
 			PageBean<ArticlesDTO> pageBean = (PageBean<ArticlesDTO>) listArticle.getData();
@@ -400,16 +454,16 @@ public class ViewController {
 	}
 
 	/**
-	 * @Description: 网站最新文章
+	 * @Description: 网站最新文章 按时间排序
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
 	 * @return null
 	 */
-	@ApiOperation(value = "最新文章列表", notes = "文章列表")
+	@ApiOperation(value = "最新文章列表")
 	@GetMapping(value = "/article/new")
 	public ApiResult<ArticleTitleVO> listArticleHot() {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, 1);
+		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, ArticleOrderEnum.NEW.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -427,16 +481,16 @@ public class ViewController {
 	//最新发布
 
 	/**
-	 * @Description: 热门文章
+	 * @Description: 热门文章 按阅读量排序
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
 	 * @return null
 	 */
-	@ApiOperation(value = "网站热门文章列表", notes = "文章列表")
+	@ApiOperation(value = "网站热门文章列表")
 	@GetMapping(value = "/article/hot")
 	public ApiResult<ArticleTitleVO> listArticleNew() {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, 2);
+		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, ArticleOrderEnum.HOT.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -453,16 +507,16 @@ public class ViewController {
 	}
 
 	/**
-	 * @Description: 热门文章
+	 * @Description: 推荐文章 按点赞数量排序
 	 * @author: shuyu.wang
 	 * @date: 2019-08-13 12:37
 	 * @return null
 	 */
-	@ApiOperation(value = "推荐阅读文章列表", notes = "文章列表")
+	@ApiOperation(value = "推荐阅读文章列表")
 	@GetMapping(value = "/article/recommend")
 	public ApiResult<ArticleTitleVO> listArticleRecommend() {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, 3);
+		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, ArticleOrderEnum.Recommend.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -474,6 +528,23 @@ public class ViewController {
 			apiResult.success(list);
 		} else {
 			apiResult.setMsg(listArticle.getMsg());
+		}
+		return apiResult;
+	}
+	@ApiOperation(value = "文章标签集合")
+	@GetMapping(value = "/article/tags")
+	public ApiResult<List<TagVO>> allTagList(){
+		ApiResult apiResult = new ApiResult();
+		ReturnClass returnClass = tagService.allTagList(null);
+		if (returnClass.isSuccess()) {
+			List<TagVO> list = new ArrayList<>();
+			List<TagDTO> articlesDTOS = (List<TagDTO>) returnClass.getData();
+			for (TagDTO entity : articlesDTOS) {
+				TagVO tagVO = new TagVO();
+				BeanUtils.copyProperties(entity, tagVO);
+				list.add(tagVO);
+			}
+			apiResult.success(list);
 		}
 		return apiResult;
 	}

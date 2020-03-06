@@ -141,4 +141,15 @@ public class TagServiceImpl implements TagService {
 		}
 		return ReturnClass.fail(TagConstant.FAIL_DEL);
 	}
+
+	/**
+	 * 查询所以标签
+	 *
+	 * @return
+	 */
+	@Override
+	public ReturnClass allTagList(String userName) {
+		List<TagDTO> tagDTOS = tagMapper.allTagList(userName);
+		return ReturnClass.success(tagDTOS);
+	}
 }

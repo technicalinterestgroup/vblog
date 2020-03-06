@@ -2,6 +2,7 @@ package com.technicalinterest.group.mapper;
 
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
+import com.technicalinterest.group.dto.UserBlogDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -106,6 +107,13 @@ public interface ArticleMapper {
      * @return null
      */
     Integer allArticleListCount(@Param("pojo")QueryArticleDTO queryArticleDTO);
+
+    /**
+     * 获取用户博客数据
+     * @param userName
+     * @return
+     */
+    UserBlogDTO getBlogInfoByUser(@Param("userName")String userName);
 
 
 

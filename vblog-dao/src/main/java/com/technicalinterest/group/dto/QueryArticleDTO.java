@@ -43,4 +43,8 @@ public class QueryArticleDTO extends PageBase {
 	 * 文章状态归档时间
 	 */
 	private String archiveTime;
+    /**
+	 * 排序标志
+     */
+	private Integer orderBy;
 }

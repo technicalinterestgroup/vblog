@@ -35,7 +35,7 @@ public class NewUserParam {
 	/**
 	 * 邮箱
 	 */
-	@ApiModelProperty(value = "邮箱",required = true)
+//	@ApiModelProperty(value = "邮箱",required = true)
 	@NotBlank(message = "邮箱不能为空")
 	@Pattern(regexp ="^([a-z0-9A-Z]+[-|_|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$",message = "邮箱格式不正确!")
 	private String email;
@@ -43,6 +43,7 @@ public class NewUserParam {
 	@ApiModelProperty(value = "验证码",required = true)
 	@NotBlank(message = "验证码不能为空")
 	private String img;
+
 	@ApiModelProperty(value = "验证码token",required = true)
 	@NotBlank(message = "不能为空")
 	private String token;

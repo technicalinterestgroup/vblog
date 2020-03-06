@@ -129,4 +129,11 @@ public interface UserService {
      * @return null
      */
     ReturnClass createImage();
+
+    /**
+     * 查询用户信息
+     * @param userName
+     * @return
+     */
+    ReturnClass getUserInfo(String userName);
 }
