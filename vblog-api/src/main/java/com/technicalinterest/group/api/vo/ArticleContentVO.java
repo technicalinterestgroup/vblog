@@ -22,8 +22,13 @@ import java.util.Date;
 public class ArticleContentVO {
 	@ApiModelProperty(value = "文章id")
 	private Long id;
+
+	@ApiModelProperty(value = "作者")
+	private String userName;
+
 	@ApiModelProperty(value = "标题")
 	private String title;
+
 	@ApiModelProperty(value = "摘要")
 	private String submit;
 

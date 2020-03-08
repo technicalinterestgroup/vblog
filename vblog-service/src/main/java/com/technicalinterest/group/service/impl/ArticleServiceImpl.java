@@ -215,9 +215,9 @@ public class ArticleServiceImpl implements ArticleService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass articleDetail(Boolean authCheck, Long id) {
+	public ReturnClass articleDetail(Boolean authCheck, Long id,String userName) {
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, null);
+		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, userName);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}

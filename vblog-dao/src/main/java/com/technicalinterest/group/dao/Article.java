@@ -69,6 +69,8 @@ public class Article extends BaseDao {
 	private Integer commentCount;
 
 
-	
-	
+
+
+
+
 }

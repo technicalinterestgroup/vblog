@@ -57,7 +57,7 @@ public interface ArticleService {
      * @param id
      * @return null
     */
-	ReturnClass articleDetail(Boolean authCheck,Long id);
+	ReturnClass articleDetail(Boolean authCheck,Long id,String userName);
 
 	/**
 	 * @Description: 全站文章列表

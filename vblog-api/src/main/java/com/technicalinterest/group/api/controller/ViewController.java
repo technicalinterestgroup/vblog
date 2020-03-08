@@ -339,7 +339,7 @@ public class ViewController {
 	 */
 	@ApiOperation(value = "会员文章归档", notes = "文章归档")
 	@GetMapping(value = "/article/archive/{userName}")
-	public ApiResult<ArticleTitleVO> listArticleArchive(@PathVariable("userName") String userName) {
+	public ApiResult<List<ArticleArchiveVO>> listArticleArchive(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass listArticleArchive = articleService.listArticleArchive(userName);
 		if (listArticleArchive.isSuccess()) {
@@ -405,9 +405,10 @@ public class ViewController {
 	@ApiOperation(value = "文章详情", notes = "文章详情")
 	@GetMapping(value = "/article/detail/{id}")
 	@VBlogReadCount
-	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id) {
+	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id,
+			@RequestParam(name = "userName",required = false)String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass articleDetail = articleService.articleDetail(authCheck, id);
+		ReturnClass articleDetail = articleService.articleDetail(authCheck, id,userName);
 		ArticleContentVO articleContentVO = new ArticleContentVO();
 		if (articleDetail.isSuccess()) {
 			BeanUtils.copyProperties(articleDetail.getData(), articleContentVO);
