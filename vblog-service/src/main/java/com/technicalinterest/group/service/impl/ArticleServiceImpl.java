@@ -7,6 +7,7 @@ import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dao.Content;
 import com.technicalinterest.group.dto.QueryArticleDTO;
 import com.technicalinterest.group.dto.UserBlogDTO;
+import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.ContentMapper;
 import com.technicalinterest.group.mapper.UserMapper;
@@ -80,7 +81,7 @@ public class ArticleServiceImpl implements ArticleService {
 		Long userId = null;
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			article.setUserName(userDTO.getUserName());
 			userId = userDTO.getId();
 		} else {
@@ -155,7 +156,7 @@ public class ArticleServiceImpl implements ArticleService {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
 		//判断是否是本人操作
-		UserDTO userDTO = (UserDTO) userByToken.getData();
+		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 		if (!StringUtils.equals(articleResult.getUserName(), userDTO.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
@@ -228,7 +229,7 @@ public class ArticleServiceImpl implements ArticleService {
 			if (!userByToken.isSuccess()) {
 				throw new VLogException(ResultEnum.USERINFO_ERROR);
 			}
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			if (!StringUtils.equals(userDTO.getUserName(), articleInfo.getUserName())) {
 				throw new VLogException(ResultEnum.NO_AUTH);
 			}
@@ -329,7 +330,7 @@ public class ArticleServiceImpl implements ArticleService {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
 		//判断是否是本人操作
-		UserDTO userDTO = (UserDTO) userByToken.getData();
+		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 		if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
@@ -365,7 +366,7 @@ public class ArticleServiceImpl implements ArticleService {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
 		//判断是否是本人操作
-		UserDTO userDTO = (UserDTO) userByToken.getData();
+		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 		if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}

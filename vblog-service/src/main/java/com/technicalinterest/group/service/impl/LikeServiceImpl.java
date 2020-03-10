@@ -1,8 +1,10 @@
 package com.technicalinterest.group.service.impl;
 
+import com.technicalinterest.group.dao.Article;
 import com.technicalinterest.group.dao.Collection;
 import com.technicalinterest.group.dao.Like;
 import com.technicalinterest.group.dto.ArticlesDTO;
+import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.LikeMapper;
 import com.technicalinterest.group.service.LikeService;
@@ -50,7 +52,7 @@ public class LikeServiceImpl implements LikeService {
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		UserDTO userDTO = (UserDTO) userByToken.getData();
+		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 		Like like = Like.builder().userName(userDTO.getUserName()).type(pojo.getType()).sourceId(pojo.getSourceId()).build();
 		Like likeResult = likeMapper.queryLike(like);
 		if (Objects.nonNull(likeResult)) {
@@ -60,6 +62,10 @@ public class LikeServiceImpl implements LikeService {
 		like.setIsView((short)0);
 		int insert = likeMapper.insert(like);
 		if (insert > 0) {
+			Article article=new Article();
+			article.setId(pojo.getSourceId());
+			article.setLikeCount(1);
+			articleMapper.update(article);
 			return ReturnClass.success(LikeConstant.SUS_ADD);
 		}
 		return ReturnClass.fail(LikeConstant.FAIL_ADD);
@@ -78,17 +84,21 @@ public class LikeServiceImpl implements LikeService {
 		if (!userByToken.isSuccess()) {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		UserDTO userDTO = (UserDTO) userByToken.getData();
+		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 		Like like = Like.builder().userName(userDTO.getUserName()).type(pojo.getType()).sourceId(pojo.getSourceId()).build();
 		Like likeResult = likeMapper.queryLike(like);
 		if (Objects.isNull(likeResult)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		if (StringUtils.equals(userDTO.getUserName(),likeResult.getUserName())){
+		if (!StringUtils.equals(userDTO.getUserName(),likeResult.getUserName())){
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
 		Integer integer = likeMapper.del(likeResult.getId());
 		if (integer > 0) {
+			Article article=new Article();
+			article.setId(pojo.getSourceId());
+			article.setLikeCount(0);
+			articleMapper.update(article);
 			return ReturnClass.success(LikeConstant.SUS_DEL);
 		}
 		return ReturnClass.success(LikeConstant.FAIL_DEL);

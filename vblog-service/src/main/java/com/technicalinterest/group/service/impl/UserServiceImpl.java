@@ -257,7 +257,7 @@ public class UserServiceImpl implements UserService {
 		if (!userByToken.isSuccess()) {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		UserDTO userDTO = (UserDTO) userByToken.getData();
+		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 		BeanUtils.copyProperties(editUserDTO, user);
 		user.setId(userDTO.getId());
 		if (StringUtils.isNotEmpty(editUserDTO.getPassWord())) {
@@ -325,11 +325,13 @@ public class UserServiceImpl implements UserService {
 		if (!redisUtil.hasKey(accessToken)) {
 			throw new VLogException(ResultEnum.TIME_OUT);
 		}
-		String userInfo = (String) redisUtil.get(accessToken);
-		log.info("getUserByToken>>>  token={},userInfo={}",accessToken,userInfo);
-		UserDTO userDTO = JSONObject.parseObject(userInfo, UserDTO.class);
-		if (Objects.nonNull(userDTO)) {
-			return ReturnClass.success(userDTO);
+		String userName = (String) redisUtil.get(accessToken);
+		User user = User.builder().userName(userName).build();
+		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
+		log.info("getUserByToken>>>  token={},userInfo={}",accessToken,userRoleDTO);
+//		UserDTO userDTO = JSONObject.parseObject(userRoleDTO, UserDTO.class);
+		if (Objects.nonNull(userRoleDTO)) {
+			return ReturnClass.success(userRoleDTO);
 		}
 		return ReturnClass.fail();
 	}

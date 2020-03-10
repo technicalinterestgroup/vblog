@@ -3,6 +3,7 @@ package com.technicalinterest.group.service.impl;
 import com.technicalinterest.group.dao.Category;
 import com.technicalinterest.group.dao.Tag;
 import com.technicalinterest.group.dto.TagDTO;
+import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.mapper.TagMapper;
 import com.technicalinterest.group.service.TagService;
 import com.technicalinterest.group.service.UserService;
@@ -36,7 +37,7 @@ public class TagServiceImpl implements TagService {
 		BeanUtils.copyProperties(pojo, tag);
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			tag.setUserName(userDTO.getUserName());
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
@@ -59,7 +60,7 @@ public class TagServiceImpl implements TagService {
 		tag.setId(pojo.getId());
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			tag.setUserName(userDTO.getUserName());
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
@@ -117,7 +118,7 @@ public class TagServiceImpl implements TagService {
 		tag.setId(id);
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			tag.setUserName(userDTO.getUserName());
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);

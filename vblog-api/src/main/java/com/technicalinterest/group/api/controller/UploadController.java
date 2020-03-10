@@ -9,6 +9,7 @@ import com.technicalinterest.group.api.vo.ImgVO;
 import com.technicalinterest.group.dao.PageBase;
 import com.technicalinterest.group.dto.FileDTO;
 import com.technicalinterest.group.dto.QueryFileDTO;
+import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.service.FileUploadService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
@@ -87,7 +88,7 @@ public class UploadController {
 		ReturnClass userByToken = userService.getUserByToken();
 		String userName = null;
 		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			userName = userDTO.getUserName();
 		}
 		ApiResult<String> apiResult = new ApiResult<>();
@@ -124,7 +125,7 @@ public class UploadController {
 		ReturnClass userByToken = userService.getUserByToken();
 		String userName = null;
 		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			userName = userDTO.getUserName();
 		}
 		ApiResult<String> apiResult = new ApiResult<>();

@@ -5,6 +5,7 @@ import com.technicalinterest.group.dao.Collection;
 import com.technicalinterest.group.dao.PageBase;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.CollectionDTO;
+import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.CollectionMapper;
 import com.technicalinterest.group.service.CollectionService;
@@ -44,7 +45,7 @@ public class CollectionServiceImpl implements CollectionService {
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		UserDTO userDTO = (UserDTO) userByToken.getData();
+		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 		Collection collectionPa = Collection.builder().userName(userDTO.getUserName()).articleId(articleId).build();
 		Collection collection2 = collectionMapper.queryCollection(collectionPa);
 		if (Objects.nonNull(collection2)) {
@@ -64,7 +65,7 @@ public class CollectionServiceImpl implements CollectionService {
 		if (!userByToken.isSuccess()) {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		UserDTO userDTO = (UserDTO) userByToken.getData();
+		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 		Collection collectionPa = Collection.builder().userName(userDTO.getUserName()).articleId(articleId).build();
 		Collection collection = collectionMapper.queryCollection(collectionPa);
 		if (Objects.isNull(collection)) {

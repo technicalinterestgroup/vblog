@@ -2,6 +2,7 @@ package com.technicalinterest.group.service.impl;
 
 import com.technicalinterest.group.dao.Category;
 import com.technicalinterest.group.dto.CategoryDTO;
+import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.mapper.CategoryMapper;
 import com.technicalinterest.group.service.CategoryService;
 import com.technicalinterest.group.service.UserService;
@@ -35,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
 		BeanUtils.copyProperties(pojo, category);
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			category.setUserName(userDTO.getUserName());
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
@@ -59,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
 
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			category.setUserName(userDTO.getUserName());
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);
@@ -110,7 +111,7 @@ public class CategoryServiceImpl implements CategoryService {
 		category.setId(id);
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			category.setUserName(userDTO.getUserName());
 		} else {
 			throw new VLogException(ResultEnum.USERINFO_ERROR);

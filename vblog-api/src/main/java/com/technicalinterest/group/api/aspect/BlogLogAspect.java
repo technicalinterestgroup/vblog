@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleContentVO;
 import com.technicalinterest.group.dao.Log;
+import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.service.LogService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
@@ -51,6 +52,8 @@ public class BlogLogAspect {
 	private RedisUtil redisUtil;
 	@Autowired
 	private LogService logService;
+	@Autowired
+	private UserService userService;
 
 	@Pointcut("@annotation(com.technicalinterest.group.service.annotation.BlogOperation)")
 	public void logPoinCut() {
@@ -93,8 +96,13 @@ public class BlogLogAspect {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String userInfo = (String) redisUtil.get(token);
-		UserDTO userDTO = JSONObject.parseObject(userInfo, UserDTO.class);
+		ReturnClass userByToken = userService.getUserByToken();
+		UserRoleDTO userDTO =null;
+		if (userByToken.isSuccess()){
+			userDTO = (UserRoleDTO) userByToken.getData();
+		}
+//
+//		UserDTO userDTO = JSONObject.parseObject(userInfo, UserDTO.class);
 		if (Objects.nonNull(userDTO)){
 			log.info(">>>url:【{}】,ip:【{}】,userName:【{}】,classMethod:【{}】,operation:【{}】,params:【{}】", url, ip,
 					userDTO.getUserName(), methodStr, operationName, params);

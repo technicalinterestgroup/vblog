@@ -3,6 +3,7 @@ package com.technicalinterest.group.service.impl;
 import com.technicalinterest.group.dao.Comment;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.CommentDTO;
+import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.CommentMapper;
 import com.technicalinterest.group.service.CommentService;
@@ -42,7 +43,7 @@ public class CommentServiceImpl implements CommentService {
 		BeanUtils.copyProperties(pojo, comment);
 		ReturnClass userByToken = userService.getUserByToken();
 		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 			comment.setUserName(userDTO.getUserName());
 		}
 		ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getArticleId(),null);
