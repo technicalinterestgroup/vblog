@@ -18,7 +18,7 @@ import lombok.Data;
 public class QueryArticleParam extends PageBaseParam {
 
 	@ApiModelProperty(value = "搜索条件")
-	private String condition;
+	private String keywords;
 	@ApiModelProperty(value = "文章分类id")
 	private Long categoryId;
 

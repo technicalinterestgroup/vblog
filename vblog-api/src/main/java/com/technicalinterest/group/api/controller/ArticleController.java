@@ -112,7 +112,7 @@ public class ArticleController {
 	@BlogOperation(value = "博客列表")
 	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass articleDetail = articleService.articleDetail(authCheck, id);
+		ReturnClass articleDetail = articleService.articleDetail(authCheck, id,null);
 		ArticleContentVO articleContentVO = new ArticleContentVO();
 		if (articleDetail.isSuccess()) {
 			BeanUtils.copyProperties(articleDetail.getData(), articleContentVO);

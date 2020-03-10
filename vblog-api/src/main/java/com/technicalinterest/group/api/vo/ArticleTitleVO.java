@@ -31,4 +31,14 @@ public class ArticleTitleVO {
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date createTime;
 
+	@ApiModelProperty(value = "文章阅读量")
+	private Long readCount;
+
+	@ApiModelProperty(value = "评论数")
+	private Integer commentCount;
+
+	@ApiModelProperty(value = "点赞数")
+	private Integer likeCount;
+
+
 }

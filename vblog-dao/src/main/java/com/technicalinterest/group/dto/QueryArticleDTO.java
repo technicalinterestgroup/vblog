@@ -16,7 +16,7 @@ public class QueryArticleDTO extends PageBase {
 	/**
 	 * 搜索条件
 	 */
-	private String condition;
+	private String keywords;
 	/**
 	 * 是否置顶
 	 */
