@@ -108,6 +108,7 @@
             <if test="user.userName!=null">and t1.user_name=#{user.userName}</if>
             <if test="user.passWord!=null">and t1.pass_word=MD5(#{user.passWord})</if>
         </where>
+        limit 1
     </select>
 
     <select id="queryAllUser" resultType="com.technicalinterest.group.dto.UserRoleDTO" parameterType="com.technicalinterest.group.dao.User">

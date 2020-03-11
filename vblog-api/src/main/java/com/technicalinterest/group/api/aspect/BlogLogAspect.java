@@ -5,7 +5,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleContentVO;
 import com.technicalinterest.group.dao.Log;
+import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.dto.UserRoleDTO;
+import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.service.LogService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
@@ -54,12 +56,23 @@ public class BlogLogAspect {
 	private LogService logService;
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private UserMapper userMapper;
+
+	/**
+	 * 请求切点方法(已提供@RequestMapping,@GetMapping,@PostMapping注解，需要其它请增加)
+	 */
+	@Pointcut(" @annotation(org.springframework.web.bind.annotation.RequestMapping) || " +
+			"   @annotation(org.springframework.web.bind.annotation.GetMapping) || " +
+			"   @annotation(org.springframework.web.bind.annotation.PostMapping)")
+	void requestMapping() {
+	}
 
 	@Pointcut("@annotation(com.technicalinterest.group.service.annotation.BlogOperation)")
 	public void logPoinCut() {
 	}
 
-	@AfterReturning(value = "logPoinCut()", returning = "result")
+	@AfterReturning(value = "requestMapping() && logPoinCut()", returning = "result")
 	public void doAfterReturningAdvice1(JoinPoint joinPoint, ApiResult result) {
 		log.info(">>>日志拦截AOP开始");
 		//获取用户ip地址
@@ -96,13 +109,9 @@ public class BlogLogAspect {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		ReturnClass userByToken = userService.getUserByToken();
-		UserRoleDTO userDTO =null;
-		if (userByToken.isSuccess()){
-			userDTO = (UserRoleDTO) userByToken.getData();
-		}
-//
-//		UserDTO userDTO = JSONObject.parseObject(userInfo, UserDTO.class);
+		String userName = (String) redisUtil.get(token);
+		User user = User.builder().userName(userName).build();
+		UserRoleDTO userDTO = userMapper.queryUserRoleDTO(user);
 		if (Objects.nonNull(userDTO)){
 			log.info(">>>url:【{}】,ip:【{}】,userName:【{}】,classMethod:【{}】,operation:【{}】,params:【{}】", url, ip,
 					userDTO.getUserName(), methodStr, operationName, params);
