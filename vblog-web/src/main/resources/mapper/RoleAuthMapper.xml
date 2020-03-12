@@ -95,7 +95,7 @@
 
     <select id="queryAuthByRole" resultType="com.technicalinterest.group.dto.RoleAuthDTO">
         SELECT t1.id as authId,t2.`name` as authName,t2.url,t2.type as authType FROM v_role_auth t1 INNER JOIN v_auth t2
-        ON t1.auth_id=t2.id
+        ON t1.auth_id=t2.id and t1.is_del=0 and t2.is_del=0
         <where>
             <if test="roleId!=null">and t1.role_id=#{roleId}</if>
             <if test="type!=null">and t2.type=#{type}</if>
