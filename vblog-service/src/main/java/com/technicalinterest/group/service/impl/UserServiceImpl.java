@@ -355,11 +355,9 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		User user = User.builder().userName(userName).build();
-		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
-		if (Objects.nonNull(userRoleDTO)) {
-			UserDTO userDTO = new UserDTO();
-			BeanUtils.copyProperties(userRoleDTO, userDTO);
-			return ReturnClass.success(userDTO);
+		User userResult = userMapper.getUserByUser(user);
+		if (Objects.nonNull(userResult)) {
+			return ReturnClass.success(userResult);
 		}
 		return ReturnClass.fail();
 	}

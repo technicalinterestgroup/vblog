@@ -24,4 +24,6 @@ public class RoleAuthDTO {
 	private String url;
 
 	private String authType;
+
+	private String icon;
 }
