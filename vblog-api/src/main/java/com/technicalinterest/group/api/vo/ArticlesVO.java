@@ -59,7 +59,7 @@ public class ArticlesVO {
 	private Integer likeCount;
 
 	@ApiModelProperty(value = "发布时间")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date createTime;
 
 	private Integer coverType=2;

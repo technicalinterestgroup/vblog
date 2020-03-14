@@ -27,7 +27,7 @@ public class Auth extends BaseDao {
 	/**
 	 * 描述
 	 */
-	private String info;
+	private String icon;
 	/**
 	 * 上级权限id
 	 */

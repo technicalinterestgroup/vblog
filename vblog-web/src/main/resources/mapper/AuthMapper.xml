@@ -6,7 +6,7 @@
         <result column="name" property="name"/>
         <result column="type" property="type"/>
         <result column="url" property="url"/>
-        <result column="info" property="info"/>
+        <result column="icon" property="icon"/>
         <result column="id" property="id"/>
         <result column="is_del" property="isDel"/>
         <result column="create_time" property="createTime"/>
@@ -19,12 +19,12 @@
         `name`,
         `type`,
         `url`,
-        `info`,
+        `icon`,
         `id`,
         `is_del`,
         `create_time`,
         `update_time`,
-`parent_id`
+        `parent_id`
 </sql>
 
     <!--auto generated Code-->
@@ -33,7 +33,7 @@
             `name`,
             `type`,
             `url`,
-            `info`,
+            `icon`,
             `id`,
             `is_del`,
             `create_time`,
@@ -42,7 +42,7 @@
             #{pojo.name},
             #{pojo.type},
             #{pojo.url},
-            #{pojo.info},
+            #{pojo.icon},
             #{pojo.id},
             #{pojo.isDel},
             #{pojo.createTime},
@@ -57,7 +57,7 @@
             <if test="pojo.name!=null"> `name`,</if>
             <if test="pojo.type!=null"> `type`,</if>
             <if test="pojo.url!=null"> `url`,</if>
-            <if test="pojo.info!=null"> `info`,</if>
+            <if test="pojo.icon!=null"> `icon`,</if>
             <if test="pojo.id!=null"> `id`,</if>
             <if test="pojo.isDel!=null"> `is_del`,</if>
             <if test="pojo.createTime!=null"> `create_time`,</if>
@@ -68,7 +68,7 @@
             <if test="pojo.name!=null">#{pojo.name},</if>
             <if test="pojo.type!=null">#{pojo.type},</if>
             <if test="pojo.url!=null">#{pojo.url},</if>
-            <if test="pojo.info!=null">#{pojo.info},</if>
+            <if test="pojo.icon!=null">#{pojo.icon},</if>
             <if test="pojo.id!=null">#{pojo.id},</if>
             <if test="pojo.isDel!=null">#{pojo.isDel},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
@@ -86,7 +86,7 @@
             #{pojo.name},
             #{pojo.type},
             #{pojo.url},
-            #{pojo.info},
+            #{pojo.icon},
             #{pojo.id},
             #{pojo.isDel},
             #{pojo.createTime},
@@ -102,7 +102,7 @@
             <if test="pojo.name != null"> `name` = #{pojo.name}, </if>
             <if test="pojo.type != null"> `type` = #{pojo.type}, </if>
             <if test="pojo.url != null"> `url` = #{pojo.url}, </if>
-            <if test="pojo.info != null"> `info` = #{pojo.info}, </if>
+            <if test="pojo.icon != null"> `icon` = #{pojo.icon}, </if>
             <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
             <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
             <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>

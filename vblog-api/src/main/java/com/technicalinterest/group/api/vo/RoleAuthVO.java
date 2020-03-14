@@ -18,7 +18,9 @@ public class RoleAuthVO {
 
 	@ApiModelProperty(value = "菜单名")
 	private String authName;
-	@ApiModelProperty(value = "图标url")
+	@ApiModelProperty(value = "url")
 	private String url;
+	@ApiModelProperty(value = "图标")
+	private String icon;
 
 }

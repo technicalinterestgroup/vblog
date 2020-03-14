@@ -355,11 +355,9 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		User user = User.builder().userName(userName).build();
-		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
-		if (Objects.nonNull(userRoleDTO)) {
-			UserDTO userDTO = new UserDTO();
-			BeanUtils.copyProperties(userRoleDTO, userDTO);
-			return ReturnClass.success(userDTO);
+		User userResult = userMapper.getUserByUser(user);
+		if (Objects.nonNull(userResult)) {
+			return ReturnClass.success(userResult);
 		}
 		return ReturnClass.fail();
 	}
@@ -377,10 +375,13 @@ public class UserServiceImpl implements UserService {
 		if (!redisUtil.hasKey(accessToken)) {
 			throw new VLogException(ResultEnum.TIME_OUT);
 		}
-		String userInfo = (String) redisUtil.get(accessToken);
-		UserDTO userDTO=JSONObject.parseObject(userInfo,UserDTO.class);
-		if (Objects.nonNull(userDTO)&&StringUtils.equals(userName, userDTO.getUserName())) {
-			return ReturnClass.success(userDTO);
+		String useName = (String) redisUtil.get(accessToken);
+		User query=new User();
+		query.setUserName(useName);
+		User result=userMapper.getUserByUser(query);
+//		UserDTO userDTO=JSONObject.parseObject(userInfo,UserDTO.class);
+		if (Objects.nonNull(result)&&StringUtils.equals(userName, useName)) {
+			return ReturnClass.success(result);
 		}
 		return ReturnClass.fail();
 	}

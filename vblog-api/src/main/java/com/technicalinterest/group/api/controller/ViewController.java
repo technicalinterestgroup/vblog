@@ -557,7 +557,7 @@ public class ViewController {
 	 * @date: 2019-07-14 19:24
 	 */
 	@ApiOperation(value = "博客主题渲染查询接口", notes = "详情")
-	@GetMapping(value = "/detail/{userName}")
+	@GetMapping(value = "/blog/info/{userName}")
 	public ApiResult<VSystemVO> systemDetail(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass getSystemByUser = vSystemService.getSystemByUser(authCheck, userName);
