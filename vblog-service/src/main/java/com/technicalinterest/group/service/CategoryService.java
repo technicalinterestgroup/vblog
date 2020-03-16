@@ -15,4 +15,6 @@ public interface CategoryService{
      ReturnClass listCategoryByUser(Boolean authCheck,String userName);
 
      ReturnClass delCategory(Long id);
+
+     ReturnClass listCategorySByUser();
 }

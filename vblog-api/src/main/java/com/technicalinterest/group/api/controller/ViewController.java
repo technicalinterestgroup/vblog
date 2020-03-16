@@ -228,6 +228,7 @@ public class ViewController {
 		ApiResult apiResult = new ApiResult();
 		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
 		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
+		queryArticleDTO.setOrderBy(IndexOrderByUtil.getOrderByFlage(queryArticleParam));
 		queryArticleDTO.setUserName(userName);
 		queryArticleDTO.setState((short) 1);
 		ReturnClass listArticle = articleService.listArticle(authCheck, userName, queryArticleDTO);

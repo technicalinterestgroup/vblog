@@ -13,7 +13,7 @@ public enum ResultEnum {
 	SUCCESS("000000","请求成功!"),
 	ERROR("000001","请求失败！"),
 	//业务异常
-	ACCESTOKEN_NULL("000004","ACCESTOKEN为空!"),
+	ACCESTOKEN_NULL("000004","请先登录!"),
 	TIME_OUT("000005","登录超时!"),
 	SERVICE_ERROR("000006","业务异常!"),
 	USERINFO_ERROR("000007","获取用户信息异常!"),

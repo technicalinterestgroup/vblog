@@ -24,4 +24,6 @@ public interface TagService{
      */
     ReturnClass allTagList(String userName);
 
+    ReturnClass allTagListDic();
+
 }

@@ -28,4 +28,11 @@ public interface CategoryMapper {
      * @return null
     */
     Integer getArticleCountCategory(@Param("id")Long id);
+
+    /**
+     * 查询用户的标签分类
+     * @param userName
+     * @return
+     */
+    List<CategoryDTO> queryCategorysByUser(String userName);
 }

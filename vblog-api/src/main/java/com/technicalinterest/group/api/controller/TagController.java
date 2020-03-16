@@ -73,6 +73,33 @@ public class TagController {
 	}
 
 	/**
+	 * @Description: 博客标签列表
+	 * @author: shuyu.wang
+	 * @date: 2019-08-15 17:39
+	 * @return null
+	 */
+	@ApiOperation(value = "博客标签列表下拉选择")
+	@GetMapping(value = "/list/dic")
+	@BlogOperation(value = "博客标签列表")
+	public ApiResult<List<TagVO>> listTagDics() {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass listCategory = tagService.allTagListDic();
+		if (listCategory.isSuccess()) {
+			List<TagVO> list = new ArrayList<TagVO>();
+			List<TagDTO> tagDTOS = (List<TagDTO>) listCategory.getData();
+			for (TagDTO entity : tagDTOS) {
+				TagVO tagVO = new TagVO();
+				BeanUtils.copyProperties(entity, tagVO);
+				list.add(tagVO);
+			}
+			apiResult.success(list);
+		} else {
+			apiResult.setMsg(listCategory.getMsg());
+		}
+		return apiResult;
+	}
+
+	/**
 	 * @Description: 编辑博客标签
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39

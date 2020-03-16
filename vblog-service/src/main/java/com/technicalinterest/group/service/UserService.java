@@ -82,6 +82,14 @@ public interface UserService {
     */
     ReturnClass getUserByuserName(Boolean authCheck,String userName);
 
+    /**
+     * @Description:查询登陆者用户信息
+     * @author: shuyu.wang
+     * @date: 2019-08-08 13:08
+     * @return null
+     */
+    ReturnClass getUserDetail();
+
 
     
     /**

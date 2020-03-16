@@ -136,4 +136,16 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 		return ReturnClass.fail(CategoryConstant.FAIL_DEL);
 	}
+
+	@Override
+	public ReturnClass listCategorySByUser() {
+		ReturnClass userByToken = userService.getUserByToken();
+		if (userByToken.isSuccess()) {
+			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
+			List<CategoryDTO> categoryDTOS = categoryMapper.queryCategorysByUser(userDTO.getUserName());
+			return ReturnClass.success(categoryDTOS);
+		} else {
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
+		}
+	}
 }

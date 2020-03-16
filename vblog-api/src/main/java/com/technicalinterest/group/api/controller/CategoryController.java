@@ -65,7 +65,32 @@ public class CategoryController {
 		}
 		return apiResult;
 	}
-
+	/**
+	 * @Description: 博客分类列表
+	 * @author: shuyu.wang
+	 * @date: 2019-08-15 17:39
+	 * @return null
+	 */
+	@ApiOperation(value = "博客分类下拉接口")
+	@GetMapping(value = "/list/dic")
+	@BlogOperation(value = "博客分类")
+	public ApiResult<List<CategoryVO>> listCategory() {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass listCategory = categoryService.listCategorySByUser();
+		if (listCategory.isSuccess()) {
+			List<CategoryVO> list = new ArrayList<CategoryVO>();
+			List<CategoryDTO> categoryDTOList = (List<CategoryDTO>) listCategory.getData();
+			for (CategoryDTO entity : categoryDTOList) {
+				CategoryVO categoryVO = new CategoryVO();
+				BeanUtils.copyProperties(entity, categoryVO);
+				list.add(categoryVO);
+			}
+			apiResult.success(list);
+		} else {
+			apiResult.setMsg(listCategory.getMsg());
+		}
+		return apiResult;
+	}
 	/**
 	 * @Description: 编辑博客分类
 	 * @author: shuyu.wang

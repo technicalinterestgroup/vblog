@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.EditUserParam;
 import com.technicalinterest.group.api.param.NewUserParam;
@@ -16,6 +17,7 @@ import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.exception.VLogException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,7 @@ import javax.validation.Valid;
 @Api(tags = "用户管理")
 @RestController
 @RequestMapping("user")
+@Slf4j
 public class UserController {
 	@Autowired
 	private UserService userService;
@@ -49,8 +52,8 @@ public class UserController {
 	@ApiOperation(value = "修改用户信息", notes = "用户模块")
 	@PostMapping(value = "/edit")
 	@BlogOperation(value = "修改用户信息")
-	@DistributeLock( key = "#newUserParam.userName", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> editUser(@Valid @RequestBody EditUserParam editUserParam) {
+		log.info("修改用户信息 参数={}", JSONObject.toJSON(editUserParam));
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(editUserParam, editUserDTO);
@@ -70,11 +73,11 @@ public class UserController {
 	 * @date: 2019-07-14 19:24
 	 */
 	@ApiOperation(value = "查询用户信息", notes = "用户信息")
-	@GetMapping(value = "/detail/{userName}")
+	@GetMapping(value = "/detail")
 	@BlogOperation(value = "查询用户信息")
-	public ApiResult<UserDetailVO> detail(@PathVariable("userName") String userName) {
+	public ApiResult<UserDetailVO> detail() {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass getUserByuserName = userService.getUserByuserName(authCheck, userName);
+		ReturnClass getUserByuserName = userService.getUserDetail();
 		if (getUserByuserName.isSuccess()) {
 			UserDetailVO userVO = new UserDetailVO();
 			BeanUtils.copyProperties(getUserByuserName.getData(), userVO);

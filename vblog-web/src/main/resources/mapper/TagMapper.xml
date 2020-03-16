@@ -89,5 +89,10 @@
          <if test="userName !=null"> WHERE t2.`user_name`=#{userName}</if>
         GROUP BY t1.id
     </select>
+
+    <select id="allTagListDic" resultType="com.technicalinterest.group.dto.TagDTO">
+        SELECT t1.id,t1.name FROM v_tag t1
+    </select>
+
 </mapper>
 

@@ -67,12 +67,12 @@ public class ArticleContentDTO {
 	/**
 	 * 文章内容html格式
 	 */
-	private String content;
+	private String contentFormat;
 
 	/**
 	 * 文章内容markdown格式
 	 */
-	private String contentMD;
+	private String content;
 	/**
 	 * 文章状态 0：草稿，1：发布
 	 */

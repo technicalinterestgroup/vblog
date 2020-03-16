@@ -82,5 +82,10 @@
     <select id="getArticleCountCategory" resultType="java.lang.Integer">
         select count(1) from v_article where category_id=#{id}
     </select>
+
+    <select id="queryCategorysByUser" resultType="com.technicalinterest.group.dto.CategoryDTO">
+        SELECT t1.id,t1.name FROM v_category t1
+       WHERE t1.user_name=#{userName} and t1.is_del=0
+    </select>
 </mapper>
 

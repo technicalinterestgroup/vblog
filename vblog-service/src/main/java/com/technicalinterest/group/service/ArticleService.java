@@ -50,6 +50,15 @@ public interface ArticleService {
 	 */
 	ReturnClass listArticle(Boolean authCheck,String userName,QueryArticleDTO queryArticleDTO);
 
+	/**
+	 * @Description: 根据登录用户查询
+	 * @author: shuyu.wang
+	 * @date: 2019-08-04 15:12
+	 * @param queryArticleDTO
+	 * @return ReturnClass
+	 */
+	ReturnClass listArticleByLogin(QueryArticleDTO queryArticleDTO);
+
     /**
      * @Description:获取文章详情
      * @author: shuyu.wang

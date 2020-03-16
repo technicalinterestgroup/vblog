@@ -153,4 +153,10 @@ public class TagServiceImpl implements TagService {
 		List<TagDTO> tagDTOS = tagMapper.allTagList(userName);
 		return ReturnClass.success(tagDTOS);
 	}
+
+	@Override
+	public ReturnClass allTagListDic() {
+		List<TagDTO> tagDTOS = tagMapper.allTagListDic();
+		return ReturnClass.success(tagDTOS);
+	}
 }

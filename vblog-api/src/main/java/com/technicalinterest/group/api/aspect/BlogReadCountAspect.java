@@ -45,8 +45,8 @@ public class BlogReadCountAspect {
 	public void read() {
 	}
 
-	@AfterReturning(value = "read()&&args(id)", returning = "result")
-	public void doAfterReturningAdvice1(JoinPoint joinPoint, Long id, ApiResult result) {
+	@AfterReturning(value = "read()&&args(id,userName)", returning = "result")
+	public void doAfterReturningAdvice1(JoinPoint joinPoint, Long id,String userName, ApiResult result) {
 		log.info("博客阅读数累加后置通知：id={},result={}", id, JSONObject.toJSON(result));
 		if (StringUtils.equals(result.getCode(), ResultEnum.SUCCESS.getCode())) {
 			//获取用户ip地址

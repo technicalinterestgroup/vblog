@@ -329,11 +329,10 @@ public class UserServiceImpl implements UserService {
 		User user = User.builder().userName(userName).build();
 		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
 		log.info("getUserByToken>>>  token={},userInfo={}",accessToken,userRoleDTO);
-//		UserDTO userDTO = JSONObject.parseObject(userRoleDTO, UserDTO.class);
-		if (Objects.nonNull(userRoleDTO)) {
-			return ReturnClass.success(userRoleDTO);
+		if (Objects.isNull(userRoleDTO)) {
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
 		}
-		return ReturnClass.fail();
+		return ReturnClass.success(userRoleDTO);
 	}
 
 	/**
@@ -358,6 +357,26 @@ public class UserServiceImpl implements UserService {
 		User userResult = userMapper.getUserByUser(user);
 		if (Objects.nonNull(userResult)) {
 			return ReturnClass.success(userResult);
+		}
+		return ReturnClass.fail();
+	}
+
+	/**
+	 * @return null
+	 * @Description:查询登陆者用户信息
+	 * @author: shuyu.wang
+	 * @date: 2019-08-08 13:08
+	 */
+	@Override
+	public ReturnClass getUserDetail() {
+		ReturnClass userByToken = getUserByToken();
+		if (userByToken.isSuccess()){
+			UserRoleDTO userRoleDTO =(UserRoleDTO)userByToken.getData();
+			User user = User.builder().userName(userRoleDTO.getUserName()).build();
+			User userResult = userMapper.getUserByUser(user);
+			if (Objects.nonNull(userResult)) {
+				return ReturnClass.success(userResult);
+			}
 		}
 		return ReturnClass.fail();
 	}

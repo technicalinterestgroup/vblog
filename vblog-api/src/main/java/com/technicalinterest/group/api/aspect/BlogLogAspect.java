@@ -79,7 +79,7 @@ public class BlogLogAspect {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 		BlogLogAspect blogLogAspect=SpringContextUtil.getBean(BlogLogAspect.class);
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		blogLogAspect.analisy(joinPoint,result,request.getRequestURL().toString(),IpAdrressUtil.getIpAdrress(request),accessToken);
+//		blogLogAspect.analisy(joinPoint,result,request.getRequestURL().toString(),IpAdrressUtil.getIpAdrress(request),accessToken);
 		log.info(">>>日志拦截AOP结束");
 	}
     @Async

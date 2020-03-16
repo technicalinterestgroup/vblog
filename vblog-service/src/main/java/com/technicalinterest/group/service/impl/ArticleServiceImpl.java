@@ -98,15 +98,15 @@ public class ArticleServiceImpl implements ArticleService {
 			return returnClass;
 		}
 		//文章摘要
-		String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContent());
+		String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContentFormat());
 		article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
 		article.setCreateTime(new Date());
 		articleMapper.insertSelective(article);
 		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
 			Content content = new Content();
 			content.setArticleId(article.getId());
-			content.setContent(articleContentDTO.getContent());
-			content.setContentMD(articleContentDTO.getContentMD());
+			content.setContent(articleContentDTO.getContentFormat());
+			content.setContentMD(articleContentDTO.getContent());
 			int i = contentMapper.insertSelective(content);
 			if (i < 1) {
 				throw new VLogException(ArticleConstant.FAIL_ADD);
@@ -173,8 +173,8 @@ public class ArticleServiceImpl implements ArticleService {
 		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
 			Content content = new Content();
 			content.setArticleId(article.getId());
-			content.setContent(articleContentDTO.getContent());
-			content.setContentMD(articleContentDTO.getContentMD());
+			content.setContent(articleContentDTO.getContentFormat());
+			content.setContentMD(articleContentDTO.getContent());
 			content.setUpdateTime(new Date());
 			int i = contentMapper.update(content);
 			if (i < 1) {
@@ -197,6 +197,30 @@ public class ArticleServiceImpl implements ArticleService {
 		ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
 		if (!returnClass.isSuccess()) {
 			throw new VLogException(ResultEnum.NO_URL);
+		}
+		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
+		if (integer < 1) {
+			return ReturnClass.fail(ArticleConstant.NO_BLOG);
+		}
+		PageHelper.startPage(queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize());
+		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
+		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
+		return ReturnClass.success(pageBean);
+	}
+
+	/**
+	 * @param queryArticleDTO
+	 * @return ReturnClass
+	 * @Description: 根据登录用户查询
+	 * @author: shuyu.wang
+	 * @date: 2019-08-04 15:12
+	 */
+	@Override
+	public ReturnClass listArticleByLogin(QueryArticleDTO queryArticleDTO) {
+		ReturnClass userByToken = userService.getUserByToken();
+		if (userByToken.isSuccess()){
+			UserRoleDTO userRoleDTO =(UserRoleDTO)userByToken.getData();
+			queryArticleDTO.setUserName(userRoleDTO.getUserName());
 		}
 		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
 		if (integer < 1) {
