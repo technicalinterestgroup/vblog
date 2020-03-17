@@ -89,7 +89,7 @@
             <if test="pojo.isDel!=null">`is_del`,</if>
             <if test="pojo.createTime!=null">`create_time`,</if>
             <if test="pojo.updateTime!=null">`update_time`,</if>
-            <if test="pojo.state!=null">`state`</if>
+            <if test="pojo.state!=null">`state`,</if>
             <if test="pojo.description!=null">`description`</if>
         </trim>
         VALUES
@@ -105,7 +105,7 @@
             <if test="pojo.isDel!=null">#{pojo.isDel},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
             <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
-            <if test="pojo.state!=null">#{pojo.state}</if>
+            <if test="pojo.state!=null">#{pojo.state},</if>
             <if test="pojo.description!=null">#{pojo.description}</if>
         </trim>
     </insert>

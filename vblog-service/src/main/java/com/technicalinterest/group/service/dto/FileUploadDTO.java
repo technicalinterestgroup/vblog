@@ -1,7 +1,11 @@
 package com.technicalinterest.group.service.dto;
 
 import com.technicalinterest.group.dao.BaseDao;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @package: com.technicalinterest.group.dao
@@ -12,6 +16,9 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class FileUploadDTO {
 
 	private String userName;

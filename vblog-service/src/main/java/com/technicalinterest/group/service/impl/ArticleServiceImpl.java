@@ -76,6 +76,16 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnClass saveArticle(ArticleContentDTO articleContentDTO) {
+        if (articleContentDTO.getId() != null) {
+            ArticleServiceImpl articleService = SpringContextUtil.getBean(ArticleServiceImpl.class);
+            ReturnClass returnClass = articleService.editArticle(articleContentDTO);
+            if (articleContentDTO.getState() == 1) {
+                returnClass.setMsg(ArticleConstant.SUS_ADD);
+            } else {
+                returnClass.setMsg(ArticleConstant.SUS_DRAFT);
+            }
+            return returnClass;
+        }
         Article article = new Article();
         BeanUtils.copyProperties(articleContentDTO, article);
         Long userId = null;
@@ -87,16 +97,6 @@ public class ArticleServiceImpl implements ArticleService {
         } else {
             throw new VLogException(ResultEnum.USERINFO_ERROR);
         }
-        if (articleContentDTO.getId() != null) {
-            ArticleServiceImpl articleService = SpringContextUtil.getBean(ArticleServiceImpl.class);
-            ReturnClass returnClass = articleService.editArticle(articleContentDTO);
-            if (articleContentDTO.getState() == 1) {
-                returnClass.setMsg(ArticleConstant.SUS_ADD);
-            } else {
-                returnClass.setMsg(ArticleConstant.SUS_DRAFT);
-            }
-            return returnClass;
-        }
         //文章摘要
         String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContentFormat());
         article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
@@ -105,8 +105,8 @@ public class ArticleServiceImpl implements ArticleService {
         if (Objects.nonNull(article.getId()) && article.getId() > 0) {
             Content content = new Content();
             content.setArticleId(article.getId());
-            content.setContent(articleContentDTO.getContentFormat());
-            content.setContentMD(articleContentDTO.getContent());
+            content.setContent(articleContentDTO.getContent());
+            content.setContentFormat(articleContentDTO.getContentFormat());
             int i = contentMapper.insertSelective(content);
             if (i < 1) {
                 throw new VLogException(ArticleConstant.FAIL_ADD);
@@ -173,8 +173,8 @@ public class ArticleServiceImpl implements ArticleService {
         if (Objects.nonNull(article.getId()) && article.getId() > 0) {
             Content content = new Content();
             content.setArticleId(article.getId());
-            content.setContent(articleContentDTO.getContentFormat());
-            content.setContentMD(articleContentDTO.getContent());
+            content.setContent(articleContentDTO.getContent());
+            content.setContentFormat(articleContentDTO.getContentFormat());
             content.setUpdateTime(new Date());
             int i = contentMapper.update(content);
             if (i < 1) {
@@ -262,9 +262,9 @@ public class ArticleServiceImpl implements ArticleService {
         Content content = contentMapper.getContent(articleInfo.getId());
         if (Objects.nonNull(content)) {
             if (authCheck) {
-                articleContentDTO.setContent(content.getContentMD());
+                articleContentDTO.setContent(content.getContentFormat());
             } else {
-                articleContentDTO.setContent(content.getContent());
+                articleContentDTO.setContent(content.getContentFormat());
             }
 
         }
@@ -300,7 +300,7 @@ public class ArticleServiceImpl implements ArticleService {
         Content content = contentMapper.getContent(result.getId());
         if (Objects.nonNull(content)) {
             articleContentDTO.setContent(content.getContent());
-			articleContentDTO.setContentFormat(content.getContent());
+			articleContentDTO.setContentFormat(content.getContentFormat());
         }
         return ReturnClass.success(articleContentDTO);
     }

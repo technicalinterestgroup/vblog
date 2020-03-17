@@ -5,7 +5,7 @@
     <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.Content">
         <result column="article_id" property="articleId"/>
         <result column="content" property="content"/>
-        <result column="content_md" property="contentMD"/>
+        <result column="content_format" property="contentFormat"/>
         <result column="id" property="id"/>
         <result column="is_del" property="isDel"/>
         <result column="create_time" property="createTime"/>
@@ -16,7 +16,7 @@
     <sql id="all_column">
         `article_id`,
         `content`,
-        `content_md`,
+        `content_format`,
         `id`,
         `is_del`,
         `create_time`,
@@ -28,7 +28,7 @@
         INSERT INTO content (
             `article_id`,
             `content`,
-            `content_md`,
+            `content_format`,
             `id`,
             `is_del`,
             `create_time`,
@@ -36,7 +36,7 @@
         ) VALUES (
             #{pojo.articleId},
             #{pojo.content},
-            #{pojo.contentMD},
+            #{pojo.contentFormat},
             #{pojo.id},
             #{pojo.isDel},
             #{pojo.createTime},
@@ -50,7 +50,7 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.articleId!=null">`article_id`,</if>
             <if test="pojo.content!=null">`content`,</if>
-            <if test="pojo.contentMD!=null">`content_md`,</if>
+            <if test="pojo.contentFormat!=null">`content_format`,</if>
             <if test="pojo.id!=null">`id`,</if>
             <if test="pojo.isDel!=null">`is_del`,</if>
             <if test="pojo.createTime!=null">`create_time`,</if>
@@ -60,7 +60,7 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.articleId!=null">#{pojo.articleId},</if>
             <if test="pojo.content!=null">#{pojo.content},</if>
-            <if test="pojo.contentMD!=null">#{pojo.contentMD},</if>
+            <if test="pojo.contentFormat!=null">#{pojo.contentFormat},</if>
             <if test="pojo.id!=null">#{pojo.id},</if>
             <if test="pojo.isDel!=null">#{pojo.isDel},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
@@ -92,7 +92,7 @@
         <set>
             <if test="pojo.articleId != null">`article_id` = #{pojo.articleId},</if>
             <if test="pojo.content != null">`content` = #{pojo.content},</if>
-            <if test="pojo.contentMD != null">`content_md` = #{pojo.contentMD},</if>
+            <if test="pojo.contentFormat != null">`content_format` = #{pojo.contentFormat},</if>
             <if test="pojo.id != null">`id` = #{pojo.id},</if>
             <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
             <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime}</if>

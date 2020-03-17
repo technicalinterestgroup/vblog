@@ -11,7 +11,6 @@ import com.technicalinterest.group.dto.FileDTO;
 import com.technicalinterest.group.dto.QueryFileDTO;
 import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.service.AliyunOSSService;
-import com.technicalinterest.group.service.Enum.FileTypeEnum;
 import com.technicalinterest.group.service.FileUploadService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
@@ -19,6 +18,7 @@ import com.technicalinterest.group.service.dto.FileUploadDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
+import com.technicalinterest.group.service.util.FileUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -82,10 +82,13 @@ public class UploadController {
 
 	private static final String UNIT = "K";
 
+	@Autowired
+	private AliyunOSSService aliyunOSSService;
+
 	@ApiOperation(value = "图片上传", notes = "图片上传")
 	@PostMapping(value = "/img/upload")
 	@BlogOperation(value = "图片上传")
-	@DistributeLock( key = "#file.getOriginalFilename", timeout = 2, expire = 1, errMsg = "00000")
+//	@DistributeLock( key = "#file.getOriginalFilename", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> uploadImg(@RequestParam(value = "file") MultipartFile file) {
 		ReturnClass userByToken = userService.getUserByToken();
 		String userName = null;
@@ -103,14 +106,13 @@ public class UploadController {
 			apiResult.fail(FILE_EMPTY);
 			return apiResult;
 		}
-		if (!checkFileSize(file.getSize(), IMG_FILE_SIZE, UNIT)) {
+		if (!FileUtil.checkFileSize(file.getSize(), IMG_FILE_SIZE, UNIT)) {
 			apiResult.fail(SIZE_ERROR);
 			return apiResult;
 		}
 		try {
-			String s = saveFiles(file, userName, null, IMG_PATH);
-			apiResult.success(s, "文件上传成功");
-			log.info("------>>>>>>图片共上传成功!<<<<<<------");
+			String s = aliyunOSSService.uploadImg2Oss(file, userName);
+			apiResult.setData(s);
 		} catch (Exception e) {
 			log.error("文件上传异常", e);
 			apiResult.fail("文件上传异常");
@@ -141,7 +143,7 @@ public class UploadController {
 				apiResult.fail(FILE_EMPTY);
 				return apiResult;
 			}
-			if (!checkFileSize(file.getSize(), DOC_FILE_SIZE, UNIT)) {
+			if (!FileUtil.checkFileSize(file.getSize(), DOC_FILE_SIZE, UNIT)) {
 				apiResult.fail(SIZE_ERROR);
 				return apiResult;
 			}
@@ -230,50 +232,9 @@ public class UploadController {
 		return sdf.format(d);
 	}
 
-	/**
-	 * 判断文件大小
-	 * @param len 文件长度
-	 * @param size 限制大小
-	 * @param unit 限制单位（B,K,M,G）
-	 * @return
-	 */
-	private static boolean checkFileSize(Long len, int size, String unit) {
-		double fileSize = 0;
-		if ("B".equals(unit.toUpperCase())) {
-			fileSize = (double) len;
-		} else if ("K".equals(unit.toUpperCase())) {
-			fileSize = (double) len / 1024;
-		} else if ("M".equals(unit.toUpperCase())) {
-			fileSize = (double) len / 1048576;
-		} else if ("G".equals(unit.toUpperCase())) {
-			fileSize = (double) len / 1073741824;
-		}
-		if (fileSize > size) {
-			return false;
-		}
-		return true;
-	}
 
-	/**
-	 * 判断文件大小
-	 * @param len 文件长度
-	 * @param unit 限制单位（B,K,M,G）
-	 * @return
-	 */
-	private static double getFileSize(Long len, String unit) {
-		double fileSize = 0;
-		if ("B".equals(unit.toUpperCase())) {
-			fileSize = (double) len;
-		} else if ("K".equals(unit.toUpperCase())) {
-			fileSize = (double) len / 1024;
-		} else if ("M".equals(unit.toUpperCase())) {
-			fileSize = (double) len / 1048576;
-		} else if ("G".equals(unit.toUpperCase())) {
-			fileSize = (double) len / 1073741824;
-		}
 
-		return fileSize;
-	}
+
 
 	/**
 	 * @Description: 保存文件
@@ -306,7 +267,7 @@ public class UploadController {
 		fileUploadDTO.setFileName(filename);
 		fileUploadDTO.setNewFileName(newFilename);
 		fileUploadDTO.setFilePath(resultPath);
-		fileUploadDTO.setFileSize(getFileSize(file.getSize(), "K"));
+		fileUploadDTO.setFileSize(FileUtil.getFileSize(file.getSize(), "K"));
 		fileUploadDTO.setUserName(userName);
 		if (StringUtils.equals(FILE_PATH, pathType)) {
 			fileUploadDTO.setFileType((short) 2);
@@ -326,25 +287,6 @@ public class UploadController {
 			file.mkdirs();
 		}
 		return rootFile;
-	}
-    @Autowired
-	private AliyunOSSService aliyunOSSService;
-
-	@ApiOperation(value = "图片上传", notes = "图片上传")
-	@PostMapping(value = "/oss/img")
-	@BlogOperation(value = "图片上传")
-	public ApiResult<List<String>> upload(@RequestParam(value = "file") MultipartFile[] files) {
-		ReturnClass userByToken = userService.getUserByToken();
-		String userName = null;
-//		if (userByToken.isSuccess()) {
-//			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-//			userName = userDTO.getUserName();
-//		}
-		ApiResult<List<String>> apiResult = new ApiResult<>();
-		List<String> result=aliyunOSSService.uploadFile(files, FileTypeEnum.IMG,null,null);
-//		aliyunOSSService.uploadImg2Oss(file);
-		apiResult.setData(result);
-		return apiResult;
 	}
 
 
