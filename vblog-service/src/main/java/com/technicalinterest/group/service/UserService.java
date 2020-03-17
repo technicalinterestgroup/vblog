@@ -47,6 +47,15 @@ public interface UserService {
     ReturnClass updateUser(Boolean authCheck,EditUserDTO editUserDTO);
 
     /**
+     * 修改密码
+     * @author: shuyu.wang
+     * @date: 2019-07-21 22:11
+     * @param editUserDTO
+     * @return null
+     */
+    ReturnClass updateUserPassWord(EditUserDTO editUserDTO);
+
+    /**
      * @Description: 退出登录
      * @author: shuyu.wang
      * @date: 2019-07-21 22:22

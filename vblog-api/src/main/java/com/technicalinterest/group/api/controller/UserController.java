@@ -2,6 +2,7 @@ package com.technicalinterest.group.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
+import com.technicalinterest.group.api.param.EditPassWordrParam;
 import com.technicalinterest.group.api.param.EditUserParam;
 import com.technicalinterest.group.api.param.NewUserParam;
 import com.technicalinterest.group.api.param.UserParam;
@@ -58,6 +59,30 @@ public class UserController {
 		EditUserDTO editUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(editUserParam, editUserDTO);
 		ReturnClass addUser = userService.updateUser(authCheck, editUserDTO);
+		if (addUser.isSuccess()) {
+			apiResult.success(addUser.getMsg(),null);
+		} else {
+			apiResult.fail(addUser.getMsg());
+		}
+		return apiResult;
+	}
+
+	/**
+	 * 修改信息设置
+	 * @author: shuyu.wang
+	 * @date: 2019-07-21 21:50
+	 * @param editPassWordrParam
+	 * @return com.technicalinterest.group.api.vo.ApiResult<com.technicalinterest.group.service.vo.UserVO>
+	 */
+	@ApiOperation(value = "修改密码")
+	@PostMapping(value = "/edit/pass")
+	@BlogOperation(value = "修改用户信息")
+	public ApiResult<String> editUser(@Valid @RequestBody EditPassWordrParam editPassWordrParam) {
+		log.info("修改面 参数={}", JSONObject.toJSON(editPassWordrParam));
+		ApiResult apiResult = new ApiResult();
+		EditUserDTO editUserDTO = new EditUserDTO();
+		BeanUtils.copyProperties(editPassWordrParam, editUserDTO);
+		ReturnClass addUser = userService.updateUserPassWord(editUserDTO);
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getMsg(),null);
 		} else {

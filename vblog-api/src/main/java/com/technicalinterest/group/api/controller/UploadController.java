@@ -10,6 +10,8 @@ import com.technicalinterest.group.dao.PageBase;
 import com.technicalinterest.group.dto.FileDTO;
 import com.technicalinterest.group.dto.QueryFileDTO;
 import com.technicalinterest.group.dto.UserRoleDTO;
+import com.technicalinterest.group.service.AliyunOSSService;
+import com.technicalinterest.group.service.Enum.FileTypeEnum;
 import com.technicalinterest.group.service.FileUploadService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
@@ -325,5 +327,25 @@ public class UploadController {
 		}
 		return rootFile;
 	}
+    @Autowired
+	private AliyunOSSService aliyunOSSService;
+
+	@ApiOperation(value = "图片上传", notes = "图片上传")
+	@PostMapping(value = "/oss/img")
+	@BlogOperation(value = "图片上传")
+	public ApiResult<List<String>> upload(@RequestParam(value = "file") MultipartFile[] files) {
+		ReturnClass userByToken = userService.getUserByToken();
+		String userName = null;
+//		if (userByToken.isSuccess()) {
+//			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
+//			userName = userDTO.getUserName();
+//		}
+		ApiResult<List<String>> apiResult = new ApiResult<>();
+		List<String> result=aliyunOSSService.uploadFile(files, FileTypeEnum.IMG,null,null);
+//		aliyunOSSService.uploadImg2Oss(file);
+		apiResult.setData(result);
+		return apiResult;
+	}
+
 
 }

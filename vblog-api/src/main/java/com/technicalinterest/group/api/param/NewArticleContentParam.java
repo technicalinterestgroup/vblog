@@ -69,4 +69,7 @@ public class NewArticleContentParam {
 	@NotNull(message = "文章状态不能为空")
 	private Short state;
 
+	@NotNull(message = "文章描述不能为空")
+	private String description;
+
 }

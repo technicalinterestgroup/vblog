@@ -48,390 +48,424 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class ArticleServiceImpl implements ArticleService {
-	@Autowired
-	private ArticleMapper articleMapper;
-	@Autowired
-	private ContentMapper contentMapper;
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private UserMapper userMapper;
-	@Autowired
-	private RedisUtil redisUtil;
-	@Value("${submit_length}")
-	private Integer ARTICLE_LENGTH;
+    @Autowired
+    private ArticleMapper articleMapper;
+    @Autowired
+    private ContentMapper contentMapper;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private RedisUtil redisUtil;
+    @Value("${submit_length}")
+    private Integer ARTICLE_LENGTH;
 
-	@Value("${article_jf}")
-	private Integer JF;
-	@Value("${article_limit}")
-	private Integer ARTICLE_LIMIT;
+    @Value("${article_jf}")
+    private Integer JF;
+    @Value("${article_limit}")
+    private Integer ARTICLE_LIMIT;
 
-	/**
-	 * @Description: 新增文章
-	 * @author: shuyu.wang
-	 * @date: 2019-08-04 15:12
-	 * @param articleContentDTO
-	 * @return ReturnClass
-	 */
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public ReturnClass saveArticle(ArticleContentDTO articleContentDTO) {
-		Article article = new Article();
-		BeanUtils.copyProperties(articleContentDTO, article);
-		Long userId = null;
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-			article.setUserName(userDTO.getUserName());
-			userId = userDTO.getId();
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-		if (articleContentDTO.getId()!=null){
-			ArticleServiceImpl articleService=SpringContextUtil.getBean(ArticleServiceImpl.class);
-			ReturnClass returnClass = articleService.editArticle(articleContentDTO);
-			if (articleContentDTO.getState()==1){
-				returnClass.setMsg(ArticleConstant.SUS_ADD);
-			}else {
-				returnClass.setMsg(ArticleConstant.SUS_DRAFT);
-			}
-			return returnClass;
-		}
-		//文章摘要
-		String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContentFormat());
-		article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
-		article.setCreateTime(new Date());
-		articleMapper.insertSelective(article);
-		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
-			Content content = new Content();
-			content.setArticleId(article.getId());
-			content.setContent(articleContentDTO.getContentFormat());
-			content.setContentMD(articleContentDTO.getContent());
-			int i = contentMapper.insertSelective(content);
-			if (i < 1) {
-				throw new VLogException(ArticleConstant.FAIL_ADD);
-			}
-			//增加积分
-			if (articleContentDTO.getState() == 1) {
-				ArticleServiceImpl articleService=SpringContextUtil.getBean(ArticleServiceImpl.class);
-                articleService.addJF(userId,article.getUserName(),article.getId());
-			}
-			return ReturnClass.success(ArticleConstant.SUS_ADD,article.getId());
-		}
-		return ReturnClass.fail(ArticleConstant.FAIL_ADD);
-	}
+    /**
+     * @param articleContentDTO
+     * @return ReturnClass
+     * @Description: 新增文章
+     * @author: shuyu.wang
+     * @date: 2019-08-04 15:12
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnClass saveArticle(ArticleContentDTO articleContentDTO) {
+        Article article = new Article();
+        BeanUtils.copyProperties(articleContentDTO, article);
+        Long userId = null;
+        ReturnClass userByToken = userService.getUserByToken();
+        if (userByToken.isSuccess()) {
+            UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
+            article.setUserName(userDTO.getUserName());
+            userId = userDTO.getId();
+        } else {
+            throw new VLogException(ResultEnum.USERINFO_ERROR);
+        }
+        if (articleContentDTO.getId() != null) {
+            ArticleServiceImpl articleService = SpringContextUtil.getBean(ArticleServiceImpl.class);
+            ReturnClass returnClass = articleService.editArticle(articleContentDTO);
+            if (articleContentDTO.getState() == 1) {
+                returnClass.setMsg(ArticleConstant.SUS_ADD);
+            } else {
+                returnClass.setMsg(ArticleConstant.SUS_DRAFT);
+            }
+            return returnClass;
+        }
+        //文章摘要
+        String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContentFormat());
+        article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
+        article.setCreateTime(new Date());
+        articleMapper.insertSelective(article);
+        if (Objects.nonNull(article.getId()) && article.getId() > 0) {
+            Content content = new Content();
+            content.setArticleId(article.getId());
+            content.setContent(articleContentDTO.getContentFormat());
+            content.setContentMD(articleContentDTO.getContent());
+            int i = contentMapper.insertSelective(content);
+            if (i < 1) {
+                throw new VLogException(ArticleConstant.FAIL_ADD);
+            }
+            //增加积分
+            if (articleContentDTO.getState() == 1) {
+                ArticleServiceImpl articleService = SpringContextUtil.getBean(ArticleServiceImpl.class);
+                articleService.addJF(userId, article.getUserName(), article.getId());
+            }
+            return ReturnClass.success(ArticleConstant.SUS_ADD, article.getId());
+        }
+        return ReturnClass.fail(ArticleConstant.FAIL_ADD);
+    }
 
-	@Async
-	public void addJF(Long userId,String userName,Long articleId){
-		User user = User.builder().integral(JF).build();
-		user.setId(userId);
-		int update = userMapper.update(user);
-		if (update < 1) {
-			log.error("博客发布增加积分失败，userName={},ArticleId={}",userName,articleId);
-		}
+    @Async
+    public void addJF(Long userId, String userName, Long articleId) {
+        User user = User.builder().integral(JF).build();
+        user.setId(userId);
+        int update = userMapper.update(user);
+        if (update < 1) {
+            log.error("博客发布增加积分失败，userName={},ArticleId={}", userName, articleId);
+        }
 
-	}
+    }
 
-	/**
-	 * @Description: 更新文章
-	 * @author: shuyu.wang
-	 * @date: 2019-08-04 15:12
-	 * @param articleContentDTO
-	 * @return ReturnClass
-	 */
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public ReturnClass editArticle(ArticleContentDTO articleContentDTO) {
-		Article article = new Article();
-		BeanUtils.copyProperties(articleContentDTO, article);
-		ReturnClass userByToken = userService.getUserByToken();
-		if (!userByToken.isSuccess()) {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-		//数据是否存在
-		Article param = new Article();
-		param.setId(articleContentDTO.getId());
-		Article articleResult = articleMapper.query(param);
-		if (Objects.isNull(articleResult)) {
-			throw new VLogException(ResultEnum.NO_DATA);
-		}
-		//判断是否是本人操作
-		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-		if (!StringUtils.equals(articleResult.getUserName(), userDTO.getUserName())) {
-			throw new VLogException(ResultEnum.NO_AUTH);
-		}
-		//文章摘要
-		String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContent());
-		article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
+    /**
+     * @param articleContentDTO
+     * @return ReturnClass
+     * @Description: 更新文章
+     * @author: shuyu.wang
+     * @date: 2019-08-04 15:12
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnClass editArticle(ArticleContentDTO articleContentDTO) {
+        Article article = new Article();
+        BeanUtils.copyProperties(articleContentDTO, article);
+        ReturnClass userByToken = userService.getUserByToken();
+        if (!userByToken.isSuccess()) {
+            throw new VLogException(ResultEnum.USERINFO_ERROR);
+        }
+        //数据是否存在
+        Article param = new Article();
+        param.setId(articleContentDTO.getId());
+        Article articleResult = articleMapper.query(param);
+        if (Objects.isNull(articleResult)) {
+            throw new VLogException(ResultEnum.NO_DATA);
+        }
+        //判断是否是本人操作
+        UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
+        if (!StringUtils.equals(articleResult.getUserName(), userDTO.getUserName())) {
+            throw new VLogException(ResultEnum.NO_AUTH);
+        }
+        //文章摘要
+        String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContent());
+        article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
 
-		if (articleContentDTO.getState()==1&&articleResult.getState()==0){
-			ArticleServiceImpl articleService=SpringContextUtil.getBean(ArticleServiceImpl.class);
-			articleService.addJF(userDTO.getId(),article.getUserName(),article.getId());
-			article.setCreateTime(new Date());
-		}
-		articleMapper.update(article);
-		if (Objects.nonNull(article.getId()) && article.getId() > 0) {
-			Content content = new Content();
-			content.setArticleId(article.getId());
-			content.setContent(articleContentDTO.getContentFormat());
-			content.setContentMD(articleContentDTO.getContent());
-			content.setUpdateTime(new Date());
-			int i = contentMapper.update(content);
-			if (i < 1) {
-				throw new VLogException(ArticleConstant.FAIL_EDIT);
-			}
-			return ReturnClass.success(ArticleConstant.SUS_EDIT,article.getId());
-		}
-		return ReturnClass.fail(ArticleConstant.FAIL_EDIT);
-	}
+        if (articleContentDTO.getState() == 1 && articleResult.getState() == 0) {
+            ArticleServiceImpl articleService = SpringContextUtil.getBean(ArticleServiceImpl.class);
+            articleService.addJF(userDTO.getId(), article.getUserName(), article.getId());
+            article.setCreateTime(new Date());
+        }
+        articleMapper.update(article);
+        if (Objects.nonNull(article.getId()) && article.getId() > 0) {
+            Content content = new Content();
+            content.setArticleId(article.getId());
+            content.setContent(articleContentDTO.getContentFormat());
+            content.setContentMD(articleContentDTO.getContent());
+            content.setUpdateTime(new Date());
+            int i = contentMapper.update(content);
+            if (i < 1) {
+                throw new VLogException(ArticleConstant.FAIL_EDIT);
+            }
+            return ReturnClass.success(ArticleConstant.SUS_EDIT, article.getId());
+        }
+        return ReturnClass.fail(ArticleConstant.FAIL_EDIT);
+    }
 
-	/**
-	 * @Description: 文章列表
-	 * @author: shuyu.wang
-	 * @date: 2019-08-04 15:12
-	 * @param queryArticleDTO
-	 * @return ReturnClass
-	 */
-	@Override
-	public ReturnClass listArticle(Boolean authCheck, String userName, QueryArticleDTO queryArticleDTO) {
-		ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
-		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
-		if (integer < 1) {
-			return ReturnClass.fail(ArticleConstant.NO_BLOG);
-		}
-		PageHelper.startPage(queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize());
-		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
-		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
-		return ReturnClass.success(pageBean);
-	}
+    /**
+     * @param queryArticleDTO
+     * @return ReturnClass
+     * @Description: 文章列表
+     * @author: shuyu.wang
+     * @date: 2019-08-04 15:12
+     */
+    @Override
+    public ReturnClass listArticle(Boolean authCheck, String userName, QueryArticleDTO queryArticleDTO) {
+        ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
+        if (!returnClass.isSuccess()) {
+            throw new VLogException(ResultEnum.NO_URL);
+        }
+        Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
+        if (integer < 1) {
+            return ReturnClass.fail(ArticleConstant.NO_BLOG);
+        }
+        PageHelper.startPage(queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize());
+        List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
+        PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
+        return ReturnClass.success(pageBean);
+    }
 
-	/**
-	 * @param queryArticleDTO
-	 * @return ReturnClass
-	 * @Description: 根据登录用户查询
-	 * @author: shuyu.wang
-	 * @date: 2019-08-04 15:12
-	 */
-	@Override
-	public ReturnClass listArticleByLogin(QueryArticleDTO queryArticleDTO) {
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()){
-			UserRoleDTO userRoleDTO =(UserRoleDTO)userByToken.getData();
-			queryArticleDTO.setUserName(userRoleDTO.getUserName());
-		}
-		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
-		if (integer < 1) {
-			return ReturnClass.fail(ArticleConstant.NO_BLOG);
-		}
-		PageHelper.startPage(queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize());
-		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
-		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
-		return ReturnClass.success(pageBean);
-	}
+    /**
+     * @param queryArticleDTO
+     * @return ReturnClass
+     * @Description: 根据登录用户查询
+     * @author: shuyu.wang
+     * @date: 2019-08-04 15:12
+     */
+    @Override
+    public ReturnClass listArticleByLogin(QueryArticleDTO queryArticleDTO) {
+        ReturnClass userByToken = userService.getUserByToken();
+        if (userByToken.isSuccess()) {
+            UserRoleDTO userRoleDTO = (UserRoleDTO) userByToken.getData();
+            queryArticleDTO.setUserName(userRoleDTO.getUserName());
+        }
+        Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
+        if (integer < 1) {
+            return ReturnClass.fail(ArticleConstant.NO_BLOG);
+        }
+        PageHelper.startPage(queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize());
+        List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
+        PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
+        return ReturnClass.success(pageBean);
+    }
 
-	/**
-	 * @Description:获取文章详情
-	 * @author: shuyu.wang
-	 * @date: 2019-08-09 16:37
-	 * @param id
-	 * @return null
-	 */
-	@Override
-	public ReturnClass articleDetail(Boolean authCheck, Long id,String userName) {
-		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, userName);
-		if (Objects.isNull(articleInfo)) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
-		//获取数据是否是当前用户校验
-		if (authCheck) {
-			//获取请求用户信息
-			ReturnClass userByToken = userService.getUserByToken();
-			if (!userByToken.isSuccess()) {
-				throw new VLogException(ResultEnum.USERINFO_ERROR);
-			}
-			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-			if (!StringUtils.equals(userDTO.getUserName(), articleInfo.getUserName())) {
-				throw new VLogException(ResultEnum.NO_AUTH);
-			}
-		}
-		BeanUtils.copyProperties(articleInfo, articleContentDTO);
-		Content content = contentMapper.getContent(articleInfo.getId());
-		if (Objects.nonNull(content)) {
-			if (authCheck) {
-				articleContentDTO.setContent(content.getContentMD());
-			} else {
-				articleContentDTO.setContent(content.getContent());
-			}
+    /**
+     * @param id
+     * @return null
+     * @Description:获取文章详情
+     * @author: shuyu.wang
+     * @date: 2019-08-09 16:37
+     */
+    @Override
+    public ReturnClass articleDetail(Boolean authCheck, Long id, String userName) {
+        ArticleContentDTO articleContentDTO = new ArticleContentDTO();
+        ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, userName);
+        if (Objects.isNull(articleInfo)) {
+            throw new VLogException(ResultEnum.NO_URL);
+        }
+        //获取数据是否是当前用户校验
+        if (authCheck) {
+            //获取请求用户信息
+            ReturnClass userByToken = userService.getUserByToken();
+            if (!userByToken.isSuccess()) {
+                throw new VLogException(ResultEnum.USERINFO_ERROR);
+            }
+            UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
+            if (!StringUtils.equals(userDTO.getUserName(), articleInfo.getUserName())) {
+                throw new VLogException(ResultEnum.NO_AUTH);
+            }
+        }
+        BeanUtils.copyProperties(articleInfo, articleContentDTO);
+        Content content = contentMapper.getContent(articleInfo.getId());
+        if (Objects.nonNull(content)) {
+            if (authCheck) {
+                articleContentDTO.setContent(content.getContentMD());
+            } else {
+                articleContentDTO.setContent(content.getContent());
+            }
 
-		}
-		return ReturnClass.success(articleContentDTO);
-	}
+        }
+        return ReturnClass.success(articleContentDTO);
+    }
 
-	/**
-	 * @Description: 全站文章列表
-	 * @author: shuyu.wang
-	 * @date: 2019-08-04 15:12
-	 * @param queryArticleDTO
-	 * @return ReturnClass
-	 */
-	@Override
-	public ReturnClass allListArticle(QueryArticleDTO queryArticleDTO) {
-		queryArticleDTO.setState((short) 1);
+    /**
+     * @param id
+     * @return null
+     * @Description:获取文章详情
+     * @author: shuyu.wang
+     * @date: 2019-08-09 16:37
+     */
+    @Override
+    public ReturnClass articleDetailByLogin(Long id) {
+        ArticleContentDTO articleContentDTO = new ArticleContentDTO();
+        Article query = new Article();
+        query.setId(id);
+        Article result = articleMapper.query(query);
+        if (Objects.isNull(result)) {
+            throw new VLogException(ResultEnum.NO_URL);
+        }
+        //获取请求用户信息
+        ReturnClass userByToken = userService.getUserByToken();
+        if (!userByToken.isSuccess()) {
+            throw new VLogException(ResultEnum.USERINFO_ERROR);
+        }
+        UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
+        if (!StringUtils.equals(userDTO.getUserName(), result.getUserName())) {
+            throw new VLogException(ResultEnum.NO_AUTH);
+        }
+        BeanUtils.copyProperties(result, articleContentDTO);
+        Content content = contentMapper.getContent(result.getId());
+        if (Objects.nonNull(content)) {
+            articleContentDTO.setContent(content.getContent());
+			articleContentDTO.setContentFormat(content.getContent());
+        }
+        return ReturnClass.success(articleContentDTO);
+    }
 
-		Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
-		if (integer < 1) {
-			return ReturnClass.fail(ArticleConstant.NO_BLOG);
-		}
-		PageHelper.startPage(queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize());
-		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
-		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
-		return ReturnClass.success(pageBean);
-	}
+    /**
+     * @param queryArticleDTO
+     * @return ReturnClass
+     * @Description: 全站文章列表
+     * @author: shuyu.wang
+     * @date: 2019-08-04 15:12
+     */
+    @Override
+    public ReturnClass allListArticle(QueryArticleDTO queryArticleDTO) {
+        queryArticleDTO.setState((short) 1);
 
-	/**
-	 * @Description: 按用户名查询文章列表
-	 * @author: shuyu.wang
-	 * @date: 2019-08-04 15:12
-	 * @param flag 1:时间排序 2：阅读量排序  3：点赞数  4：评论数
-	 * @return ReturnClass
-	 */
-	@Override
-	public ReturnClass listArticleOrderBy(Boolean authCheck, String userName, Integer flag) {
-		if (StringUtils.isNoneEmpty(userName)) {
-			ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
-			if (!returnClass.isSuccess()) {
-				throw new VLogException(ResultEnum.NO_URL);
-			}
-		}
-		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName, ARTICLE_LIMIT);
-		if (articlesDTOS.isEmpty()) {
-			return ReturnClass.fail(ArticleConstant.NO_BLOG);
-		}
-		return ReturnClass.success(articlesDTOS);
-	}
+        Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
+        if (integer < 1) {
+            return ReturnClass.fail(ArticleConstant.NO_BLOG);
+        }
+        PageHelper.startPage(queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize());
+        List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleList(queryArticleDTO);
+        PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
+        return ReturnClass.success(pageBean);
+    }
 
-	/**
-	 * @Description:博客文章归档
-	 * @author: shuyu.wang
-	 * @date: 2019/8/13 22:37
-	 * @param userName
-	 * @return null
-	 */
-	@Override
-	public ReturnClass listArticleArchive(String userName) {
-		ReturnClass returnClass = userService.getUserByuserName(false, userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
-		List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListArchive(userName);
-		if (articlesDTOS.isEmpty()) {
-			return ReturnClass.fail(ArticleConstant.NO_BLOG);
-		}
-		return ReturnClass.success(articlesDTOS);
-	}
+    /**
+     * @param flag 1:时间排序 2：阅读量排序  3：点赞数  4：评论数
+     * @return ReturnClass
+     * @Description: 按用户名查询文章列表
+     * @author: shuyu.wang
+     * @date: 2019-08-04 15:12
+     */
+    @Override
+    public ReturnClass listArticleOrderBy(Boolean authCheck, String userName, Integer flag) {
+        if (StringUtils.isNoneEmpty(userName)) {
+            ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
+            if (!returnClass.isSuccess()) {
+                throw new VLogException(ResultEnum.NO_URL);
+            }
+        }
+        List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName, ARTICLE_LIMIT);
+        if (articlesDTOS.isEmpty()) {
+            return ReturnClass.fail(ArticleConstant.NO_BLOG);
+        }
+        return ReturnClass.success(articlesDTOS);
+    }
 
-	/**
-	 * @Description:删除文章
-	 * @author: shuyu.wang
-	 * @date: 2019-08-16 18:45
-	 * @param id
-	 * @return null
-	 */
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public ReturnClass delArticle(Long id) {
-		ReturnClass userByToken = userService.getUserByToken();
-		if (!userByToken.isSuccess()) {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-		//数据是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, null);
-		if (Objects.isNull(articleInfo)) {
-			throw new VLogException(ResultEnum.NO_DATA);
-		}
-		//判断是否是本人操作
-		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-		if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
-			throw new VLogException(ResultEnum.NO_AUTH);
-		}
-		Integer integer = articleMapper.delArticle(id);
-		if (integer > 0) {
-			Integer integer1 = contentMapper.delContent(id);
-			if (integer1 < 1) {
-				log.error("文章详情删除失败，ArticleId={}", id);
-			}
-			return ReturnClass.success(ArticleConstant.SUS_DEL);
-		} else {
-			return ReturnClass.fail(ArticleConstant.FAIL_DEL);
-		}
+    /**
+     * @param userName
+     * @return null
+     * @Description:博客文章归档
+     * @author: shuyu.wang
+     * @date: 2019/8/13 22:37
+     */
+    @Override
+    public ReturnClass listArticleArchive(String userName) {
+        ReturnClass returnClass = userService.getUserByuserName(false, userName);
+        if (!returnClass.isSuccess()) {
+            throw new VLogException(ResultEnum.NO_URL);
+        }
+        List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListArchive(userName);
+        if (articlesDTOS.isEmpty()) {
+            return ReturnClass.fail(ArticleConstant.NO_BLOG);
+        }
+        return ReturnClass.success(articlesDTOS);
+    }
 
-	}
+    /**
+     * @param id
+     * @return null
+     * @Description:删除文章
+     * @author: shuyu.wang
+     * @date: 2019-08-16 18:45
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnClass delArticle(Long id) {
+        ReturnClass userByToken = userService.getUserByToken();
+        if (!userByToken.isSuccess()) {
+            throw new VLogException(ResultEnum.USERINFO_ERROR);
+        }
+        //数据是否存在
+        ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, null);
+        if (Objects.isNull(articleInfo)) {
+            throw new VLogException(ResultEnum.NO_DATA);
+        }
+        //判断是否是本人操作
+        UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
+        if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
+            throw new VLogException(ResultEnum.NO_AUTH);
+        }
+        Integer integer = articleMapper.delArticle(id);
+        if (integer > 0) {
+            Integer integer1 = contentMapper.delContent(id);
+            if (integer1 < 1) {
+                log.error("文章详情删除失败，ArticleId={}", id);
+            }
+            return ReturnClass.success(ArticleConstant.SUS_DEL);
+        } else {
+            return ReturnClass.fail(ArticleConstant.FAIL_DEL);
+        }
 
-	/**
-	 * @Description:更新文章的一些状态
-	 * @author: shuyu.wang
-	 * @date: 2019-08-16 18:45
-	 * @param articleContentDTO
-	 * @return null
-	 */
-	@Override
-	public ReturnClass updateArticleState(ArticleContentDTO articleContentDTO) {
-		ReturnClass userByToken = userService.getUserByToken();
-		if (!userByToken.isSuccess()) {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-		//数据是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId(), null);
-		if (Objects.isNull(articleInfo)) {
-			throw new VLogException(ResultEnum.NO_DATA);
-		}
-		//判断是否是本人操作
-		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-		if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
-			throw new VLogException(ResultEnum.NO_AUTH);
-		}
-		Article article = new Article();
-		BeanUtils.copyProperties(articleContentDTO, article);
-		Integer update = articleMapper.update(article);
-		if (update > 0) {
-			return ReturnClass.success();
-		}
-		return ReturnClass.fail();
-	}
+    }
 
-	/**
-	 * @Description:文章阅读数增加
-	 * @author: shuyu.wang
-	 * @date: 2019-08-17 19:17
-	 * @param id
-	 * @return null
-	 */
-	@Override
-	@Async
-	public ReturnClass addReadCount(Long id) {
+    /**
+     * @param articleContentDTO
+     * @return null
+     * @Description:更新文章的一些状态
+     * @author: shuyu.wang
+     * @date: 2019-08-16 18:45
+     */
+    @Override
+    public ReturnClass updateArticleState(ArticleContentDTO articleContentDTO) {
+        ReturnClass userByToken = userService.getUserByToken();
+        if (!userByToken.isSuccess()) {
+            throw new VLogException(ResultEnum.USERINFO_ERROR);
+        }
+        //数据是否存在
+        ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId(), null);
+        if (Objects.isNull(articleInfo)) {
+            throw new VLogException(ResultEnum.NO_DATA);
+        }
+        //判断是否是本人操作
+        UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
+        if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
+            throw new VLogException(ResultEnum.NO_AUTH);
+        }
+        Article article = new Article();
+        BeanUtils.copyProperties(articleContentDTO, article);
+        Integer update = articleMapper.update(article);
+        if (update > 0) {
+            return ReturnClass.success();
+        }
+        return ReturnClass.fail();
+    }
 
-		Integer update = articleMapper.updateReadCount(id);
-		if (update > 0) {
-			log.info("文章阅读数累加成功！");
-		} else {
-			log.info("文章阅读数累加失败！");
-		}
-		return ReturnClass.success();
-	}
+    /**
+     * @param id
+     * @return null
+     * @Description:文章阅读数增加
+     * @author: shuyu.wang
+     * @date: 2019-08-17 19:17
+     */
+    @Override
+    @Async
+    public ReturnClass addReadCount(Long id) {
 
-	/**
-	 * 查询用户博客数据
-	 *
-	 * @param userName
-	 * @return
-	 */
-	@Override
-	public ReturnClass getBlogInfoByUser(String userName) {
-		UserBlogDTO blogInfoByUser = articleMapper.getBlogInfoByUser(userName);
-		return ReturnClass.success(blogInfoByUser);
-	}
+        Integer update = articleMapper.updateReadCount(id);
+        if (update > 0) {
+            log.info("文章阅读数累加成功！");
+        } else {
+            log.info("文章阅读数累加失败！");
+        }
+        return ReturnClass.success();
+    }
+
+    /**
+     * 查询用户博客数据
+     *
+     * @param userName
+     * @return
+     */
+    @Override
+    public ReturnClass getBlogInfoByUser(String userName) {
+        UserBlogDTO blogInfoByUser = articleMapper.getBlogInfoByUser(userName);
+        return ReturnClass.success(blogInfoByUser);
+    }
 }

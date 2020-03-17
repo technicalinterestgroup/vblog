@@ -15,6 +15,8 @@ public interface UserMapper {
 
 	Integer update(@Param("pojo") User pojo);
 
+	Integer updateByUserName(@Param("pojo") User pojo);
+
 	/**
 	 * @param user
 	 * @return User

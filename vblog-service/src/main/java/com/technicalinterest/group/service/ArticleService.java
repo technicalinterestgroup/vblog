@@ -69,6 +69,14 @@ public interface ArticleService {
 	ReturnClass articleDetail(Boolean authCheck,Long id,String userName);
 
 	/**
+	 * @Description:登录用户获取文章详情
+	 * @author: shuyu.wang
+	 * @date: 2019-08-09 16:37
+	 * @param id
+	 * @return null
+	 */
+	ReturnClass articleDetailByLogin(Long id);
+	/**
 	 * @Description: 全站文章列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-04 15:12

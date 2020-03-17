@@ -31,7 +31,8 @@
         `is_del`,
         `state`,
         `grade`,
-        `user_summary`
+        `user_summary`,
+         pass_word
 </sql>
 
 
@@ -77,6 +78,22 @@
         WHERE id = #{pojo.id}
     </update>
 
+    <update id="updateByUserName">
+        UPDATE v_user
+        <set>
+            <if test="pojo.nickName!=null">nick_name=#{pojo.nickName},</if>
+            <if test="pojo.passWord != null">`pass_word` =  MD5(#{pojo.passWord}),</if>
+            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime},</if>
+            <if test="pojo.photo != null">`photo` = #{pojo.photo},</if>
+            <if test="pojo.integral != null">`integral` = integral+#{pojo.integral},</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
+            <if test="pojo.state != null">`state` = #{pojo.state},</if>
+            <if test="pojo.grade != null">`grade` = #{pojo.grade},</if>
+            <if test="pojo.userSummary != null">`user_summary` = #{pojo.userSummary},</if>
+        </set>
+        WHERE user_name = #{pojo.userName}
+    </update>
+
     <select id="getUserByUser" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.User">
         select
         <include refid="all_column"></include>
@@ -96,7 +113,7 @@
         t1.photo
         from v_user t1
         <if test="userName!=null and userName!=''">where t1.user_name=#{userName}</if>
-        <if test="userName==null or userName==''">order by integral desc limit 4</if>
+        <if test="userName==null or userName==''">order by integral desc limit 5</if>
     </select>
 
     <select id="queryUserRoleDTO" resultType="com.technicalinterest.group.dto.UserRoleDTO" parameterType="com.technicalinterest.group.dao.User">

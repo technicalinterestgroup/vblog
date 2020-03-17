@@ -5,8 +5,10 @@ import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeL
 import com.technicalinterest.group.api.param.EditArticleContentParam;
 import com.technicalinterest.group.api.param.NewArticleContentParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
+import com.technicalinterest.group.api.util.IndexOrderByUtil;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleContentVO;
+import com.technicalinterest.group.api.vo.ArticleDetailVO;
 import com.technicalinterest.group.api.vo.ArticlesVO;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
@@ -89,6 +91,7 @@ public class ArticleController {
 		ApiResult apiResult = new ApiResult();
 		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
 		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
+		queryArticleDTO.setOrderBy(IndexOrderByUtil.getOrderByFlage(queryArticleParam));
 		ReturnClass listArticle = articleService.listArticleByLogin(queryArticleDTO);
 		if (listArticle.isSuccess()) {
 			PageBean<ArticlesDTO> pageBean = (PageBean<ArticlesDTO>) listArticle.getData();
@@ -112,10 +115,10 @@ public class ArticleController {
 	@ApiOperation(value = "博客详情", notes = "博客详情")
 	@GetMapping(value = "/detail/{id}")
 	@BlogOperation(value = "博客列表")
-	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id) {
+	public ApiResult<ArticleDetailVO> articleDetail(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass articleDetail = articleService.articleDetail(authCheck, id,null);
-		ArticleContentVO articleContentVO = new ArticleContentVO();
+		ReturnClass articleDetail = articleService.articleDetailByLogin(id);
+		ArticleDetailVO articleContentVO = new ArticleDetailVO();
 		if (articleDetail.isSuccess()) {
 			BeanUtils.copyProperties(articleDetail.getData(), articleContentVO);
 			apiResult.success(articleContentVO);

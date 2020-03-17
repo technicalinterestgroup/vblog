@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.security.provider.MD5;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -260,10 +261,41 @@ public class UserServiceImpl implements UserService {
 		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
 		BeanUtils.copyProperties(editUserDTO, user);
 		user.setId(userDTO.getId());
-		if (StringUtils.isNotEmpty(editUserDTO.getPassWord())) {
-			user.setPassWord(editUserDTO.getPassWord() + PASS_SALT);
-		}
 		int update = userMapper.update(user);
+		if (update != 1) {
+			return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
+		} else {
+			return ReturnClass.success(UserConstant.EDIT_USER_SUS);
+		}
+	}
+
+	/**
+	 * 修改密码
+	 *
+	 * @param editUserDTO
+	 * @return null
+	 * @author: shuyu.wang
+	 * @date: 2019-07-21 22:11
+	 */
+	@Override
+	public ReturnClass updateUserPassWord(EditUserDTO editUserDTO) {
+		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+		if (!redisUtil.hasKey(accessToken)) {
+			throw new VLogException(ResultEnum.TIME_OUT);
+		}
+		String userName = (String) redisUtil.get(accessToken);
+		User user=User.builder().userName(userName).build();
+		User userByUser = userMapper.getUserByUser(user);
+		if (Objects.isNull(userByUser)){
+			throw new VLogException(ResultEnum.USERINFO_ERROR);
+		}
+		user.setPassWord(editUserDTO.getOldPassWord() + PASS_SALT);
+		User userByUser2 = userMapper.getUserByUser(user);
+		if (Objects.isNull(userByUser2)){
+			return ReturnClass.fail("旧密码错误");
+		}
+		user.setPassWord(editUserDTO.getNewPassWord() + PASS_SALT);
+		int update = userMapper.updateByUserName(user);
 		if (update != 1) {
 			return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
 		} else {

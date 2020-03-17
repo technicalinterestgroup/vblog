@@ -105,4 +105,6 @@ public class ArticleContentDTO {
 
 	private Date createTime;
 
+	private String description;
+
 }
