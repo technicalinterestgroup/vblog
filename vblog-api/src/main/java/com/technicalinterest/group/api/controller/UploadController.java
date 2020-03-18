@@ -110,12 +110,11 @@ public class UploadController {
         }
         try {
             String s = aliyunOSSService.uploadImg2Oss(file, userName);
-            apiResult.setData(s);
+            apiResult.success(s);
         } catch (Exception e) {
             log.error("图片上传异常", e);
             apiResult.fail("图片上传异常");
         }
-
         return apiResult;
     }
 
@@ -127,7 +126,7 @@ public class UploadController {
         for (MultipartFile pic : files.values()) {
             try {
                 String s = aliyunOSSService.uploadImg2Oss(pic, userName);
-                apiResult.setData(s);
+                apiResult.success(s);
             } catch (Exception e) {
                 log.error("头像上传异常", e);
                 apiResult.fail("头像上传异常");

@@ -574,6 +574,7 @@ public class UserServiceImpl implements UserService {
                 redisUtil.del(token);
                 return ReturnClass.success(UserConstant.IMG_SUC);
             }
+            redisUtil.del(token);
             return ReturnClass.fail(UserConstant.IMG_FAIL);
         }
         return ReturnClass.fail(UserConstant.IMG_TIME_OUT);
