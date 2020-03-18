@@ -12,7 +12,7 @@ import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.mapper.UserRoleMapper;
 import com.technicalinterest.group.service.MailService;
 import com.technicalinterest.group.service.VSystemService;
-import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.*;
@@ -28,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import sun.security.provider.MD5;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -536,7 +535,7 @@ public class UserServiceImpl implements UserService {
             String base64bytes = Base64.encodeBase64String(out.toByteArray());
             //该字符串传输至前端放入src即可显示图片，安卓可以去掉data:image/png;base64,
             String src = "data:image/png;base64," + base64bytes;
-            String token = UUID.randomUUID().toString();
+            String token ="imagVerifi_"+UUID.randomUUID().toString().replace("-","");
             redisUtil.set(token, text, IMG_TIME);
             ImagVerifi imagVerifi = ImagVerifi.builder().img(src.replaceAll("[\\s*\t\n\r]", "")).token(token).build();
             return ReturnClass.success(imagVerifi);

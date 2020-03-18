@@ -1,6 +1,6 @@
 package com.technicalinterest.group.api.vo;
 
-import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

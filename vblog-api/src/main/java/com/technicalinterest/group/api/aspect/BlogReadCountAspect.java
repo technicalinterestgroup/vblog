@@ -4,8 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleContentVO;
 import com.technicalinterest.group.service.ArticleService;
-import com.technicalinterest.group.service.constant.ResultEnum;
-import com.technicalinterest.group.service.dto.ArticleContentDTO;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 
 /**
  * @package: com.technicalinterest.group.service.aspect

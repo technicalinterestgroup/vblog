@@ -3,7 +3,7 @@ package com.technicalinterest.group.aop;
 import com.alibaba.fastjson.JSONException;
 import com.github.blackshadowwalker.spring.distributelock.LockException;
 import com.technicalinterest.group.api.vo.ApiResult;
-import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.exception.VLogException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartException;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;

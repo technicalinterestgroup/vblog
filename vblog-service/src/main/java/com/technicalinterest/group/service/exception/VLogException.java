@@ -1,6 +1,6 @@
 package com.technicalinterest.group.service.exception;
 
-import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 
 /**
  * @package: com.technicalinterest.group.service.exception

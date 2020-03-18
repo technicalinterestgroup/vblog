@@ -4,7 +4,7 @@ import com.technicalinterest.group.dao.VSystem;
 import com.technicalinterest.group.mapper.VSystemMapper;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.VSystemService;
-import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.constant.SystemConstant;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.VSystemDTO;
@@ -13,8 +13,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 
 @Service
 public class VSystemServiceImpl implements VSystemService {

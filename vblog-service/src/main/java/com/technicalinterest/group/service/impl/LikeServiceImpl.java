@@ -1,27 +1,21 @@
 package com.technicalinterest.group.service.impl;
 
 import com.technicalinterest.group.dao.Article;
-import com.technicalinterest.group.dao.Collection;
 import com.technicalinterest.group.dao.Like;
 import com.technicalinterest.group.dto.ArticlesDTO;
-import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.LikeMapper;
 import com.technicalinterest.group.service.LikeService;
 import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.constant.CollectionConstant;
 import com.technicalinterest.group.service.constant.LikeConstant;
-import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.dto.LikeDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
-import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.exception.VLogException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import java.util.List;
 import java.util.Objects;
 
 @Service

@@ -1,4 +1,4 @@
-package com.technicalinterest.group.service.constant;
+package com.technicalinterest.group.service.Enum;
 
 /**
  * @package: com.technicalinterest.group.api.constant

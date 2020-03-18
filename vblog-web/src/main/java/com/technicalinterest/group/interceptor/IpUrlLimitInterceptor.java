@@ -2,7 +2,7 @@ package com.technicalinterest.group.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.technicalinterest.group.api.vo.ApiResult;
-import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import com.technicalinterest.group.service.util.SpringContextUtil;
