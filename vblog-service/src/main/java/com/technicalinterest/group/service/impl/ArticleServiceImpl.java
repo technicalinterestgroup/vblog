@@ -89,14 +89,7 @@ public class ArticleServiceImpl implements ArticleService {
         Article article = new Article();
         BeanUtils.copyProperties(articleContentDTO, article);
         Long userId = null;
-        ReturnClass userByToken = userService.getUserByToken();
-        if (userByToken.isSuccess()) {
-            UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-            article.setUserName(userDTO.getUserName());
-            userId = userDTO.getId();
-        } else {
-            throw new VLogException(ResultEnum.USERINFO_ERROR);
-        }
+        article.setUserName(userService.getUserNameByLoginToken());
         //文章摘要
         String summaryText = HtmlUtil.cleanHtmlTag(articleContentDTO.getContentFormat());
         article.setSubmit(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
@@ -114,7 +107,7 @@ public class ArticleServiceImpl implements ArticleService {
             //增加积分
             if (articleContentDTO.getState() == 1) {
                 ArticleServiceImpl articleService = SpringContextUtil.getBean(ArticleServiceImpl.class);
-                articleService.addJF(userId, article.getUserName(), article.getId());
+                articleService.addJF(article.getUserName(), article.getId());
             }
             return ReturnClass.success(ArticleConstant.SUS_ADD, article.getId());
         }
@@ -122,10 +115,9 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Async
-    public void addJF(Long userId, String userName, Long articleId) {
-        User user = User.builder().integral(JF).build();
-        user.setId(userId);
-        int update = userMapper.update(user);
+    public void addJF(String userName, Long articleId) {
+        User user = User.builder().userName(userName).integral(JF).build();
+        int update = userMapper.updateByUserName(user);
         if (update < 1) {
             log.error("博客发布增加积分失败，userName={},ArticleId={}", userName, articleId);
         }
@@ -142,12 +134,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnClass editArticle(ArticleContentDTO articleContentDTO) {
+        String userName = userService.getUserNameByLoginToken();
         Article article = new Article();
         BeanUtils.copyProperties(articleContentDTO, article);
-        ReturnClass userByToken = userService.getUserByToken();
-        if (!userByToken.isSuccess()) {
-            throw new VLogException(ResultEnum.USERINFO_ERROR);
-        }
         //数据是否存在
         Article param = new Article();
         param.setId(articleContentDTO.getId());
@@ -155,9 +144,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (Objects.isNull(articleResult)) {
             throw new VLogException(ResultEnum.NO_DATA);
         }
-        //判断是否是本人操作
-        UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-        if (!StringUtils.equals(articleResult.getUserName(), userDTO.getUserName())) {
+        if (!StringUtils.equals(articleResult.getUserName(), userName)) {
             throw new VLogException(ResultEnum.NO_AUTH);
         }
         //文章摘要
@@ -166,7 +153,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         if (articleContentDTO.getState() == 1 && articleResult.getState() == 0) {
             ArticleServiceImpl articleService = SpringContextUtil.getBean(ArticleServiceImpl.class);
-            articleService.addJF(userDTO.getId(), article.getUserName(), article.getId());
+            articleService.addJF(article.getUserName(), article.getId());
             article.setCreateTime(new Date());
         }
         articleMapper.update(article);
@@ -217,11 +204,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public ReturnClass listArticleByLogin(QueryArticleDTO queryArticleDTO) {
-        ReturnClass userByToken = userService.getUserByToken();
-        if (userByToken.isSuccess()) {
-            UserRoleDTO userRoleDTO = (UserRoleDTO) userByToken.getData();
-            queryArticleDTO.setUserName(userRoleDTO.getUserName());
-        }
+        queryArticleDTO.setUserName(userService.getUserNameByLoginToken());
         Integer integer = articleMapper.queryArticleListCount(queryArticleDTO);
         if (integer < 1) {
             return ReturnClass.fail(ArticleConstant.NO_BLOG);
@@ -240,33 +223,16 @@ public class ArticleServiceImpl implements ArticleService {
      * @date: 2019-08-09 16:37
      */
     @Override
-    public ReturnClass articleDetail(Boolean authCheck, Long id, String userName) {
+    public ReturnClass articleDetailView(Long id, String userName) {
         ArticleContentDTO articleContentDTO = new ArticleContentDTO();
         ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, userName);
         if (Objects.isNull(articleInfo)) {
             throw new VLogException(ResultEnum.NO_URL);
         }
-        //获取数据是否是当前用户校验
-        if (authCheck) {
-            //获取请求用户信息
-            ReturnClass userByToken = userService.getUserByToken();
-            if (!userByToken.isSuccess()) {
-                throw new VLogException(ResultEnum.USERINFO_ERROR);
-            }
-            UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-            if (!StringUtils.equals(userDTO.getUserName(), articleInfo.getUserName())) {
-                throw new VLogException(ResultEnum.NO_AUTH);
-            }
-        }
         BeanUtils.copyProperties(articleInfo, articleContentDTO);
         Content content = contentMapper.getContent(articleInfo.getId());
         if (Objects.nonNull(content)) {
-            if (authCheck) {
-                articleContentDTO.setContent(content.getContentFormat());
-            } else {
-                articleContentDTO.setContent(content.getContentFormat());
-            }
-
+            articleContentDTO.setContent(content.getContentFormat());
         }
         return ReturnClass.success(articleContentDTO);
     }
@@ -280,6 +246,7 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public ReturnClass articleDetailByLogin(Long id) {
+        String userName = userService.getUserNameByLoginToken();
         ArticleContentDTO articleContentDTO = new ArticleContentDTO();
         Article query = new Article();
         query.setId(id);
@@ -287,20 +254,14 @@ public class ArticleServiceImpl implements ArticleService {
         if (Objects.isNull(result)) {
             throw new VLogException(ResultEnum.NO_URL);
         }
-        //获取请求用户信息
-        ReturnClass userByToken = userService.getUserByToken();
-        if (!userByToken.isSuccess()) {
-            throw new VLogException(ResultEnum.USERINFO_ERROR);
-        }
-        UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-        if (!StringUtils.equals(userDTO.getUserName(), result.getUserName())) {
+        if (!StringUtils.equals(userName, result.getUserName())) {
             throw new VLogException(ResultEnum.NO_AUTH);
         }
         BeanUtils.copyProperties(result, articleContentDTO);
         Content content = contentMapper.getContent(result.getId());
         if (Objects.nonNull(content)) {
             articleContentDTO.setContent(content.getContent());
-			articleContentDTO.setContentFormat(content.getContentFormat());
+            articleContentDTO.setContentFormat(content.getContentFormat());
         }
         return ReturnClass.success(articleContentDTO);
     }
@@ -334,13 +295,13 @@ public class ArticleServiceImpl implements ArticleService {
      * @date: 2019-08-04 15:12
      */
     @Override
-    public ReturnClass listArticleOrderBy(Boolean authCheck, String userName, Integer flag) {
-        if (StringUtils.isNoneEmpty(userName)) {
-            ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
-            if (!returnClass.isSuccess()) {
-                throw new VLogException(ResultEnum.NO_URL);
-            }
-        }
+    public ReturnClass listArticleOrderBy( String userName, Integer flag) {
+//        if (StringUtils.isNoneEmpty(userName)) {
+//            ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
+//            if (!returnClass.isSuccess()) {
+//                throw new VLogException(ResultEnum.NO_URL);
+//            }
+//        }
         List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName, ARTICLE_LIMIT);
         if (articlesDTOS.isEmpty()) {
             return ReturnClass.fail(ArticleConstant.NO_BLOG);
@@ -357,10 +318,6 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public ReturnClass listArticleArchive(String userName) {
-        ReturnClass returnClass = userService.getUserByuserName(false, userName);
-        if (!returnClass.isSuccess()) {
-            throw new VLogException(ResultEnum.NO_URL);
-        }
         List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListArchive(userName);
         if (articlesDTOS.isEmpty()) {
             return ReturnClass.fail(ArticleConstant.NO_BLOG);
@@ -378,18 +335,13 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReturnClass delArticle(Long id) {
-        ReturnClass userByToken = userService.getUserByToken();
-        if (!userByToken.isSuccess()) {
-            throw new VLogException(ResultEnum.USERINFO_ERROR);
-        }
+        String userName = userService.getUserNameByLoginToken();
         //数据是否存在
         ArticlesDTO articleInfo = articleMapper.getArticleInfo(id, null);
         if (Objects.isNull(articleInfo)) {
             throw new VLogException(ResultEnum.NO_DATA);
         }
-        //判断是否是本人操作
-        UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-        if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
+        if (!StringUtils.equals(articleInfo.getUserName(), userName)) {
             throw new VLogException(ResultEnum.NO_AUTH);
         }
         Integer integer = articleMapper.delArticle(id);
@@ -414,18 +366,13 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public ReturnClass updateArticleState(ArticleContentDTO articleContentDTO) {
-        ReturnClass userByToken = userService.getUserByToken();
-        if (!userByToken.isSuccess()) {
-            throw new VLogException(ResultEnum.USERINFO_ERROR);
-        }
+        String userName = userService.getUserNameByLoginToken();
         //数据是否存在
         ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleContentDTO.getId(), null);
         if (Objects.isNull(articleInfo)) {
             throw new VLogException(ResultEnum.NO_DATA);
         }
-        //判断是否是本人操作
-        UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-        if (!StringUtils.equals(articleInfo.getUserName(), userDTO.getUserName())) {
+        if (!StringUtils.equals(articleInfo.getUserName(), userName)) {
             throw new VLogException(ResultEnum.NO_AUTH);
         }
         Article article = new Article();
@@ -447,7 +394,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     @Async
     public ReturnClass addReadCount(Long id) {
-
         Integer update = articleMapper.updateReadCount(id);
         if (update > 0) {
             log.info("文章阅读数累加成功！");

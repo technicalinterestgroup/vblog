@@ -58,7 +58,7 @@ public class UserController {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO editUserDTO = new EditUserDTO();
 		BeanUtils.copyProperties(editUserParam, editUserDTO);
-		ReturnClass addUser = userService.updateUser(authCheck, editUserDTO);
+		ReturnClass addUser = userService.updateUser(editUserDTO);
 		if (addUser.isSuccess()) {
 			apiResult.success(addUser.getMsg(),null);
 		} else {

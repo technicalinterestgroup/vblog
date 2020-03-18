@@ -25,127 +25,97 @@ import java.util.Objects;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-	@Autowired
-	private CategoryMapper categoryMapper;
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private CategoryMapper categoryMapper;
+    @Autowired
+    private UserService userService;
 
-	@Override
-	public ReturnClass insertSelective(EditCategoryDTO pojo) {
-		Category category = new Category();
-		BeanUtils.copyProperties(pojo, category);
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-			category.setUserName(userDTO.getUserName());
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-		//名称是否重复
-		Category category2 = categoryMapper.queryCategory(Category.builder().name(category.getName()).userName(category.getUserName()).build());
-		if (Objects.nonNull(category2)) {
-			return ReturnClass.fail(CategoryConstant.CATEGORY_REPEAT);
-		}
-		Integer flag = categoryMapper.insertSelective(category);
-		if (flag > 0) {
-			return ReturnClass.success(CategoryConstant.SUS_ADD);
-		}
-		return ReturnClass.fail(CategoryConstant.FAIL_ADD);
-	}
+    @Override
+    public ReturnClass insertSelective(EditCategoryDTO pojo) {
+        Category category = new Category();
+        BeanUtils.copyProperties(pojo, category);
+        category.setUserName(userService.getUserNameByLoginToken());
+        //名称是否重复
+        Category category2 = categoryMapper.queryCategory(Category.builder().name(category.getName()).userName(category.getUserName()).build());
+        if (Objects.nonNull(category2)) {
+            return ReturnClass.fail(CategoryConstant.CATEGORY_REPEAT);
+        }
+        Integer flag = categoryMapper.insertSelective(category);
+        if (flag > 0) {
+            return ReturnClass.success(CategoryConstant.SUS_ADD);
+        }
+        return ReturnClass.fail(CategoryConstant.FAIL_ADD);
+    }
 
-	@Override
-	public ReturnClass update(EditCategoryDTO pojo) {
-		Category category = new Category();
-		category.setId(pojo.getId());
+    @Override
+    public ReturnClass update(EditCategoryDTO pojo) {
+        Category category = new Category();
+        category.setId(pojo.getId());
+        category.setUserName(userService.getUserNameByLoginToken());
 
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-			category.setUserName(userDTO.getUserName());
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
+        //数据是否存在
+        Category category1 = categoryMapper.queryCategory(category);
+        if (Objects.isNull(category1)) {
+            throw new VLogException(ResultEnum.NO_DATA);
+        }
+        BeanUtils.copyProperties(pojo, category);
 
-		//数据是否存在
-		Category category1 = categoryMapper.queryCategory(category);
-		if (Objects.isNull(category1)) {
-			throw new VLogException(ResultEnum.NO_DATA);
-		}
-		BeanUtils.copyProperties(pojo, category);
+        //是否是本人操作
+        if (!StringUtils.equals(category1.getUserName(), category.getUserName())) {
+            throw new VLogException(ResultEnum.NO_AUTH);
+        }
+        //名称是否重复
+        Category category2 = categoryMapper.queryCategory(Category.builder().name(category.getName()).userName(category.getUserName()).build());
+        if (Objects.nonNull(category2)) {
+            if (!StringUtils.equals(category2.getName(), pojo.getName())) {
+                return ReturnClass.fail(CategoryConstant.CATEGORY_REPEAT);
+            }
+        }
+        Integer flag = categoryMapper.update(category);
+        if (flag > 0) {
+            return ReturnClass.success(CategoryConstant.SUS_EDITE);
+        }
+        return ReturnClass.fail(CategoryConstant.FAIL_EDITE);
+    }
 
+    @Override
+    public ReturnClass listCategoryByUser(String userName) {
+        List<CategoryDTO> categoryDTOList = categoryMapper.queryCategoryListByUser(userName);
+        if (categoryDTOList.isEmpty()) {
+            return ReturnClass.fail(CategoryConstant.NO_DATA);
+        }
+        return ReturnClass.success(categoryDTOList);
+    }
 
-		//是否是本人操作
-		if (!StringUtils.equals(category1.getUserName(), category.getUserName())) {
-			throw new VLogException(ResultEnum.NO_AUTH);
-		}
-		//名称是否重复
-		Category category2 = categoryMapper.queryCategory(Category.builder().name(category.getName()).userName(category.getUserName()).build());
-		if (Objects.nonNull(category2)) {
-			if (!StringUtils.equals(category2.getName(), pojo.getName())) {
-				return ReturnClass.fail(CategoryConstant.CATEGORY_REPEAT);
-			}
-		}
-		Integer flag = categoryMapper.update(category);
-		if (flag > 0) {
-			return ReturnClass.success(CategoryConstant.SUS_EDITE);
-		}
-		return ReturnClass.fail(CategoryConstant.FAIL_EDITE);
-	}
+    @Override
+    public ReturnClass delCategory(Long id) {
+        Category category = new Category();
+        category.setId(id);
+        category.setUserName(userService.getUserNameByLoginToken());
 
-	@Override
-	public ReturnClass listCategoryByUser(Boolean authCheck, String userName) {
-		ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
-		List<CategoryDTO> categoryDTOList = categoryMapper.queryCategoryListByUser(userName);
-		if (categoryDTOList.isEmpty()) {
-			return ReturnClass.fail(CategoryConstant.NO_DATA);
-		}
-		return ReturnClass.success(categoryDTOList);
-	}
+        //数据是否存在
+        Category category1 = categoryMapper.queryCategory(category);
+        if (Objects.isNull(category1)) {
+            throw new VLogException(ResultEnum.NO_DATA);
+        }
+        //是否是本人操作
+        if (!StringUtils.equals(category1.getUserName(), category.getUserName())) {
+            throw new VLogException(ResultEnum.NO_AUTH);
+        }
+        Integer articleCountCategory = categoryMapper.getArticleCountCategory(id);
+        if (articleCountCategory > 0) {
+            return ReturnClass.fail(CategoryConstant.HAVA_ARTICLE);
+        }
+        Integer integer = categoryMapper.delCategory(id);
+        if (integer > 0) {
+            return ReturnClass.success(CategoryConstant.SUS_DEL);
+        }
+        return ReturnClass.fail(CategoryConstant.FAIL_DEL);
+    }
 
-	@Override
-	public ReturnClass delCategory(Long id) {
-		Category category = new Category();
-		category.setId(id);
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-			category.setUserName(userDTO.getUserName());
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-
-		//数据是否存在
-		Category category1 = categoryMapper.queryCategory(category);
-		if (Objects.isNull(category1)) {
-			throw new VLogException(ResultEnum.NO_DATA);
-		}
-		//是否是本人操作
-		if (!StringUtils.equals(category1.getUserName(), category.getUserName())) {
-			throw new VLogException(ResultEnum.NO_AUTH);
-		}
-		Integer articleCountCategory = categoryMapper.getArticleCountCategory(id);
-		if (articleCountCategory>0){
-			return ReturnClass.fail(CategoryConstant.HAVA_ARTICLE);
-		}
-		Integer integer = categoryMapper.delCategory(id);
-		if (integer > 0) {
-			return ReturnClass.success(CategoryConstant.SUS_DEL);
-		}
-		return ReturnClass.fail(CategoryConstant.FAIL_DEL);
-	}
-
-	@Override
-	public ReturnClass listCategorySByUser() {
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-			List<CategoryDTO> categoryDTOS = categoryMapper.queryCategorysByUser(userDTO.getUserName());
-			return ReturnClass.success(categoryDTOS);
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-	}
+    @Override
+    public ReturnClass listCategorySByUser() {
+        List<CategoryDTO> categoryDTOS = categoryMapper.queryCategorysByUser(userService.getUserNameByLoginToken());
+        return ReturnClass.success(categoryDTOS);
+    }
 }

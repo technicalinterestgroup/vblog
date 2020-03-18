@@ -46,11 +46,11 @@ public class CategoryController {
 	 * @return null
 	 */
 	@ApiOperation(value = "博客分类", notes = "博客分类")
-	@GetMapping(value = "/list/{userName}")
+	@GetMapping(value = "/list")
 	@BlogOperation(value = "博客分类")
 	public ApiResult<List<CategoryVO>> listCategory(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listCategory = categoryService.listCategoryByUser(authCheck, userName);
+		ReturnClass listCategory = categoryService.listCategoryByUser(userName);
 		if (listCategory.isSuccess()) {
 			List<CategoryVO> list = new ArrayList<CategoryVO>();
 			List<CategoryDTO> categoryDTOList = (List<CategoryDTO>) listCategory.getData();

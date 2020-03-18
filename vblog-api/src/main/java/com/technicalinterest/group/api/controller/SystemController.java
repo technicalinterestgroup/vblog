@@ -50,11 +50,11 @@ public class SystemController {
 	 * @date: 2019-07-14 19:24
 	 */
 	@ApiOperation(value = "查询系统参数详情", notes = "详情")
-	@GetMapping(value = "/detail/{userName}")
+	@GetMapping(value = "/detail")
 	@BlogOperation(value = "查询系统参数详情")
 	public ApiResult<VSystemVO> detail(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass getSystemByUser = vSystemService.getSystemByUser(authCheck, userName);
+		ReturnClass getSystemByUser = vSystemService.getSystemByUser(userName);
 		if (getSystemByUser.isSuccess()) {
 			VSystemVO vSystemVO = new VSystemVO();
 			BeanUtils.copyProperties(getSystemByUser.getData(), vSystemVO);

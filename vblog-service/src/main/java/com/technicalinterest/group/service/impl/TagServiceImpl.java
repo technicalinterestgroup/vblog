@@ -35,13 +35,7 @@ public class TagServiceImpl implements TagService {
 	public ReturnClass insertSelective(EditTagDTO pojo) {
 		Tag tag = new Tag();
 		BeanUtils.copyProperties(pojo, tag);
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-			tag.setUserName(userDTO.getUserName());
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
+		tag.setUserName(userService.getUserNameByLoginToken());
 		//名称是否重复
 		Tag tag1 = tagMapper.queryTag(Tag.builder().name(tag.getName()).userName(tag.getUserName()).build());
 		if (Objects.nonNull(tag1)) {
@@ -58,14 +52,7 @@ public class TagServiceImpl implements TagService {
 	public ReturnClass update(EditTagDTO pojo) {
 		Tag tag = new Tag();
 		tag.setId(pojo.getId());
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-			tag.setUserName(userDTO.getUserName());
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-
+		tag.setUserName(userService.getUserNameByLoginToken());
 		//数据是否存在
 		Tag tag1 = tagMapper.queryTag(tag);
 		if (Objects.isNull(tag1)) {
@@ -116,13 +103,7 @@ public class TagServiceImpl implements TagService {
 	public ReturnClass delTag(Long id) {
 		Tag tag = new Tag();
 		tag.setId(id);
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-			tag.setUserName(userDTO.getUserName());
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
+		tag.setUserName(userService.getUserNameByLoginToken());
 		//数据是否存在
 		Tag tag1 = tagMapper.queryTag(tag);
 		if (Objects.isNull(tag1)) {

@@ -66,7 +66,7 @@ public interface ArticleService {
      * @param id
      * @return null
     */
-	ReturnClass articleDetail(Boolean authCheck,Long id,String userName);
+	ReturnClass articleDetailView(Long id,String userName);
 
 	/**
 	 * @Description:登录用户获取文章详情
@@ -92,7 +92,7 @@ public interface ArticleService {
 	 * @param flag 1:时间排序 2：阅读量排序  3：点赞数  4：评论数
 	 * @return ReturnClass
 	 */
-	ReturnClass listArticleOrderBy(Boolean authCheck,String userName,Integer flag);
+	ReturnClass listArticleOrderBy(String userName,Integer flag);
 
 	/**
 	 * @Description:博客文章归档

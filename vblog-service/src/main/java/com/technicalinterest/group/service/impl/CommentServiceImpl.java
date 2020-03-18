@@ -41,11 +41,7 @@ public class CommentServiceImpl implements CommentService {
 	public ReturnClass insert(EditCommentDTO pojo) {
 		Comment comment = new Comment();
 		BeanUtils.copyProperties(pojo, comment);
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-			comment.setUserName(userDTO.getUserName());
-		}
+		comment.setUserName(userService.getUserNameByLoginToken());
 		ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getArticleId(),null);
 		if (Objects.isNull(articleInfo)){
 			throw new VLogException(CommentConstant.ARTICLE_ID_ERROR);
@@ -69,12 +65,12 @@ public class CommentServiceImpl implements CommentService {
 
 	@Override
 	public ReturnClass del(Long id) {
+		String userName=userService.getUserNameByLoginToken();
 		Comment comment = commentMapper.queryCommentById(id);
 		if (Objects.isNull(comment)) {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
-		ReturnClass returnClass = userService.userNameIsLoginUser(comment.getUserName());
-		if (!returnClass.isSuccess()) {
+		if (!userName.equals(comment.getUserName())) {
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
 		Integer integer = commentMapper.delComment(id);

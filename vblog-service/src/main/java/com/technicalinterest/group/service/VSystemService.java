@@ -9,5 +9,5 @@ public interface VSystemService {
 
 	ReturnClass update(VSystemDTO pojo);
 
-	ReturnClass getSystemByUser(Boolean authCheck,String userName);
+	ReturnClass getSystemByUser(String userName);
 }

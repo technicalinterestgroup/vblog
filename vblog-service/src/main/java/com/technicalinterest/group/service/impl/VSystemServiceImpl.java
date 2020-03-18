@@ -55,16 +55,11 @@ public class VSystemServiceImpl implements VSystemService {
 	 * @Description:查询配置详情
 	 * @author: shuyu.wang
 	 * @date: 2019-08-14 13:27
-	 * @param authCheck
 	 * @param userName
 	 * @return com.technicalinterest.group.service.dto.ReturnClass
 	 */
 	@Override
-	public ReturnClass getSystemByUser(Boolean authCheck, String userName) {
-		ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
+	public ReturnClass getSystemByUser(String userName) {
 		VSystem systemByUser = vSystemMapper.querySystemByUser(userName);
 		VSystemDTO vSystemDTO = new VSystemDTO();
 		BeanUtils.copyProperties(systemByUser, vSystemDTO);

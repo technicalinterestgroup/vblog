@@ -1,6 +1,7 @@
 package com.technicalinterest.group.service;
 
 
+import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
@@ -44,7 +45,7 @@ public interface UserService {
     * @param editUserDTO
     * @return null
    */
-    ReturnClass updateUser(Boolean authCheck,EditUserDTO editUserDTO);
+    ReturnClass updateUser(EditUserDTO editUserDTO);
 
     /**
      * 修改密码
@@ -153,4 +154,15 @@ public interface UserService {
      * @return
      */
     ReturnClass getUserInfo(String userName);
+
+    /**
+     * 根据登录token获取用户名
+     * @return
+     */
+    String getUserNameByLoginToken();
+   /**
+    * 根据用户名查询用户信息
+    * @return
+    */
+    User getUserByUserName(String userName);
 }

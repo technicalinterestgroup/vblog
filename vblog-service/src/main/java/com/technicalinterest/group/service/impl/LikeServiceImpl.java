@@ -43,17 +43,12 @@ public class LikeServiceImpl implements LikeService {
 	 */
 	@Override
 	public ReturnClass insert(LikeDTO pojo) {
-
-		ReturnClass userByToken = userService.getUserByToken();
-		if (!userByToken.isSuccess()) {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
+		String userName = userService.getUserNameByLoginToken();
 		ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getSourceId(),null);
 		if (Objects.isNull(articleInfo)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-		Like like = Like.builder().userName(userDTO.getUserName()).type(pojo.getType()).sourceId(pojo.getSourceId()).build();
+		Like like = Like.builder().userName(userName).type(pojo.getType()).sourceId(pojo.getSourceId()).build();
 		Like likeResult = likeMapper.queryLike(like);
 		if (Objects.nonNull(likeResult)) {
 			return ReturnClass.success(LikeConstant.ADD_REPEAT);
@@ -80,17 +75,13 @@ public class LikeServiceImpl implements LikeService {
 	 */
 	@Override
 	public ReturnClass del(LikeDTO pojo) {
-		ReturnClass userByToken = userService.getUserByToken();
-		if (!userByToken.isSuccess()) {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-		UserRoleDTO userDTO = (UserRoleDTO) userByToken.getData();
-		Like like = Like.builder().userName(userDTO.getUserName()).type(pojo.getType()).sourceId(pojo.getSourceId()).build();
+		String userName = userService.getUserNameByLoginToken();
+		Like like = Like.builder().userName(userName).type(pojo.getType()).sourceId(pojo.getSourceId()).build();
 		Like likeResult = likeMapper.queryLike(like);
 		if (Objects.isNull(likeResult)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		if (!StringUtils.equals(userDTO.getUserName(),likeResult.getUserName())){
+		if (!StringUtils.equals(userName,likeResult.getUserName())){
 			throw new VLogException(ResultEnum.NO_AUTH);
 		}
 		Integer integer = likeMapper.del(likeResult.getId());

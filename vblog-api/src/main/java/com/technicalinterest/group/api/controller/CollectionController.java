@@ -46,17 +46,16 @@ public class CollectionController {
 	 * @Description: 博客收藏列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
-	 * @param userName
 	 * @return null
 	 */
 	@ApiOperation(value = "博客收藏列表", notes = "博客收藏列表")
-	@GetMapping(value = "/list/{userName}")
+	@GetMapping(value = "/list")
 	@BlogOperation(value = "博客收藏列表")
-	public ApiResult<PageBean<CollectionVO>> listCategory(@PathVariable("userName") String userName, @Validated PageBaseParam pageBaseParam) {
+	public ApiResult<PageBean<CollectionVO>> listCategory(@Validated PageBaseParam pageBaseParam) {
 		ApiResult apiResult = new ApiResult();
 		PageBase pageBase = new PageBase();
 		BeanUtils.copyProperties(pageBaseParam, pageBase);
-		ReturnClass listCollection = collectionService.queryListCollection(userName, pageBase);
+		ReturnClass listCollection = collectionService.queryListCollection(pageBase);
 		if (listCollection.isSuccess()) {
 			PageBean<CollectionDTO> pageBean = (PageBean<CollectionDTO>) listCollection.getData();
 			List<CollectionVO> list = new ArrayList<>();

@@ -262,7 +262,7 @@ public class ViewController {
 	@GetMapping(value = "/article/new/{userName}")
 	public ApiResult<ArticleTitleVO> listArticleHotByUser(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, userName, ArticleOrderEnum.NEW.getOrderByFlag());
+		ReturnClass listArticle = articleService.listArticleOrderBy(userName, ArticleOrderEnum.NEW.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -289,7 +289,7 @@ public class ViewController {
 	@GetMapping(value = "/article/hot/{userName}")
 	public ApiResult<ArticleTitleVO> listArticleNewByUser(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, userName, ArticleOrderEnum.HOT.getOrderByFlag());
+		ReturnClass listArticle = articleService.listArticleOrderBy(userName, ArticleOrderEnum.HOT.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -315,7 +315,7 @@ public class ViewController {
 	@GetMapping(value = "/article/recommend/{userName}")
 	public ApiResult<ArticleTitleVO> listArticleRecommendByUser(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, userName, ArticleOrderEnum.Recommend.getOrderByFlag());
+		ReturnClass listArticle = articleService.listArticleOrderBy(userName, ArticleOrderEnum.Recommend.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -363,7 +363,7 @@ public class ViewController {
 	public ApiResult<ArticleTitleVO> listArticleCategory(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
 
-		ReturnClass listCategory = categoryService.listCategoryByUser(authCheck, userName);
+		ReturnClass listCategory = categoryService.listCategoryByUser(userName);
 		if (listCategory.isSuccess()) {
 			List<CategoryVO> list = new ArrayList<CategoryVO>();
 			List<CategoryDTO> categoryDTOList = (List<CategoryDTO>) listCategory.getData();
@@ -409,7 +409,7 @@ public class ViewController {
 	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id,
 			@RequestParam(name = "userName",required = false)String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass articleDetail = articleService.articleDetail(authCheck, id,userName);
+		ReturnClass articleDetail = articleService.articleDetailView(id,userName);
 		ArticleContentVO articleContentVO = new ArticleContentVO();
 		if (articleDetail.isSuccess()) {
 			BeanUtils.copyProperties(articleDetail.getData(), articleContentVO);
@@ -465,7 +465,7 @@ public class ViewController {
 	@GetMapping(value = "/article/new")
 	public ApiResult<ArticleTitleVO> listArticleHot() {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, ArticleOrderEnum.NEW.getOrderByFlag());
+		ReturnClass listArticle = articleService.listArticleOrderBy(null, ArticleOrderEnum.NEW.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -492,7 +492,7 @@ public class ViewController {
 	@GetMapping(value = "/article/hot")
 	public ApiResult<ArticleTitleVO> listArticleNew() {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, ArticleOrderEnum.HOT.getOrderByFlag());
+		ReturnClass listArticle = articleService.listArticleOrderBy(null, ArticleOrderEnum.HOT.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -518,7 +518,7 @@ public class ViewController {
 	@GetMapping(value = "/article/recommend")
 	public ApiResult<ArticleTitleVO> listArticleRecommend() {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listArticle = articleService.listArticleOrderBy(authCheck, null, ArticleOrderEnum.Recommend.getOrderByFlag());
+		ReturnClass listArticle = articleService.listArticleOrderBy(null, ArticleOrderEnum.Recommend.getOrderByFlag());
 		if (listArticle.isSuccess()) {
 			List<ArticleTitleVO> list = new ArrayList<ArticleTitleVO>();
 			List<ArticlesDTO> articlesDTOS = (List<ArticlesDTO>) listArticle.getData();
@@ -561,7 +561,7 @@ public class ViewController {
 	@GetMapping(value = "/blog/info/{userName}")
 	public ApiResult<VSystemVO> systemDetail(@PathVariable("userName") String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass getSystemByUser = vSystemService.getSystemByUser(authCheck, userName);
+		ReturnClass getSystemByUser = vSystemService.getSystemByUser(userName);
 		if (getSystemByUser.isSuccess()) {
 			VSystemVO vSystemVO = new VSystemVO();
 			BeanUtils.copyProperties(getSystemByUser.getData(), vSystemVO);
