@@ -111,8 +111,8 @@
         SELECT t1.user_name,t1.nick_name,(
         SELECT count(1)FROM v_article t2 WHERE t2.user_name=t1.user_name) as blogNum,user_summary as userSummary,
         t1.photo
-        from v_user t1
-        <if test="userName!=null and userName!=''">where t1.user_name=#{userName}</if>
+        from v_user t1 where and id!=1
+        <if test="userName!=null and userName!=''">and t1.user_name=#{userName}</if>
         <if test="userName==null or userName==''">order by integral desc limit 5</if>
     </select>
 
