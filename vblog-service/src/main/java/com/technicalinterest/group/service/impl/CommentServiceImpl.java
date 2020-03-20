@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
 		comment.setIsView((short)0);
 		Integer integer = commentMapper.insertSelective(comment);
 		if (integer > 0) {
-			return ReturnClass.success(CommentConstant.SAVE_SUCCESS);
+			return ReturnClass.success(CommentConstant.SAVE_SUCCESS,comment);
 		}
 		return ReturnClass.fail(CommentConstant.SAVE_FAIL);
 	}
