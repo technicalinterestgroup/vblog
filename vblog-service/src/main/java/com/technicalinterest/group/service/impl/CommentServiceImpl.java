@@ -3,6 +3,7 @@ package com.technicalinterest.group.service.impl;
 import com.technicalinterest.group.dao.Comment;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.CommentDTO;
+import com.technicalinterest.group.dto.CommentResultDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.CommentMapper;
 import com.technicalinterest.group.service.CommentService;
@@ -17,7 +18,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -87,21 +90,22 @@ public class CommentServiceImpl implements CommentService {
 	 */
 	@Override
 	public ReturnClass getArticleComment(Long id) {
-		//文章id是否存在
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(id,null);
-		if (Objects.isNull(articleInfo)) {
-			throw new VLogException(ResultEnum.NO_DATA);
-		}
+		//id是否存在
+		CommentResultDTO commentResultDTO=new CommentResultDTO();
 		List<CommentDTO> commentDTOS = commentMapper.queryListComment(null, id, null);
+		Map<Long,List<CommentDTO>> refCommnet=new HashMap<>();
 		for (CommentDTO entity : commentDTOS) {
-			List<CommentDTO> childParent = getChildParent(entity.getId());
-			entity.setChildComment(childParent);
+			List<CommentDTO> commentDTOS1 = commentMapper.queryListComment(null, null, entity.getId());
+			if (!commentDTOS.isEmpty()) {
+				refCommnet.put(entity.getId(), commentDTOS1);
+			}
 		}
 		if (commentDTOS.isEmpty()) {
 			return ReturnClass.fail(CommentConstant.NO_COMMENT);
 		}
-
-		return ReturnClass.success(commentDTOS);
+		commentResultDTO.setFristCommnetList(commentDTOS);
+		commentResultDTO.setRefCommnet(refCommnet);
+		return ReturnClass.success(commentResultDTO);
 	}
 
 	/**
@@ -120,7 +124,7 @@ public class CommentServiceImpl implements CommentService {
 		for (CommentDTO entity : commentDTOS) {
 			List<CommentDTO> child = getChildParent(entity.getId());
 			if (Objects.nonNull(child)) {
-				entity.setChildComment(child);
+//				entity.setChildComment(child);
 			}
 		}
 		return commentDTOS;

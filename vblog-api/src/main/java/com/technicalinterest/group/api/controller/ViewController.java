@@ -573,15 +573,12 @@ public class ViewController {
 	}
 
 	@ApiOperation(value = "博客评论", notes = "评论")
-	@GetMapping(value = "/commet/list/{articleId}")
-	public ApiResult<List<CommentVO>> listCommet1(@PathVariable("articleId") Long articleId) {
+	@GetMapping(value = "/comment/list/{articleId}")
+	public ApiResult<CommentResultDTO> listCommet1(@PathVariable("articleId") Long articleId) {
 		ApiResult apiResult = new ApiResult();
-
 		ReturnClass returnClass = commentService.getArticleComment(articleId);
 		if (returnClass.isSuccess()) {
-
-			List list = ListBeanUtils.copyProperties(returnClass.getData(), CommentVO.class);
-			apiResult.success(list);
+			apiResult.success(returnClass.getData());
 		} else {
 			apiResult.fail(returnClass.getMsg());
 		}

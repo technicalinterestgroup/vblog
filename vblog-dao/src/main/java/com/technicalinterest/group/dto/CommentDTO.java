@@ -44,8 +44,6 @@ public class CommentDTO {
 
 	private Date createTime;
 
-	/**
-	 * 子评论
-	 */
-	private List<CommentDTO> childComment;
+	private String avatar;
+
 }
