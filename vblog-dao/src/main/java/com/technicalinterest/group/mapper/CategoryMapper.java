@@ -14,7 +14,7 @@ public interface CategoryMapper {
 
     Integer update(@Param("pojo") Category pojo);
 
-    List<CategoryDTO> queryCategoryListByUser(String userName);
+    List<CategoryDTO> queryCategoryListByUser(@Param("userName")String userName,@Param("name")String name);
 
     Category queryCategory(Category pojo);
 

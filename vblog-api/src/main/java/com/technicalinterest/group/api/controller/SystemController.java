@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.EditVSystemParam;
 import com.technicalinterest.group.api.vo.ApiResult;
@@ -13,6 +14,7 @@ import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.VSystemDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,7 @@ import javax.validation.Valid;
 @Api(tags = "博客自定义设置")
 @RestController
 @RequestMapping("system")
+@Slf4j
 public class SystemController {
 
 	@Autowired
@@ -48,9 +51,9 @@ public class SystemController {
 	@ApiOperation(value = "查询系统参数详情", notes = "详情")
 	@GetMapping(value = "/detail")
 	@BlogOperation(value = "查询系统参数详情")
-	public ApiResult<VSystemVO> detail(@PathVariable("userName") String userName) {
+	public ApiResult<VSystemVO> detail() {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass getSystemByUser = vSystemService.getSystemByUser(userName);
+		ReturnClass getSystemByUser = vSystemService.getSystemByLogin();
 		if (getSystemByUser.isSuccess()) {
 			VSystemVO vSystemVO = new VSystemVO();
 			BeanUtils.copyProperties(getSystemByUser.getData(), vSystemVO);
@@ -73,6 +76,7 @@ public class SystemController {
 	@BlogOperation(value = "更新系统设置参数")
 	@DistributeLock( key = "#editVSystemParam.userName", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> edit(@Valid @RequestBody EditVSystemParam editVSystemParam) {
+		log.info(""+ JSONObject.toJSON(editVSystemParam));
 		ApiResult apiResult = new ApiResult();
 		VSystemDTO vSystemDTO = new VSystemDTO();
 		BeanUtils.copyProperties(editVSystemParam, vSystemDTO);

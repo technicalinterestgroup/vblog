@@ -19,6 +19,6 @@ import org.hibernate.validator.constraints.NotBlank;
 public class NewCategoryParam {
 
 	@ApiModelProperty(value = "分类名称")
-	@NotBlank(message = "分类名称不能为空")
+//	@NotBlank(message = "分类名称不能为空")
 	private String name;
 }

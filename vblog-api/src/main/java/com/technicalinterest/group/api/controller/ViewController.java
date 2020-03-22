@@ -419,6 +419,27 @@ public class ViewController {
 		}
 		return apiResult;
 	}
+	/**
+	 * 查询参数详情
+	 * @return null
+	 * @author: shuyu.wang
+	 * @date: 2019-07-14 19:24
+	 */
+	@ApiOperation(value = "博客主题渲染查询接口", notes = "详情")
+	@GetMapping(value = "/blog/info/{userName}")
+	public ApiResult<VSystemVO> systemDetail(@PathVariable("userName") String userName) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass getSystemByUser = vSystemService.getSystemByUser(userName);
+		if (getSystemByUser.isSuccess()) {
+			VSystemVO vSystemVO = new VSystemVO();
+			BeanUtils.copyProperties(getSystemByUser.getData(), vSystemVO);
+			apiResult.success(vSystemVO);
+
+		} else {
+			apiResult.fail(getSystemByUser.getMsg());
+		}
+		return apiResult;
+	}
 //-------------------------------------------------------------------
 	/**
 	 * @Description: 网站文章列表
@@ -550,27 +571,7 @@ public class ViewController {
 		return apiResult;
 	}
 
-	/**
-	 * 查询参数详情
-	 * @return null
-	 * @author: shuyu.wang
-	 * @date: 2019-07-14 19:24
-	 */
-	@ApiOperation(value = "博客主题渲染查询接口", notes = "详情")
-	@GetMapping(value = "/blog/info/{userName}")
-	public ApiResult<VSystemVO> systemDetail(@PathVariable("userName") String userName) {
-		ApiResult apiResult = new ApiResult();
-		ReturnClass getSystemByUser = vSystemService.getSystemByUser(userName);
-		if (getSystemByUser.isSuccess()) {
-			VSystemVO vSystemVO = new VSystemVO();
-			BeanUtils.copyProperties(getSystemByUser.getData(), vSystemVO);
-			apiResult.success(vSystemVO);
 
-		} else {
-			apiResult.fail(getSystemByUser.getMsg());
-		}
-		return apiResult;
-	}
 
 	@ApiOperation(value = "博客评论", notes = "评论")
 	@GetMapping(value = "/comment/list/{articleId}")

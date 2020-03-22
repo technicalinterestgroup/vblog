@@ -16,5 +16,11 @@ public interface CategoryService{
 
      ReturnClass delCategory(Long id);
 
-     ReturnClass listCategorySByUser();
+     ReturnClass listCategoryByUser();
+
+     /**
+      * 文章分类列表
+      * @return
+      */
+     ReturnClass categoryListPage(String name);
 }

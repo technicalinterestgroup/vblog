@@ -36,11 +36,8 @@ public class VSystemServiceImpl implements VSystemService {
 
 	@Override
 	public ReturnClass update(VSystemDTO pojo) {
-		ReturnClass returnClass = userService.userNameIsLoginUser(pojo.getUserName());
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_AUTH);
-		}
 		VSystem vSystem = new VSystem();
+		vSystem.setUserName(userService.getUserNameByLoginToken());
 		BeanUtils.copyProperties(pojo, vSystem);
 		Integer integer = vSystemMapper.update(vSystem);
 		if (integer < 1) {
@@ -59,6 +56,14 @@ public class VSystemServiceImpl implements VSystemService {
 	@Override
 	public ReturnClass getSystemByUser(String userName) {
 		VSystem systemByUser = vSystemMapper.querySystemByUser(userName);
+		VSystemDTO vSystemDTO = new VSystemDTO();
+		BeanUtils.copyProperties(systemByUser, vSystemDTO);
+		return ReturnClass.success(vSystemDTO);
+	}
+
+	@Override
+	public ReturnClass getSystemByLogin() {
+		VSystem systemByUser = vSystemMapper.querySystemByUser(userService.getUserNameByLoginToken());
 		VSystemDTO vSystemDTO = new VSystemDTO();
 		BeanUtils.copyProperties(systemByUser, vSystemDTO);
 		return ReturnClass.success(vSystemDTO);

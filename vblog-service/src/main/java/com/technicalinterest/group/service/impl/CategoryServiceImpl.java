@@ -76,7 +76,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ReturnClass listCategoryByUser(String userName) {
-        List<CategoryDTO> categoryDTOList = categoryMapper.queryCategoryListByUser(userName);
+        List<CategoryDTO> categoryDTOList = categoryMapper.queryCategoryListByUser(userName,null);
         if (categoryDTOList.isEmpty()) {
             return ReturnClass.fail(CategoryConstant.NO_DATA);
         }
@@ -110,8 +110,21 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ReturnClass listCategorySByUser() {
+    public ReturnClass listCategoryByUser() {
         List<CategoryDTO> categoryDTOS = categoryMapper.queryCategorysByUser(userService.getUserNameByLoginToken());
         return ReturnClass.success(categoryDTOS);
+    }
+
+    /**
+     * 文章分类列表
+     * @return
+     */
+    @Override
+    public ReturnClass categoryListPage(String name) {
+        List<CategoryDTO> categoryDTOList = categoryMapper.queryCategoryListByUser(userService.getUserNameByLoginToken(),name);
+        if (categoryDTOList.isEmpty()) {
+            return ReturnClass.fail(CategoryConstant.NO_DATA);
+        }
+        return ReturnClass.success(categoryDTOList);
     }
 }

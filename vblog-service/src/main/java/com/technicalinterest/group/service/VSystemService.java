@@ -10,4 +10,6 @@ public interface VSystemService {
 	ReturnClass update(VSystemDTO pojo);
 
 	ReturnClass getSystemByUser(String userName);
+
+	ReturnClass getSystemByLogin();
 }
