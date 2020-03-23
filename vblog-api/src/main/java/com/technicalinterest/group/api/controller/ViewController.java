@@ -5,6 +5,8 @@ import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeL
 import com.technicalinterest.group.api.param.*;
 import com.technicalinterest.group.api.util.IndexOrderByUtil;
 import com.technicalinterest.group.api.vo.*;
+import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeDetailVO;
+import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeVO;
 import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.*;
 import com.technicalinterest.group.service.Enum.ArticleOrderEnum;
@@ -52,6 +54,8 @@ public class ViewController {
 	private CommentService commentService;
 	@Autowired
 	private TagService tagService;
+	@Autowired
+	private WebsiteNoticeService websiteNoticeService;
 
 	private static final Boolean authCheck = false;
 
@@ -599,6 +603,35 @@ public class ViewController {
 		}
 		return apiResult;
 	}
+
+	@ApiOperation(value = "查询轮播图")
+	@GetMapping(value = "/carousels")
+	public ApiResult<List<WebsiteNoticeVO>> getCarousels(@RequestParam("type")Short type) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass carousels = websiteNoticeService.getIndexWebsiteNotice(type);
+		if (carousels.isSuccess()) {
+			List result = ListBeanUtils.copyProperties(carousels.getData(), WebsiteNoticeVO.class);
+			apiResult.success(result);
+		} else {
+			apiResult.setMsg(carousels.getMsg());
+		}
+		return apiResult;
+	}
+	@ApiOperation(value = "通告详情查询")
+	@GetMapping(value = "/notice/{id}")
+	public ApiResult<WebsiteNoticeDetailVO> getNoticeDetail(@PathVariable long id) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass carousels = websiteNoticeService.getWebsiteNoticeDetail(id);
+		if (carousels.isSuccess()) {
+			WebsiteNoticeDetailVO websiteNoticeDetailVO=new WebsiteNoticeDetailVO();
+			BeanUtils.copyProperties(carousels.getData(),websiteNoticeDetailVO);
+			apiResult.success(websiteNoticeDetailVO);
+		} else {
+			apiResult.setMsg(carousels.getMsg());
+		}
+		return apiResult;
+	}
+
 
 	@ApiOperation(value = "测试ws")
 	@GetMapping(value = "/socket")

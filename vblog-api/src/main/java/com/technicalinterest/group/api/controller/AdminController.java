@@ -33,8 +33,10 @@ import java.util.List;
 @RestController
 @RequestMapping("admin")
 public class AdminController {
+
 	@Autowired
 	private AdminService adminService;
+	//TODO 登录
 
 	@ApiOperation(value = "用户列表", notes = "用户列表")
 	@GetMapping(value = "/list/user")
@@ -50,6 +52,9 @@ public class AdminController {
 		}
 		return apiResult;
 	}
+	//用户禁用
+	//角色管理
+	//菜单管理
 
 	@ApiOperation(value = "博客列表", notes = "博客列表")
 	@GetMapping(value = "/list/blog")

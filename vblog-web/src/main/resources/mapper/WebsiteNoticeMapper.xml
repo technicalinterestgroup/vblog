@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.WebsiteNoticeMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.WebsiteNotice">
+        <result column="title" property="title"/>
+        <result column="carousel_url" property="carouselUrl"/>
+        <result column="content_format" property="contentFormat"/>
+        <result column="content" property="content"/>
+        <result column="description" property="description"/>
+        <result column="user_name" property="userName"/>
+        <result column="state" property="state"/>
+        <result column="is_index" property="isIndex"/>
+        <result column="type" property="type"/>
+        <result column="read_count" property="readCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="id" property="id"/>
+        <result column="is_del" property="isDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `title`,
+        `carousel_url`,
+        `content_format`,
+        `content`,
+        `description`,
+        `user_name`,
+        `state`,
+        `is_index`,
+        `type`,
+        `read_count`,
+        `like_count`,
+        `comment_count`,
+        `id`,
+        `create_time`,
+        `update_time`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_website_notice (
+            `title`,
+            `carousel_url`,
+            `content_format`,
+            `content`,
+            `description`,
+            `user_name`,
+            `state`,
+            `is_index`,
+            `type`,
+            `read_count`,
+            `like_count`,
+            `comment_count`,
+            `id`,
+            `is_del`,
+            `create_time`,
+            `update_time`
+        ) VALUES (
+            #{pojo.title},
+            #{pojo.carouselUrl},
+            #{pojo.contentFormat},
+            #{pojo.content},
+            #{pojo.description},
+            #{pojo.userName},
+            #{pojo.state},
+            #{pojo.isIndex},
+            #{pojo.type},
+            #{pojo.readCount},
+            #{pojo.likeCount},
+            #{pojo.commentCount},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+        )
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_website_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.title!=null"> `title`,</if>
+            <if test="pojo.carouselUrl!=null"> `carousel_url`,</if>
+            <if test="pojo.contentFormat!=null"> `content_format`,</if>
+            <if test="pojo.content!=null"> `content`,</if>
+            <if test="pojo.description!=null"> `description`,</if>
+            <if test="pojo.userName!=null"> `user_name`,</if>
+            <if test="pojo.state!=null"> `state`,</if>
+            <if test="pojo.isIndex!=null"> `is_index`,</if>
+            <if test="pojo.type!=null"> `type`,</if>
+            <if test="pojo.readCount!=null"> `read_count`,</if>
+            <if test="pojo.likeCount!=null"> `like_count`,</if>
+            <if test="pojo.commentCount!=null"> `comment_count`,</if>
+            <if test="pojo.id!=null"> `id`,</if>
+            <if test="pojo.isDel!=null"> `is_del`,</if>
+            <if test="pojo.createTime!=null"> `create_time`,</if>
+            <if test="pojo.updateTime!=null"> `update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.title!=null">#{pojo.title},</if>
+            <if test="pojo.carouselUrl!=null">#{pojo.carouselUrl},</if>
+            <if test="pojo.contentFormat!=null">#{pojo.contentFormat},</if>
+            <if test="pojo.content!=null">#{pojo.content},</if>
+            <if test="pojo.description!=null">#{pojo.description},</if>
+            <if test="pojo.userName!=null">#{pojo.userName},</if>
+            <if test="pojo.state!=null">#{pojo.state},</if>
+            <if test="pojo.isIndex!=null">#{pojo.isIndex},</if>
+            <if test="pojo.type!=null">#{pojo.type},</if>
+            <if test="pojo.readCount!=null">#{pojo.readCount},</if>
+            <if test="pojo.likeCount!=null">#{pojo.likeCount},</if>
+            <if test="pojo.commentCount!=null">#{pojo.commentCount},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO v_website_notice (
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.title},
+            #{pojo.carouselUrl},
+            #{pojo.contentFormat},
+            #{pojo.content},
+            #{pojo.description},
+            #{pojo.userName},
+            #{pojo.state},
+            #{pojo.isIndex},
+            #{pojo.type},
+            #{pojo.readCount},
+            #{pojo.likeCount},
+            #{pojo.commentCount},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE v_website_notice
+        <set>
+            <if test="pojo.title != null"> `title` = #{pojo.title}, </if>
+            <if test="pojo.carouselUrl != null"> `carousel_url` = #{pojo.carouselUrl}, </if>
+            <if test="pojo.contentFormat != null"> `content_format` = #{pojo.contentFormat}, </if>
+            <if test="pojo.content != null"> `content` = #{pojo.content}, </if>
+            <if test="pojo.description != null"> `description` = #{pojo.description}, </if>
+            <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
+            <if test="pojo.state != null"> `state` = #{pojo.state}, </if>
+            <if test="pojo.isIndex != null"> `is_index` = #{pojo.isIndex}, </if>
+            <if test="pojo.type != null"> `type` = #{pojo.type}, </if>
+            <if test="pojo.readCount != null"> `read_count` = #{pojo.readCount}, </if>
+            <if test="pojo.likeCount != null"> `like_count` = #{pojo.likeCount}, </if>
+            <if test="pojo.commentCount != null"> `comment_count` = #{pojo.commentCount}, </if>
+            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
+            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
+            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="websiteNoticeList" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.WebsiteNotice">
+        select <include refid="all_column"/> from v_website_notice where is_del=0
+        <if test="pojo.type !=null">and type=#{pojo.type}</if>
+        <if test="pojo.title !=null">and title like concat(#{pojo.title},'%')</if>
+        <if test="pojo.isIndex !=null">and is_index=#{pojo.isIndex}</if>
+        <if test="pojo.state !=null">and state=#{pojo.state}</if>
+        order by update_time desc
+    </select>
+
+    <select id="websiteNoticeListCount" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.WebsiteNotice">
+        select count(id) from v_website_notice where is_del=0
+        <if test="pojo.type !=null">and type=#{pojo.type}</if>
+        <if test="pojo.title !=null">and title like concat(#{pojo.title},'%')</if>
+        <if test="pojo.isIndex !=null">and is_index=#{pojo.isIndex}</if>
+        <if test="pojo.state !=null">and state=#{pojo.state}</if>
+    </select>
+    <select id="websiteNoticeById" resultMap="AllColumnMap">
+        select <include refid="all_column"/> from v_website_notice where is_del=0
+       and id=#{id} limit 1
+    </select>
+</mapper>
+
