@@ -102,7 +102,7 @@ public class WebsiteNoticeServiceImpl implements WebsiteNoticeService {
             params.setUpdateTime(new Date());
             int i = websiteNoticeMapper.insertSelective(params);
             if (i>0){
-                return ReturnClass.success(WebsiteNoticeConstant.SAVE_SUS);
+                return ReturnClass.success(params.getId());
             }
         }else {
             WebsiteNotice websiteNotice = websiteNoticeMapper.websiteNoticeById(websiteNoticeDTO.getId());
@@ -116,7 +116,7 @@ public class WebsiteNoticeServiceImpl implements WebsiteNoticeService {
             websiteNotice.setUpdateTime(new Date());
             int i =websiteNoticeMapper.update(websiteNotice);
             if (i>0){
-                return ReturnClass.success(WebsiteNoticeConstant.SAVE_SUS);
+                return ReturnClass.success(websiteNoticeDTO.getId());
             }
         }
         return ReturnClass.fail(WebsiteNoticeConstant.SAVE_FAIL);

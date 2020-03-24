@@ -37,26 +37,25 @@ import java.util.List;
  **/
 @Api(tags = "博客标签")
 @RestController
-@RequestMapping("tag")
-public class TagController {
+@RequestMapping("admin/tag")
+public class AdminTagController {
 	@Autowired
 	private TagService tagService;
 
-	private static final Boolean authCheck = true;
 
 	/**
 	 * @Description: 博客标签列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
-	 * @param userName
+	 * @param name
 	 * @return null
 	 */
 	@ApiOperation(value = "博客标签列表", notes = "博客标签")
-	@GetMapping(value = "/list/{userName}")
+	@GetMapping(value = "/list")
 	@BlogOperation(value = "博客标签列表")
-	public ApiResult<List<TagVO>> listCategory(@PathVariable("userName") String userName) {
+	public ApiResult<List<TagVO>> listCategory(@RequestParam("name") String name) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listCategory = tagService.listTagByUser(authCheck, userName);
+		ReturnClass listCategory = tagService.listTagByAdmin(name);
 		if (listCategory.isSuccess()) {
 			List<TagVO> list = new ArrayList<TagVO>();
 			List<TagDTO> tagDTOS = (List<TagDTO>) listCategory.getData();

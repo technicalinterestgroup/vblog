@@ -42,14 +42,16 @@ public interface UserMapper {
 	 * @param user
 	 * @return null
 	 */
-	UserRoleDTO queryUserRoleDTO(@Param("user") User user);
+	UserRoleDTO queryUserRoleDTO(@Param("user") User user,@Param("type") Short type);
 
 	/**
-	 * @Description: 查询所有博客用户
+	 * @Description: 查询所有用户
 	 * @author: shuyu.wang
 	 * @date: 2019-09-01 15:16
 	 * @param user
 	 * @return null
 	 */
-	List<UserRoleDTO> queryAllUser(@Param("user") User user);
+	List<UserRoleDTO> queryAllUser(@Param("user") UserRoleDTO user);
+
+	Integer queryAllUserCount(@Param("user") UserRoleDTO user);
 }

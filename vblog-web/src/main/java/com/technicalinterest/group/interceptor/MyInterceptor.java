@@ -58,7 +58,7 @@ public class MyInterceptor implements HandlerInterceptor {
 
 		String url = request.getRequestURI();
 		String ACCESS_TOKEN_STRING = request.getHeader(UrlConstant.ACCESS_TOKEN_STRING);
-		if (!url.startsWith(UrlConstant.NOT_AUTH_URL_STRING) && !url.contains(UrlConstant.DOC_URL_STRING)) {
+		if (!url.startsWith(UrlConstant.NOT_AUTH_URL_STRING)&&!url.contains(UrlConstant.NOT_AUTH_ADMIN_LOGIN_STRING) && !url.contains(UrlConstant.DOC_URL_STRING)) {
 			if (Objects.nonNull(ACCESS_TOKEN_STRING)) {
 				if (!redisUtil.hasKey(ACCESS_TOKEN_STRING)) {
 					log.error(">>>无效请求：登录超时;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());

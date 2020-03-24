@@ -24,7 +24,7 @@ public interface UserService {
      * @param userDTO
      * @return UserDTO
     */
-    ReturnClass login(EditUserDTO userDTO);
+    ReturnClass login(EditUserDTO userDTO,Short type);
 
 
 

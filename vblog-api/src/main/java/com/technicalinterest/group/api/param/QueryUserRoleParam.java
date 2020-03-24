@@ -1,6 +1,5 @@
-package com.technicalinterest.group.dto;
+package com.technicalinterest.group.api.param;
 
-import com.technicalinterest.group.dao.PageBase;
 import lombok.Data;
 
 /**
@@ -12,7 +11,7 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-public class UserRoleDTO extends PageBase {
+public class QueryUserRoleParam extends PageBaseParam{
 
 	private Long id;
 	/**

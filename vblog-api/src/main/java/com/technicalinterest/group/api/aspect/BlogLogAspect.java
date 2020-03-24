@@ -101,7 +101,7 @@ public class BlogLogAspect {
 		}
 		String userName = (String) redisUtil.get(token);
 		User user = User.builder().userName(userName).build();
-		UserRoleDTO userDTO = userMapper.queryUserRoleDTO(user);
+		UserRoleDTO userDTO = userMapper.queryUserRoleDTO(user,null);
 		if (Objects.nonNull(userDTO)){
 			log.info(">>>url:【{}】,ip:【{}】,userName:【{}】,classMethod:【{}】,operation:【{}】,params:【{}】", url, ip,
 					userDTO.getUserName(), methodStr, operationName, params);

@@ -39,6 +39,17 @@
         `create_time`,
         `update_time`
     </sql>
+    <sql id="list_column">
+        `title`,
+        `carousel_url`,
+        `state`,
+        `is_index`,
+        `type`,
+        `read_count`,
+        `like_count`,
+        `comment_count`,
+        `id`
+    </sql>
 
     <!--auto generated Code-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
@@ -173,7 +184,7 @@
     </update>
 
     <select id="websiteNoticeList" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.WebsiteNotice">
-        select <include refid="all_column"/> from v_website_notice where is_del=0
+        select <include refid="list_column"/> from v_website_notice where is_del=0
         <if test="pojo.type !=null">and type=#{pojo.type}</if>
         <if test="pojo.title !=null">and title like concat(#{pojo.title},'%')</if>
         <if test="pojo.isIndex !=null">and is_index=#{pojo.isIndex}</if>
@@ -181,7 +192,7 @@
         order by update_time desc
     </select>
 
-    <select id="websiteNoticeListCount" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.WebsiteNotice">
+    <select id="websiteNoticeListCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dao.WebsiteNotice">
         select count(id) from v_website_notice where is_del=0
         <if test="pojo.type !=null">and type=#{pojo.type}</if>
         <if test="pojo.title !=null">and title like concat(#{pojo.title},'%')</if>

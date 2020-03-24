@@ -1,14 +1,16 @@
 package com.technicalinterest.group.api.controller;
 
-import com.technicalinterest.group.api.param.QueryArticleAdminParam;
-import com.technicalinterest.group.api.param.QueryFileParam;
-import com.technicalinterest.group.api.param.QueryLogParam;
+import com.technicalinterest.group.api.param.*;
 import com.technicalinterest.group.api.vo.*;
 import com.technicalinterest.group.dao.Log;
 import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.AdminService;
+import com.technicalinterest.group.service.UserService;
+import com.technicalinterest.group.service.annotation.BlogOperation;
+import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
+import com.technicalinterest.group.service.dto.UserJWTDTO;
 import com.technicalinterest.group.service.util.ListBeanUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,16 +39,57 @@ public class AdminController {
 
 	@Autowired
 	private AdminService adminService;
-	//TODO 登录
+	@Autowired
+	private UserService userService;
+
+
+	/**
+	 * 登录接口
+	 * @return null
+	 * @author: shuyu.wang
+	 * @date: 2019-07-14 19:24
+	 */
+	@ApiOperation(value = "登录", notes = "用户登录")
+	@GetMapping(value = "/login")
+	@BlogOperation(value = "登录")
+	public ApiResult<UserVO> login(@Valid UserParam userParam) {
+		ApiResult apiResult = new ApiResult();
+		EditUserDTO userDTO = new EditUserDTO();
+		BeanUtils.copyProperties(userParam, userDTO);
+		ReturnClass login = userService.login(userDTO,(short)1);
+		if (login.isSuccess()) {
+			UserVO userVO = new UserVO();
+			UserJWTDTO resultUser = (UserJWTDTO) login.getData();
+			BeanUtils.copyProperties(resultUser, userVO);
+			List list = ListBeanUtils.copyProperties(resultUser.getAuthList(), RoleAuthVO.class);
+			userVO.setAuthList(list);
+			apiResult.success(userVO);
+			apiResult.setMsg(login.getMsg());
+		} else {
+			apiResult.fail(login.getMsg());
+		}
+		return apiResult;
+	}
 
 	@ApiOperation(value = "用户列表", notes = "用户列表")
 	@GetMapping(value = "/list/user")
-	public ApiResult<List<UserInfoVO>> listUser() {
+	public ApiResult<PageBean<UserInfoVO>> listUser(QueryUserRoleParam queryUserRoleParam) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listUser = adminService.userAll();
+		UserRoleDTO user=new UserRoleDTO();
+		BeanUtils.copyProperties(queryUserRoleParam,user);
+		ReturnClass listUser = adminService.userAll(user);
 		if (listUser.isSuccess()) {
-			List list = ListBeanUtils.copyProperties(listUser.getData(), UserInfoVO.class);
-			apiResult.success(list);
+			PageBean<UserRoleDTO> pageBean = (PageBean<UserRoleDTO>) listUser.getData();
+			List<UserInfoVO> list = new ArrayList<>();
+			for (UserRoleDTO entity : pageBean.getPageData()) {
+				UserInfoVO userInfoVO = new UserInfoVO();
+				BeanUtils.copyProperties(entity, userInfoVO);
+				list.add(userInfoVO);
+			}
+			PageBean<UserInfoVO> pageInfo = new PageBean<UserInfoVO>();
+			BeanUtils.copyProperties(listUser.getData(), pageInfo);
+			pageInfo.setPageData(list);
+			apiResult.success(pageInfo);
 
 		} else {
 			apiResult.setMsg(listUser.getMsg());
@@ -70,7 +114,6 @@ public class AdminController {
 			BeanUtils.copyProperties(pageBean, result);
 			result.setPageData(list);
 			apiResult.success(result);
-
 		} else {
 			apiResult.setMsg(listUser.getMsg());
 		}

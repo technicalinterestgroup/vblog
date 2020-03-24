@@ -20,8 +20,6 @@ public class ArticlesAdminVO {
 	private Long id;
 	@ApiModelProperty(value = "标题")
 	private String title;
-	@ApiModelProperty(value = "摘要")
-	private String submit;
 	@ApiModelProperty(value = "分类")
 	private String categoryCN;
 	@ApiModelProperty(value = "标签名称")
@@ -29,10 +27,12 @@ public class ArticlesAdminVO {
 	@ApiModelProperty(value = "文章作者")
 	private String userName;
 	@ApiModelProperty(value = "发布时间")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date createTime;
 	@ApiModelProperty(value = "状态",allowableValues = "1:被禁 0:可正常访问")
 	private Short isDel;
+
+	private Short isRecommend;
 
 
 }

@@ -14,6 +14,8 @@ public class UrlConstant {
 
     public static final String NOT_AUTH_URL_STRING = "/vblog/view/";
 
+    public static final String NOT_AUTH_ADMIN_LOGIN_STRING = "/vblog/admin/login";
+
     public static final String LOGIN_URL_STRING = "login";
 
     public static final String LOGOUT_URL_STRING = "logout";

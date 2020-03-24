@@ -101,6 +101,11 @@ public class ArticleContentDTO {
 	 */
 	private String ip;
 
+	/**
+	 * 是否为系统推荐文章 0：不是，1：是
+	 */
+	private Short recommend;
+
 	private Date updateTime;
 
 	private Date createTime;

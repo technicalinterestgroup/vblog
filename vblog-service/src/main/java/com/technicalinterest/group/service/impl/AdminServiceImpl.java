@@ -1,6 +1,8 @@
 package com.technicalinterest.group.service.impl;
 
 import com.github.pagehelper.PageHelper;
+import com.technicalinterest.group.dao.Article;
+import com.technicalinterest.group.dao.Content;
 import com.technicalinterest.group.dao.FileUpload;
 import com.technicalinterest.group.dao.Log;
 import com.technicalinterest.group.dto.*;
@@ -9,15 +11,25 @@ import com.technicalinterest.group.mapper.FileUploadMpper;
 import com.technicalinterest.group.mapper.LogMapper;
 import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.service.AdminService;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.constant.ArticleConstant;
 import com.technicalinterest.group.service.constant.FileConstant;
 import com.technicalinterest.group.service.constant.UserConstant;
+import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
+import com.technicalinterest.group.service.exception.VLogException;
+import com.technicalinterest.group.service.util.HtmlUtil;
+import com.technicalinterest.group.service.util.SpringContextUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @package: com.technicalinterest.group.service.impl
@@ -45,11 +57,14 @@ public class AdminServiceImpl implements AdminService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass userAll() {
-		List<UserRoleDTO> userRoleDTOS = userMapper.queryAllUser(null);
-		if (userRoleDTOS.isEmpty()) {
-			return ReturnClass.fail(UserConstant.NO_USER_INFO);
+	public ReturnClass userAll(UserRoleDTO user) {
+		Integer integer = userMapper.queryAllUserCount(user);
+		if (integer<1){
+			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
 		}
+		PageHelper.startPage(user.getCurrentPage(), user.getPageSize());
+		List<UserRoleDTO> userRoleDTOS = userMapper.queryAllUser(user);
+		PageBean<UserRoleDTO> pageBean = new PageBean<>(userRoleDTOS, user.getCurrentPage(), user.getPageSize(), integer);
 		return ReturnClass.success(userRoleDTOS);
 	}
 
@@ -71,6 +86,30 @@ public class AdminServiceImpl implements AdminService {
 		List<ArticlesDTO> articlesDTOS = articleMapper.allArticleList(queryArticleDTO);
 		PageBean<ArticlesDTO> pageBean = new PageBean<>(articlesDTOS, queryArticleDTO.getCurrentPage(), queryArticleDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
+	}
+
+	/**
+	 * @Description:文章操作
+	 * @author: shuyu.wang
+	 * @date: 2019-09-01 16:43
+	 * @param articleContentDTO
+	 * @return null
+	 */
+	@Override
+	public ReturnClass editArticle(ArticleContentDTO articleContentDTO) {
+		Article article = new Article();
+		BeanUtils.copyProperties(articleContentDTO, article);
+		//数据是否存在
+		Article param = new Article();
+		param.setId(articleContentDTO.getId());
+		Article articleResult = articleMapper.query(param);
+		if (Objects.isNull(articleResult)) {
+			throw new VLogException(ResultEnum.NO_DATA);
+		}
+		articleResult.setRecommend(articleContentDTO.getRecommend());
+		articleResult.setIsReview(articleContentDTO.getIsReview());
+		articleMapper.update(article);
+		return ReturnClass.success();
 	}
 
 	/**

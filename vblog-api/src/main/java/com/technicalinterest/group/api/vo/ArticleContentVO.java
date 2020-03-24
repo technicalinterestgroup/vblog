@@ -53,6 +53,9 @@ public class ArticleContentVO {
 	@ApiModelProperty(value = "文章详情")
 	private String content;
 
+	@ApiModelProperty(value = "文章详情")
+	private String contentFormat;
+
 	@ApiModelProperty(value = "是否收藏",allowableValues = "1:是,null:否")
 	@JsonProperty("vCollection")
 	private Integer vCollection;

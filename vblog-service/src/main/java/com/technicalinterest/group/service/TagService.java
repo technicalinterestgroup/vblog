@@ -14,10 +14,9 @@ public interface TagService{
 
     ReturnClass update(EditTagDTO pojo);
 
-    ReturnClass listTagByUser(Boolean authCheck,String userName);
+    ReturnClass listTagByAdmin(String name);
 
     ReturnClass delTag(Long id);
-
     /**
      * 查询所以标签
      * @return

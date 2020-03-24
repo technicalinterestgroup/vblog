@@ -28,19 +28,25 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public ReturnClass insertSelective(EditCategoryDTO pojo) {
-        Category category = new Category();
-        BeanUtils.copyProperties(pojo, category);
-        category.setUserName(userService.getUserNameByLoginToken());
-        //名称是否重复
-        Category category2 = categoryMapper.queryCategory(Category.builder().name(category.getName()).userName(category.getUserName()).build());
-        if (Objects.nonNull(category2)) {
-            return ReturnClass.fail(CategoryConstant.CATEGORY_REPEAT);
+        if (Objects.isNull(pojo.getId())){
+            Category category = new Category();
+            BeanUtils.copyProperties(pojo, category);
+            category.setUserName(userService.getUserNameByLoginToken());
+            //名称是否重复
+            Category category2 = categoryMapper.queryCategory(Category.builder().name(category.getName()).userName(category.getUserName()).build());
+            if (Objects.nonNull(category2)) {
+                return ReturnClass.fail(CategoryConstant.CATEGORY_REPEAT);
+            }
+            Integer flag = categoryMapper.insertSelective(category);
+            if (flag > 0) {
+                return ReturnClass.success(CategoryConstant.SUS_ADD);
+            }
+            return ReturnClass.fail(CategoryConstant.FAIL_ADD);
+        }else {
+            ReturnClass update = update(pojo);
+            return update;
         }
-        Integer flag = categoryMapper.insertSelective(category);
-        if (flag > 0) {
-            return ReturnClass.success(CategoryConstant.SUS_ADD);
-        }
-        return ReturnClass.fail(CategoryConstant.FAIL_ADD);
+
     }
 
     @Override

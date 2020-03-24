@@ -2,12 +2,10 @@ package com.technicalinterest.group.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
-import com.technicalinterest.group.api.param.EditArticleContentParam;
 import com.technicalinterest.group.api.param.NewArticleContentParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
 import com.technicalinterest.group.api.util.IndexOrderByUtil;
 import com.technicalinterest.group.api.vo.ApiResult;
-import com.technicalinterest.group.api.vo.ArticleContentVO;
 import com.technicalinterest.group.api.vo.ArticleDetailVO;
 import com.technicalinterest.group.api.vo.ArticlesVO;
 import com.technicalinterest.group.dto.ArticlesDTO;
@@ -64,22 +62,6 @@ public class ArticleController {
 			apiResult.success(saveArticle.getMsg(), saveArticle.getData());
 		} else {
 			apiResult.fail(saveArticle.getMsg());
-		}
-		return apiResult;
-	}
-
-	@ApiOperation(value = "博客编辑", notes = "博客编辑")
-	@PostMapping(value = "/edit")
-	@BlogOperation(value = "博客编辑")
-	public ApiResult<String> editArticle(@Valid @RequestBody EditArticleContentParam editArticleContentParam) {
-		ApiResult apiResult = new ApiResult();
-		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
-		BeanUtils.copyProperties(editArticleContentParam, articleContentDTO);
-		ReturnClass editArticle = articleService.editArticle(articleContentDTO);
-		if (editArticle.isSuccess()) {
-			apiResult.success(editArticle.getMsg(), null);
-		} else {
-			apiResult.fail(editArticle.getMsg());
 		}
 		return apiResult;
 	}

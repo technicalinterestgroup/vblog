@@ -41,7 +41,7 @@ public class NewWebsiteNoticeParam {
      */
     private Boolean state;
     /**
-     * 是否在首页轮播
+     * 是否轮播
      */
     private Boolean isIndex;
     /**

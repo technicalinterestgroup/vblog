@@ -78,17 +78,12 @@ public class TagServiceImpl implements TagService {
 	 * @Description:文章标签
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 13:00
-	 * @param authCheck
-	 * @param userName
+	 * @param name
 	 * @return com.technicalinterest.group.service.dto.ReturnClass
 	 */
 	@Override
-	public ReturnClass listTagByUser(Boolean authCheck, String userName) {
-		ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
-		List<TagDTO> tagDTOS = tagMapper.queryTagListByUser(userName);
+	public ReturnClass listTagByAdmin(String name) {
+		List<TagDTO> tagDTOS = tagMapper.queryTagListByUser(userService.getUserNameByLoginToken(),name);
 		if (tagDTOS.isEmpty()) {
 			return ReturnClass.fail(TagConstant.NO_DATA);
 		}

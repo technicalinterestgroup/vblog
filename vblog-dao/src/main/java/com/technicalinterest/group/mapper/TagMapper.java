@@ -14,7 +14,7 @@ public interface TagMapper {
 
     Integer update(@Param("pojo") Tag pojo);
 
-    List<TagDTO> queryTagListByUser(@Param("userName")String userName);
+    List<TagDTO> queryTagListByUser(@Param("userName")String userName,@Param("name")String name);
 
     Tag queryTag(Tag pojo);
 

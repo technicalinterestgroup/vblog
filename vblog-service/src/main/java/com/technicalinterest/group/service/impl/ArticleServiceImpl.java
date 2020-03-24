@@ -229,7 +229,8 @@ public class ArticleServiceImpl implements ArticleService {
         BeanUtils.copyProperties(articleInfo, articleContentDTO);
         Content content = contentMapper.getContent(articleInfo.getId());
         if (Objects.nonNull(content)) {
-            articleContentDTO.setContent(content.getContentFormat());
+            articleContentDTO.setContent(content.getContent());
+            articleContentDTO.setContentFormat(content.getContentFormat());
         }
         return ReturnClass.success(articleContentDTO);
     }

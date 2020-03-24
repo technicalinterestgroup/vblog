@@ -72,7 +72,7 @@ public class ViewController {
 		ApiResult apiResult = new ApiResult();
 		EditUserDTO userDTO = new EditUserDTO();
 		BeanUtils.copyProperties(userParam, userDTO);
-		ReturnClass login = userService.login(userDTO);
+		ReturnClass login = userService.login(userDTO,(short)2);
 		if (login.isSuccess()) {
 			UserVO userVO = new UserVO();
 			UserJWTDTO resultUser = (UserJWTDTO) login.getData();
