@@ -71,55 +71,10 @@ public class AdminController {
 		return apiResult;
 	}
 
-	@ApiOperation(value = "用户列表", notes = "用户列表")
-	@GetMapping(value = "/list/user")
-	public ApiResult<PageBean<UserInfoVO>> listUser(QueryUserRoleParam queryUserRoleParam) {
-		ApiResult apiResult = new ApiResult();
-		UserRoleDTO user=new UserRoleDTO();
-		BeanUtils.copyProperties(queryUserRoleParam,user);
-		ReturnClass listUser = adminService.userAll(user);
-		if (listUser.isSuccess()) {
-			PageBean<UserRoleDTO> pageBean = (PageBean<UserRoleDTO>) listUser.getData();
-			List<UserInfoVO> list = new ArrayList<>();
-			for (UserRoleDTO entity : pageBean.getPageData()) {
-				UserInfoVO userInfoVO = new UserInfoVO();
-				BeanUtils.copyProperties(entity, userInfoVO);
-				list.add(userInfoVO);
-			}
-			PageBean<UserInfoVO> pageInfo = new PageBean<UserInfoVO>();
-			BeanUtils.copyProperties(listUser.getData(), pageInfo);
-			pageInfo.setPageData(list);
-			apiResult.success(pageInfo);
 
-		} else {
-			apiResult.setMsg(listUser.getMsg());
-		}
-		return apiResult;
-	}
 	//用户禁用
 	//角色管理
 	//菜单管理
-
-	@ApiOperation(value = "博客列表", notes = "博客列表")
-	@GetMapping(value = "/list/blog")
-	public ApiResult<PageBean<ArticlesAdminVO>> listBlog(QueryArticleAdminParam queryArticleAdminParam) {
-		ApiResult apiResult = new ApiResult();
-		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
-		BeanUtils.copyProperties(queryArticleAdminParam, queryArticleDTO);
-		ReturnClass listUser = adminService.articleAll(queryArticleDTO);
-		if (listUser.isSuccess()) {
-			PageBean<ArticlesAdminVO> result = new PageBean<ArticlesAdminVO>();
-			PageBean<ArticlesDTO> pageBean = (PageBean<ArticlesDTO>) listUser.getData();
-			List list = ListBeanUtils.copyProperties(pageBean.getPageData(), ArticlesAdminVO.class);
-			BeanUtils.copyProperties(pageBean, result);
-			result.setPageData(list);
-			apiResult.success(result);
-		} else {
-			apiResult.setMsg(listUser.getMsg());
-		}
-		return apiResult;
-
-	}
 
 	@ApiOperation(value = "文件列表", notes = "文件列表")
 	@GetMapping(value = "/list/file")
