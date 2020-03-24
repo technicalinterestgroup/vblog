@@ -1,8 +1,11 @@
 package com.technicalinterest.group.api.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @package: com.technicalinterest.group.dto
@@ -36,4 +39,7 @@ public class UserInfoVO {
 
 	@ApiModelProperty(value = "角色名")
 	private String roleName;
+
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private Date createTime;
 }

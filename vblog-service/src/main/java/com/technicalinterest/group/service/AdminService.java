@@ -6,6 +6,7 @@ import com.technicalinterest.group.dto.QueryFileDTO;
 import com.technicalinterest.group.dto.QueryLogDTO;
 import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
+import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 
 /**
@@ -60,4 +61,11 @@ public interface AdminService {
 	 * @return null
 	 */
 	ReturnClass logAll(QueryLogDTO queryLogDTO);
+
+	/**
+	 * 修改账号信息
+	 * @param editUserDTO
+	 * @return
+	 */
+	ReturnClass updateUser(EditUserDTO editUserDTO);
 }

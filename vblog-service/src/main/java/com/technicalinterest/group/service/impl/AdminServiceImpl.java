@@ -1,10 +1,7 @@
 package com.technicalinterest.group.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.technicalinterest.group.dao.Article;
-import com.technicalinterest.group.dao.Content;
-import com.technicalinterest.group.dao.FileUpload;
-import com.technicalinterest.group.dao.Log;
+import com.technicalinterest.group.dao.*;
 import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.FileUploadMpper;
@@ -16,6 +13,7 @@ import com.technicalinterest.group.service.constant.ArticleConstant;
 import com.technicalinterest.group.service.constant.FileConstant;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
+import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
@@ -65,7 +63,7 @@ public class AdminServiceImpl implements AdminService {
 		PageHelper.startPage(user.getCurrentPage(), user.getPageSize());
 		List<UserRoleDTO> userRoleDTOS = userMapper.queryAllUser(user);
 		PageBean<UserRoleDTO> pageBean = new PageBean<>(userRoleDTOS, user.getCurrentPage(), user.getPageSize(), integer);
-		return ReturnClass.success(userRoleDTOS);
+		return ReturnClass.success(pageBean);
 	}
 
 	/**
@@ -148,5 +146,17 @@ public class AdminServiceImpl implements AdminService {
 		List<Log> logs = logMapper.allLogList(queryLogDTO);
 		PageBean<Log> pageBean = new PageBean<>(logs, queryLogDTO.getCurrentPage(), queryLogDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
+	}
+
+	@Override
+	public ReturnClass updateUser(EditUserDTO editUserDTO) {
+		User user = new User();
+		BeanUtils.copyProperties(editUserDTO, user);
+		int update = userMapper.updateByUserName(user);
+		if (update != 1) {
+			return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
+		} else {
+			return ReturnClass.success(UserConstant.EDIT_USER_SUS);
+		}
 	}
 }

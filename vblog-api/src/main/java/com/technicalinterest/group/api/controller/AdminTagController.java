@@ -53,7 +53,7 @@ public class AdminTagController {
 	@ApiOperation(value = "博客标签列表", notes = "博客标签")
 	@GetMapping(value = "/list")
 	@BlogOperation(value = "博客标签列表")
-	public ApiResult<List<TagVO>> listCategory(@RequestParam("name") String name) {
+	public ApiResult<List<TagVO>> listCategory(@RequestParam(value = "name",required = false) String name) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass listCategory = tagService.listTagByAdmin(name);
 		if (listCategory.isSuccess()) {

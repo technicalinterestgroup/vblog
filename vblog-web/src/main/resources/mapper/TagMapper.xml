@@ -61,7 +61,8 @@
 
     <select id="queryTagListByUser" resultType="com.technicalinterest.group.dto.TagDTO">
        SELECT t1.id,t1.name,COUNT(t2.id)as articleNum FROM v_tag t1 LEFT JOIN v_article t2 ON t1.id=t2.`tag_id`
-       WHERE t1.user_name=#{userName}
+       WHERE t1.is_del=0
+        <if test="userName !=null and userName !=''">and t1.user_name=#{userName}</if>
        <if test="name !=null and name !=''">and t1.name=#{name}</if>
          GROUP BY t1.id
     </select>

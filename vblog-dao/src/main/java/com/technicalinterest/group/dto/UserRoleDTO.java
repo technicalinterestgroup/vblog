@@ -3,6 +3,8 @@ package com.technicalinterest.group.dto;
 import com.technicalinterest.group.dao.PageBase;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @package: com.technicalinterest.group.dto
  * @className: UserRoleDTO
@@ -47,4 +49,6 @@ public class UserRoleDTO extends PageBase {
 	 * 角色类型
 	 */
 	private Short roleType;
+
+	private Date createTime;
 }

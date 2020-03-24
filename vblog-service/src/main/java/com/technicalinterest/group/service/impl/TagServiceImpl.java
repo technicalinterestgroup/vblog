@@ -83,7 +83,7 @@ public class TagServiceImpl implements TagService {
 	 */
 	@Override
 	public ReturnClass listTagByAdmin(String name) {
-		List<TagDTO> tagDTOS = tagMapper.queryTagListByUser(userService.getUserNameByLoginToken(),name);
+		List<TagDTO> tagDTOS = tagMapper.queryTagListByUser(null,name);
 		if (tagDTOS.isEmpty()) {
 			return ReturnClass.fail(TagConstant.NO_DATA);
 		}
