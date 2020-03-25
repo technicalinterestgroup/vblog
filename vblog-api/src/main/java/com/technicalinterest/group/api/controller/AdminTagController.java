@@ -132,7 +132,6 @@ public class AdminTagController {
 	@ApiOperation(value = "新增博客标签", notes = "新增")
 	@PostMapping(value = "/new")
 	@BlogOperation(value = "新增博客标签")
-	@DistributeLock( key = "#newTagParam.userName", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> newCategory(@Valid @RequestBody NewTagParam newTagParam) {
 		ApiResult apiResult = new ApiResult();
 		EditTagDTO editTagDTO = new EditTagDTO();
