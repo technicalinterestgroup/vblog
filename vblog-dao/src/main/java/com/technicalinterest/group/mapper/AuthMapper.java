@@ -24,4 +24,16 @@ public interface AuthMapper {
      */
     List<TreeDTO>  getTree(@Param("type")Short type,@Param("parentId")Long parentId);
 
+    /**
+     * 查询列表
+     * @param pojo
+     * @return
+     */
+    List<Auth> getAuthList(@Param("pojo") Auth pojo);
+    /**
+     * 查询一个权限
+     * @param pojo
+     * @return
+     */
+    Auth getAuth(@Param("pojo") Auth pojo);
 }
