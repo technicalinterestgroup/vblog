@@ -101,5 +101,18 @@
             <if test="type!=null">and t2.type=#{type}</if>
         </where>
     </select>
+
+    <select id="getRoleAuthList" resultType="com.technicalinterest.group.dao.RoleAuth">
+         SELECT t2.id as authId,t1.role_id as roleId FROM v_role_auth t1 INNER JOIN v_auth t2
+         ON t1.auth_id=t2.id and t1.is_del=0 and t2.is_del=0
+        <where>
+            <if test="roleId!=null">and t1.role_id=#{roleId}</if>
+            <if test="type!=null">and t2.type=#{type}</if>
+        </where>
+    </select>
+
+    <delete id="delRoleAuthByRoleId">
+        delete from v_role_auth where role_id=#{roleId}
+    </delete>
 </mapper>
 

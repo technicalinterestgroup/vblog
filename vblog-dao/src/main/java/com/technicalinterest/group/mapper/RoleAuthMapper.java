@@ -19,4 +19,21 @@ public interface RoleAuthMapper {
 
 
     List<RoleAuthDTO> queryAuthByRole(@Param("roleId")Long roleId,@Param("type")Short type);
+
+    /**
+     * 查询角色对象的权限
+     * @param roleId
+     * @param type
+     * @return
+     */
+    List<RoleAuth> getRoleAuthList(@Param("roleId")Long roleId,@Param("type")Short type);
+
+    /**
+     * 删除关联
+     * @param roleId
+     * @return
+     */
+    Integer delRoleAuthByRoleId(@Param("roleId")Long roleId);
+
+
 }

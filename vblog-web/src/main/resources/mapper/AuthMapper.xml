@@ -35,6 +35,7 @@
             `url`,
             `icon`,
             `id`,
+            `parent_id`,
             `is_del`,
             `create_time`,
             `update_time`
@@ -44,6 +45,7 @@
             #{pojo.url},
             #{pojo.icon},
             #{pojo.id},
+            #{pojo.parentId},
             #{pojo.isDel},
             #{pojo.createTime},
             #{pojo.updateTime}
@@ -59,6 +61,7 @@
             <if test="pojo.url!=null"> `url`,</if>
             <if test="pojo.icon!=null"> `icon`,</if>
             <if test="pojo.id!=null"> `id`,</if>
+            <if test="pojo.parentId!=null"> `parent_id`,</if>
             <if test="pojo.isDel!=null"> `is_del`,</if>
             <if test="pojo.createTime!=null"> `create_time`,</if>
             <if test="pojo.updateTime!=null"> `update_time`,</if>
@@ -70,6 +73,7 @@
             <if test="pojo.url!=null">#{pojo.url},</if>
             <if test="pojo.icon!=null">#{pojo.icon},</if>
             <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.parentId!=null"> #{pojo.parentId},</if>
             <if test="pojo.isDel!=null">#{pojo.isDel},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
             <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
@@ -103,12 +107,16 @@
             <if test="pojo.type != null"> `type` = #{pojo.type}, </if>
             <if test="pojo.url != null"> `url` = #{pojo.url}, </if>
             <if test="pojo.icon != null"> `icon` = #{pojo.icon}, </if>
-            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+            <if test="pojo.parentId != null"> `parent_id` = #{pojo.parentId}, </if>
             <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
-            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
             <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
         </set>
         WHERE id = #{pojo.id}
     </update>
+
+    <select id="getTree" resultType="com.technicalinterest.group.dto.TreeDTO">
+        select id,name as title from  v_auth where is_del=0
+        and type=#{type} and parent_id=#{parentId}
+    </select>
 </mapper>
 

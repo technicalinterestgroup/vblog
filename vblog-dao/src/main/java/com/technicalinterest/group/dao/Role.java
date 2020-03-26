@@ -19,5 +19,5 @@ public class Role extends BaseDao {
 	/** 
 	* 类型 1：管理员 2：普通用户
 	*/ 
-	private String type;
+	private Short type;
 }

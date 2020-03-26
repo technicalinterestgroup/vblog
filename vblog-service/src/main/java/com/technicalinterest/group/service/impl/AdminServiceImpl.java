@@ -3,10 +3,7 @@ package com.technicalinterest.group.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.*;
 import com.technicalinterest.group.dto.*;
-import com.technicalinterest.group.mapper.ArticleMapper;
-import com.technicalinterest.group.mapper.FileUploadMpper;
-import com.technicalinterest.group.mapper.LogMapper;
-import com.technicalinterest.group.mapper.UserMapper;
+import com.technicalinterest.group.mapper.*;
 import com.technicalinterest.group.service.AdminService;
 import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.constant.ArticleConstant;
@@ -19,6 +16,7 @@ import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.HtmlUtil;
 import com.technicalinterest.group.service.util.SpringContextUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +36,7 @@ import java.util.Objects;
  * @since: 0.1
  **/
 @Service
+@Slf4j
 public class AdminServiceImpl implements AdminService {
 	@Autowired
 	private UserMapper userMapper;
@@ -47,6 +46,10 @@ public class AdminServiceImpl implements AdminService {
 	private FileUploadMpper fileUploadMpper;
 	@Autowired
 	private LogMapper logMapper;
+	@Autowired
+	private AuthMapper authMapper;
+	@Autowired
+	private RoleAuthMapper roleAuthMapper;
 
 	/**
 	 * @Description:查询全部博客用户
@@ -147,7 +150,6 @@ public class AdminServiceImpl implements AdminService {
 		PageBean<Log> pageBean = new PageBean<>(logs, queryLogDTO.getCurrentPage(), queryLogDTO.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
-
 	@Override
 	public ReturnClass updateUser(EditUserDTO editUserDTO) {
 		User user = new User();

@@ -1,13 +1,13 @@
 package com.technicalinterest.group.service;
 
 import com.technicalinterest.group.dao.FileUpload;
-import com.technicalinterest.group.dto.QueryArticleDTO;
-import com.technicalinterest.group.dto.QueryFileDTO;
-import com.technicalinterest.group.dto.QueryLogDTO;
-import com.technicalinterest.group.dto.UserRoleDTO;
+import com.technicalinterest.group.dao.RoleAuth;
+import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
+
+import java.util.List;
 
 /**
  * @package: com.technicalinterest.group.service
@@ -68,4 +68,6 @@ public interface AdminService {
 	 * @return
 	 */
 	ReturnClass updateUser(EditUserDTO editUserDTO);
+
+
 }

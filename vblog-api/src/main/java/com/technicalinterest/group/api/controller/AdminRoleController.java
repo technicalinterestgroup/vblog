@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.controller;
 
+import com.technicalinterest.group.api.param.EditRoleAuthParam;
 import com.technicalinterest.group.api.vo.EditRoleParam;
 import com.technicalinterest.group.api.vo.QueryRoleParam;
 import com.technicalinterest.group.api.vo.ApiResult;
@@ -12,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -61,4 +63,31 @@ public class AdminRoleController {
         }
         return apiResult;
     }
+
+    @ApiOperation(value = "菜单树")
+    @GetMapping(value = "/tree")
+    public ApiResult getAuthTree(@RequestParam(value = "roleId")Long roleId,@RequestParam(value = "type")Short type) {
+        ApiResult apiResult = new ApiResult();
+        ReturnClass authTree = roleService.getAuthTree(roleId, type);
+        if (authTree.isSuccess()) {
+            apiResult.success(authTree.getData());
+        } else {
+            apiResult.setMsg(authTree.getMsg());
+        }
+        return apiResult;
+    }
+
+    @ApiOperation(value = "修改角色权限")
+    @PostMapping(value = "/auth/edit")
+    public ApiResult editRoleAuth(@RequestBody @Validated EditRoleAuthParam editRoleAuthParam) {
+        ApiResult apiResult = new ApiResult();
+        ReturnClass editRoleAuth = roleService.editAuthRole(editRoleAuthParam.getRoleId(),editRoleAuthParam.getRoleAuthList());
+        if (editRoleAuth.isSuccess()) {
+            apiResult.success();
+        } else {
+            apiResult.setMsg(editRoleAuth.getMsg());
+        }
+        return apiResult;
+    }
+
 }
