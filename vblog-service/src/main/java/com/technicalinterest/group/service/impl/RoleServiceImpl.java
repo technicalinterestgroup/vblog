@@ -1,5 +1,6 @@
 package com.technicalinterest.group.service.impl;
 
+import com.technicalinterest.group.dao.Auth;
 import com.technicalinterest.group.dao.Role;
 import com.technicalinterest.group.dao.RoleAuth;
 import com.technicalinterest.group.dao.User;
@@ -150,5 +151,18 @@ public class RoleServiceImpl implements RoleService {
             return ReturnClass.success();
         }
         return ReturnClass.fail();
+    }
+
+    /**
+     * 查询菜单列表
+     *
+     * @param pojo
+     * @return
+     */
+    @Override
+    public ReturnClass getAuthList(Auth pojo) {
+
+        authMapper.getAuthList(pojo);
+        return null;
     }
 }

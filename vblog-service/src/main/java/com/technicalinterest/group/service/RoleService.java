@@ -1,9 +1,11 @@
 package com.technicalinterest.group.service;
 
+import com.technicalinterest.group.dao.Auth;
 import com.technicalinterest.group.dao.Role;
 import com.technicalinterest.group.dao.RoleAuth;
 import com.technicalinterest.group.dto.RoleDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -35,4 +37,10 @@ public interface RoleService {
      * @return
      */
     ReturnClass editAuthRole(Long roleId, List<RoleAuth> roleAuthList);
+    /**
+     * 查询菜单列表
+     * @param pojo
+     * @return
+     */
+    ReturnClass getAuthList(Auth pojo);
 }
