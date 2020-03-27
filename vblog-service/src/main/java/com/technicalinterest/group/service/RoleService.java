@@ -1,6 +1,7 @@
 package com.technicalinterest.group.service;
 
 import com.technicalinterest.group.dao.Auth;
+import com.technicalinterest.group.dao.PageBase;
 import com.technicalinterest.group.dao.Role;
 import com.technicalinterest.group.dao.RoleAuth;
 import com.technicalinterest.group.dto.RoleDTO;
@@ -42,5 +43,19 @@ public interface RoleService {
      * @param pojo
      * @return
      */
-    ReturnClass getAuthList(Auth pojo);
+    ReturnClass getAuthList(Auth pojo, PageBase pageBase);
+
+    /**
+     * 新增或修改
+     * @param auth
+     * @return
+     */
+    ReturnClass saveOrUpdateAuth(Auth auth);
+
+    /**
+     * 删除菜单
+     * @param id
+     * @return
+     */
+    ReturnClass delAuth(Long id);
 }

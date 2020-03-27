@@ -99,6 +99,7 @@
         <where>
             <if test="roleId!=null">and t1.role_id=#{roleId}</if>
             <if test="type!=null">and t2.type=#{type}</if>
+            <if test="parentId!=null">and t2.parent_id=#{parentId}</if>
         </where>
     </select>
 

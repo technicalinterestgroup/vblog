@@ -116,11 +116,18 @@
         and type=#{type} and parent_id=#{parentId}
     </select>
 
+    <select id="getAuthListCount" resultType="java.lang.Integer">
+        select count(id) from  v_auth where is_del=0
+        <if test="pojo.name!=null and pojo.name!=''">and name= #{pojo.name}</if>
+        <if test="pojo.type!=null">and type=#{pojo.type}</if>
+        <if test="pojo.parentId!=null">and parent_id=#{pojo.parentId}</if>
+    </select>
+
     <select id="getAuthList" resultMap="AllColumnMap">
      select <include refid="all_column"/> from  v_auth where is_del=0
      <if test="pojo.name!=null and pojo.name!=''">and name= #{pojo.name}</if>
      <if test="pojo.type!=null">and type=#{pojo.type}</if>
-    <if test="pojo.parentId!=null">and parent_id=#{parentId}</if>
+     <if test="pojo.parentId!=null">and parent_id=#{pojo.parentId}</if>
     order by id desc
     </select>
 
@@ -128,9 +135,13 @@
         select <include refid="all_column"/> from  v_auth where is_del=0
         <if test="pojo.name!=null and pojo.name!=''">and name= #{pojo.name}</if>
         <if test="pojo.type!=null">and type=#{pojo.type}</if>
-        <if test="pojo.parentId!=null">and parent_id=#{parentId}</if>
+        <if test="pojo.parentId!=null">and parent_id=#{pojo.parentId}</if>
         limit 1
     </select>
+
+    <delete id="delAuth">
+        delete from v_auth where id=#{id}
+    </delete>
 
 </mapper>
 

@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
         //清除错误登录次数
         redisUtil.del(LOGIN_ERROR_KEY + userDTO.getUserName());
         //获取权限列表
-        List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 1);
+        List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(),null,0L);
 //        if (userRoleDTO.getRoleType() == 1) {
 //            if (!redisUtil.hasKey(UserConstant.ADMIN_AUTH_URL)) {
 //                List<RoleAuthDTO> roleAuth = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 2);

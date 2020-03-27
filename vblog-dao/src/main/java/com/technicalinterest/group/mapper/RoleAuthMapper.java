@@ -18,7 +18,7 @@ public interface RoleAuthMapper {
     int update(@Param("pojo") RoleAuth pojo);
 
 
-    List<RoleAuthDTO> queryAuthByRole(@Param("roleId")Long roleId,@Param("type")Short type);
+    List<RoleAuthDTO> queryAuthByRole(@Param("roleId")Long roleId,@Param("type")Short type,@Param("parentId")Long parentId);
 
     /**
      * 查询角色对象的权限
