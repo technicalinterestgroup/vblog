@@ -1,4 +1,4 @@
-package com.technicalinterest.group.api.controller;
+package com.technicalinterest.group.api.controller.admin;
 
 import com.technicalinterest.group.api.param.NewWebsiteNoticeParam;
 import com.technicalinterest.group.api.param.QueryWebsiteNoticeParam;

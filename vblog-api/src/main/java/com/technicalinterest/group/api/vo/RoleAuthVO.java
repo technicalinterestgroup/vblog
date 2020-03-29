@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @package: com.technicalinterest.group.dto
  * @className: RoleAuthDTO
@@ -22,5 +24,7 @@ public class RoleAuthVO {
 	private String url;
 	@ApiModelProperty(value = "图标")
 	private String icon;
+
+	private List<RoleAuthVO> children;
 
 }

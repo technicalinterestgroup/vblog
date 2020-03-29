@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
         //清除错误登录次数
         redisUtil.del(LOGIN_ERROR_KEY + userDTO.getUserName());
         //获取权限列表
-        List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(),null,0L);
+//        List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(),null,0L);
 //        if (userRoleDTO.getRoleType() == 1) {
 //            if (!redisUtil.hasKey(UserConstant.ADMIN_AUTH_URL)) {
 //                List<RoleAuthDTO> roleAuth = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 2);
@@ -165,6 +165,7 @@ public class UserServiceImpl implements UserService {
 //                redisUtil.set(UserConstant.ADMIN_AUTH_URL, stringBuffer.toString());
 //            }
 //        }
+        List<RoleAuthDTO> roleAuthDTOS = getAuthList(userRoleDTO.getRoleId(),0L);
         //生成token
         UserJWTDTO userVO = new UserJWTDTO();
         userVO.setUserName(userRoleDTO.getUserName());
@@ -174,6 +175,18 @@ public class UserServiceImpl implements UserService {
         userVO.setAuthList(roleAuthDTOS);
         userVO.setUserToken(setToken(userRoleDTO.getUserName()));
         return ReturnClass.success(UserConstant.LOGIN_SUCCESS, userVO);
+    }
+
+    private  List<RoleAuthDTO> getAuthList(Long roleId,Long parentId){
+        List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(roleId,null,parentId);
+        for (RoleAuthDTO entity:roleAuthDTOS) {
+            List<RoleAuthDTO> roleAuthDTOS1 = roleAuthMapper.queryAuthByRole(roleId, null, entity.getAuthId());
+            if (!roleAuthDTOS1.isEmpty()){
+                entity.setChildren(roleAuthDTOS1);
+            }
+
+        }
+        return roleAuthDTOS;
     }
 
     private String setToken(UserJWTDTO userVO, UserRoleDTO userRoleDTO) {

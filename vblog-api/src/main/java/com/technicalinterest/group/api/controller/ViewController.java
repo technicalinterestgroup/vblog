@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @package: com.technicalinterest.group.api.controller
@@ -77,8 +78,17 @@ public class ViewController {
 			UserVO userVO = new UserVO();
 			UserJWTDTO resultUser = (UserJWTDTO) login.getData();
 			BeanUtils.copyProperties(resultUser, userVO);
-			List list = ListBeanUtils.copyProperties(resultUser.getAuthList(), RoleAuthVO.class);
-			userVO.setAuthList(list);
+			List<RoleAuthVO> result=new ArrayList<>();
+			for (RoleAuthDTO entity: resultUser.getAuthList()) {
+				RoleAuthVO parent=new RoleAuthVO();
+				BeanUtils.copyProperties(entity,parent);
+				if(Objects.nonNull(entity)){
+					List list = ListBeanUtils.copyProperties(entity.getChildren(), RoleAuthVO.class);
+					parent.setChildren(list);
+				}
+				result.add(parent);
+			}
+			userVO.setAuthList(result);
 			apiResult.success(userVO);
 			apiResult.setMsg(login.getMsg());
 		} else {

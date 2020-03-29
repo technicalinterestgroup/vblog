@@ -1,4 +1,4 @@
-package com.technicalinterest.group.api.controller;
+package com.technicalinterest.group.api.controller.admin;
 
 import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.EditCategoryParam;

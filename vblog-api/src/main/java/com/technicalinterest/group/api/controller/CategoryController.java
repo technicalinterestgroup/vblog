@@ -7,8 +7,11 @@ import com.technicalinterest.group.api.param.NewCategoryParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleTitleVO;
 import com.technicalinterest.group.api.vo.CategoryVO;
+import com.technicalinterest.group.api.vo.TagVO;
 import com.technicalinterest.group.dto.CategoryDTO;
+import com.technicalinterest.group.dto.TagDTO;
 import com.technicalinterest.group.service.CategoryService;
+import com.technicalinterest.group.service.TagService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.dto.EditCategoryDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -38,8 +41,9 @@ import java.util.List;
 public class CategoryController {
 	@Autowired
 	private CategoryService categoryService;
+	@Autowired
+	private TagService tagService;
 
-	private static final Boolean authCheck = true;
 
 	/**
 	 * @Description: 博客分类列表
@@ -50,7 +54,7 @@ public class CategoryController {
 	@ApiOperation(value = "博客分类", notes = "博客分类")
 	@GetMapping(value = "/list")
 	@BlogOperation(value = "博客分类")
-	public ApiResult<List<CategoryVO>> listCategory(@RequestParam("name")String name) {
+	public ApiResult<List<CategoryVO>> listCategory(@RequestParam(value = "name",required = false)String name) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass listCategory = categoryService.categoryListPage(name);
 		if (listCategory.isSuccess()) {
@@ -86,6 +90,32 @@ public class CategoryController {
 				CategoryVO categoryVO = new CategoryVO();
 				BeanUtils.copyProperties(entity, categoryVO);
 				list.add(categoryVO);
+			}
+			apiResult.success(list);
+		} else {
+			apiResult.setMsg(listCategory.getMsg());
+		}
+		return apiResult;
+	}
+	/**
+	 * @Description: 博客标签列表
+	 * @author: shuyu.wang
+	 * @date: 2019-08-15 17:39
+	 * @return null
+	 */
+	@ApiOperation(value = "博客标签列表下拉选择")
+	@GetMapping(value = "/tag/dic")
+	@BlogOperation(value = "博客标签列表")
+	public ApiResult<List<TagVO>> listTagDics() {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass listCategory = tagService.allTagListDic();
+		if (listCategory.isSuccess()) {
+			List<TagVO> list = new ArrayList<TagVO>();
+			List<TagDTO> tagDTOS = (List<TagDTO>) listCategory.getData();
+			for (TagDTO entity : tagDTOS) {
+				TagVO tagVO = new TagVO();
+				BeanUtils.copyProperties(entity, tagVO);
+				list.add(tagVO);
 			}
 			apiResult.success(list);
 		} else {

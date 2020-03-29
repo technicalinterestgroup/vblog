@@ -1,4 +1,4 @@
-package com.technicalinterest.group.api.controller;
+package com.technicalinterest.group.api.controller.admin;
 
 import com.technicalinterest.group.api.param.AdminEditUserParam;
 import com.technicalinterest.group.api.param.EditAuthParam;
