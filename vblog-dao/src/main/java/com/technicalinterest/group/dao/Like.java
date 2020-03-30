@@ -39,4 +39,5 @@ public class Like extends BaseDao {
 	 * 是否被查看
 	 */
 	private Short isView;
+
 }

@@ -28,6 +28,8 @@ public class LikeNoticeVO {
 	 */
 	@ApiModelProperty(value = "点赞用户")
 	private String userName;
+	@ApiModelProperty(value = "源数据作者")
+	private String sourceUserName;
 	/**
 	 * id
 	 */
@@ -49,6 +51,24 @@ public class LikeNoticeVO {
 	private Short type;
 
 	@ApiModelProperty(value = "点赞时间")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date createTime;
+
+	private String typeCN;
+
+	public String getTypeCN() {
+		this.setTypeCN();
+		return typeCN;
+	}
+
+	public void setTypeCN() {
+		if (this.type==null){
+			return;
+		}
+		if (this.type==1){
+			this.typeCN="博客";
+		}else if(this.type==2){
+			this.typeCN="评论";
+		}
+	}
 }

@@ -133,7 +133,7 @@
     </delete>
 
     <select id="queryListLikeNotice" resultType="com.technicalinterest.group.dto.LikeNoticeDTO">
-        SELECT t1.title,t2.id,t2.source_id as sourceId,t2.user_name as userName,t2.create_time as createTime,t2.is_view as isView,
+        SELECT t1.title,t1.user_name as sourceUserName,t2.id,t1.id as sourceId,t2.user_name as userName,t2.create_time as createTime,t2.is_view as isView,
         t2.type
         FROM v_article t1 INNER JOIN v_like t2 on t1.id=t2.source_id
 	    AND t2.type=1

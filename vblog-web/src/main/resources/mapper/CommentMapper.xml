@@ -174,7 +174,7 @@
     </select>
 
     <select id="queryListCommentNotice" resultType="com.technicalinterest.group.dto.CommentNoticeDTO">
-        SELECT t1.title,t2.id,t2.article_id as articleId,t2.user_name as userName,t2.create_time as createTime,t2.is_view as isView FROM v_article t1 INNER JOIN v_comment t2 on t1.id=t2.article_id
+        SELECT t1.title,t1.user_name as sourceUserName,t2.id,t1.id as sourceId,t2.user_name as userName,t2.create_time as createTime,t2.is_view as isView FROM v_article t1 INNER JOIN v_comment t2 on t1.id=t2.article_id
 	    AND t2.parent_id=0
         <where>
             <if test="userName!=null"> and t1.user_name=#{userName}</if>
