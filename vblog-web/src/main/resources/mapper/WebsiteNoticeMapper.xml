@@ -203,5 +203,9 @@
         select <include refid="all_column"/> from v_website_notice where is_del=0
        and id=#{id} limit 1
     </select>
+
+    <update id="addReadCount">
+        update v_website_notice set read_count=read_count+1 where id=#{id}
+    </update>
 </mapper>
 

@@ -121,4 +121,16 @@ public class WebsiteNoticeServiceImpl implements WebsiteNoticeService {
         }
         return ReturnClass.fail(WebsiteNoticeConstant.SAVE_FAIL);
     }
+
+    /**
+     * 增加阅读数
+     * @param id
+     */
+    @Override
+    public void addReadCount(Long id) {
+        Integer integer = websiteNoticeMapper.addReadCount(id);
+        if (integer>0){
+            log.info("");
+        }
+    }
 }

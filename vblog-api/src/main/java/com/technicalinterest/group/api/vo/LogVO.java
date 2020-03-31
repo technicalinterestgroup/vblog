@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 /**
  * @package: com.technicalinterest.group.dao
  * @className: Log
@@ -33,5 +35,6 @@ public class LogVO {
 	private String params;
 	@ApiModelProperty(value = "请求结果")
 	private String result;
-
+	@ApiModelProperty(value = "请求结果")
+	private Date createTime;
 }

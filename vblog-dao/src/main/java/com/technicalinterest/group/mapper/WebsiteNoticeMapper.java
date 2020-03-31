@@ -36,4 +36,11 @@ public interface WebsiteNoticeMapper {
      * @return
      */
     WebsiteNotice websiteNoticeById(@Param("id") Long id);
+
+    /**
+     * 增加阅读数
+     * @param id
+     * @return
+     */
+    Integer addReadCount(@Param("id")Long id);
 }

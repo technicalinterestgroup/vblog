@@ -10,6 +10,7 @@ import com.technicalinterest.group.service.LogService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
+import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import com.technicalinterest.group.service.util.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -44,10 +45,6 @@ public class BlogLogAspect {
 	private RedisUtil redisUtil;
 	@Autowired
 	private LogService logService;
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private UserMapper userMapper;
 
 	/**
 	 * 请求切点方法(已提供@RequestMapping,@GetMapping,@PostMapping注解，需要其它请增加)
@@ -69,7 +66,7 @@ public class BlogLogAspect {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 		BlogLogAspect blogLogAspect=SpringContextUtil.getBean(BlogLogAspect.class);
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-//		blogLogAspect.analisy(joinPoint,result,request.getRequestURL().toString(),IpAdrressUtil.getIpAdrress(request),accessToken);
+		blogLogAspect.analisy(joinPoint,result,request.getRequestURL().toString(), IpAdrressUtil.getIpAdrress(request),accessToken);
 		log.info(">>>日志拦截AOP结束");
 	}
     @Async
@@ -100,15 +97,9 @@ public class BlogLogAspect {
 			e.printStackTrace();
 		}
 		String userName = (String) redisUtil.get(token);
-		User user = User.builder().userName(userName).build();
-		UserRoleDTO userDTO = userMapper.queryUserRoleDTO(user,null);
-		if (Objects.nonNull(userDTO)){
-			log.info(">>>url:【{}】,ip:【{}】,userName:【{}】,classMethod:【{}】,operation:【{}】,params:【{}】", url, ip,
-					userDTO.getUserName(), methodStr, operationName, params);
-		}
 		log.info(">>>请求返回结果：{}", JSONObject.toJSON(result));
 		try {
-			Log log = Log.builder().url(url).ip(ip).userName(userDTO==null?"":userDTO.getUserName()).classMethod(methodStr)
+			Log log = Log.builder().url(url).ip(ip).userName(userName).classMethod(methodStr)
 					.operation(operationName).params(params).result(result.getMsg()).build();
 			logService.insert(log);
 		} catch (Exception e) {

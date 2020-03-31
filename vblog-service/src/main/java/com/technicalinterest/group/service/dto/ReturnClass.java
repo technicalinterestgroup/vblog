@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @version:V1.0
  **/
 @Data
-public final class ReturnClass implements Serializable {
+public final class ReturnClass<T> implements Serializable {
 	private static final long serialVersionUID = 1098033339357933985L;
 	/**
 	 * @Field：请求状态
@@ -26,7 +26,7 @@ public final class ReturnClass implements Serializable {
 	/**
 	 * @Field：数据
 	 */
-	private Object data;
+	private T data;
 
 	public ReturnClass() {
 		this.success = false;
@@ -39,7 +39,7 @@ public final class ReturnClass implements Serializable {
 		this.msg = msg;
 	}
 
-	public ReturnClass(Boolean success, String msg, Object data) {
+	public ReturnClass(Boolean success, String msg, T data) {
 		super();
 		this.success = success;
 		this.msg = msg;
@@ -54,11 +54,11 @@ public final class ReturnClass implements Serializable {
 		return new ReturnClass(true, "请求成功！");
 	}
 
-	public static ReturnClass success(Object data) {
+	public static <T> ReturnClass<T> success(T data) {
 		return new ReturnClass(true, "请求成功！", data);
 	}
 
-	public static ReturnClass success(String msg, Object data) {
+	public static <T> ReturnClass<T> success(String msg, T data) {
 		return new ReturnClass(true, msg, data);
 	}
 

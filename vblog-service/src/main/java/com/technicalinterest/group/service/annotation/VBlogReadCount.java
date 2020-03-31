@@ -15,4 +15,6 @@ import java.lang.annotation.*;
 @Documented
 public @interface VBlogReadCount {
 	String value() default "";
+
+	String type() default "1";
 }

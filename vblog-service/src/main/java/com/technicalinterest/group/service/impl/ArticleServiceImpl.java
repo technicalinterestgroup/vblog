@@ -294,12 +294,6 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public ReturnClass listArticleOrderBy( String userName, Integer flag) {
-//        if (StringUtils.isNoneEmpty(userName)) {
-//            ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
-//            if (!returnClass.isSuccess()) {
-//                throw new VLogException(ResultEnum.NO_URL);
-//            }
-//        }
         List<ArticlesDTO> articlesDTOS = articleMapper.queryArticleListOrderBy(flag, userName, ARTICLE_LIMIT);
         if (articlesDTOS.isEmpty()) {
             return ReturnClass.fail(ArticleConstant.NO_BLOG);
@@ -390,7 +384,7 @@ public class ArticleServiceImpl implements ArticleService {
      * @date: 2019-08-17 19:17
      */
     @Override
-    @Async
+    @Async("vblog")
     public ReturnClass addReadCount(Long id) {
         Integer update = articleMapper.updateReadCount(id);
         if (update > 0) {

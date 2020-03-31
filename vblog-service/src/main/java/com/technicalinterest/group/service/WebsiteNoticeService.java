@@ -42,4 +42,10 @@ public interface WebsiteNoticeService {
      */
     ReturnClass saveOrUpdate(WebsiteNoticeDTO websiteNoticeDTO);
 
+    /**
+     * 增加阅读数
+     * @param id
+     */
+    void addReadCount(Long id);
+
 }

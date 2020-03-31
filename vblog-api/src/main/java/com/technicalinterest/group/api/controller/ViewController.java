@@ -7,6 +7,7 @@ import com.technicalinterest.group.api.util.IndexOrderByUtil;
 import com.technicalinterest.group.api.vo.*;
 import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeDetailVO;
 import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeVO;
+import com.technicalinterest.group.dao.Ask;
 import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.*;
 import com.technicalinterest.group.service.Enum.ArticleOrderEnum;
@@ -57,6 +58,8 @@ public class ViewController {
 	private TagService tagService;
 	@Autowired
 	private WebsiteNoticeService websiteNoticeService;
+	@Autowired
+	private AskService askService;
 
 	private static final Boolean authCheck = false;
 
@@ -418,7 +421,7 @@ public class ViewController {
 	 */
 	@ApiOperation(value = "文章详情", notes = "文章详情")
 	@GetMapping(value = "/article/detail/{id}")
-	@VBlogReadCount
+	@VBlogReadCount(type = "1")
 	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id,
 			@RequestParam(name = "userName",required = false)String userName) {
 		ApiResult apiResult = new ApiResult();
@@ -629,6 +632,7 @@ public class ViewController {
 	}
 	@ApiOperation(value = "通告详情查询")
 	@GetMapping(value = "/notice/{id}")
+	//TODO 增加阅读数
 	public ApiResult<WebsiteNoticeDetailVO> getNoticeDetail(@PathVariable long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass carousels = websiteNoticeService.getWebsiteNoticeDetail(id);
@@ -642,14 +646,48 @@ public class ViewController {
 		return apiResult;
 	}
 
+	@ApiOperation(value = "问题列表")
+	@GetMapping(value = "/list")
+	public ApiResult<PageBean<AskListVO>> getAskList(QueryAskParam queryAskParam) {
+		log.info("问题发布 参数{}", JSONObject.toJSON(queryAskParam));
+		ApiResult apiResult = new ApiResult();
+		AskDTO ask=new AskDTO();
+		BeanUtils.copyProperties(queryAskParam, ask);
+		ReturnClass<PageBean<Ask>> saveArticle = askService.getAskPage(ask);
+		if (saveArticle.isSuccess()) {
+			PageBean<AskListVO> result=new  PageBean<AskListVO>();
+			PageBean<Ask> pageBean = saveArticle.getData();
+			List list = ListBeanUtils.copyProperties(pageBean.getPageData(), AskListVO.class);
+			BeanUtils.copyProperties(pageBean,result);
+			result.setPageData(list);
+			apiResult.success(result);
+		} else {
+			apiResult.fail(saveArticle.getMsg());
+		}
+		return apiResult;
+	}
+
+	@ApiOperation(value = "问题详情")
+	@GetMapping(value = "/detail/{id}")
+	@VBlogReadCount(type = "2")
+	public ApiResult<AskVO> getAskDetail(@PathVariable Long id) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass<Ask> saveArticle = askService.getAskDetailById(id);
+		if (saveArticle.isSuccess()) {
+			AskVO askVO=new AskVO();
+			BeanUtils.copyProperties(saveArticle.getData(),askVO);
+			apiResult.success(askVO);
+		} else {
+			apiResult.fail(saveArticle.getMsg());
+		}
+		return apiResult;
+	}
 
 	@ApiOperation(value = "测试ws")
 	@GetMapping(value = "/socket")
 	public ApiResult<List<BlogUserVO>> test(@RequestParam("userName")String userName,@RequestParam(value = "msg")String msg) {
-
 		WebSocketUtils.sendToUser(userName,WebSocketMessage.builder().message(msg).build());
 		ApiResult apiResult = new ApiResult();
-
 		return apiResult;
 	}
 	

@@ -20,7 +20,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 public class TaskPoolConfig {
 
-	@Bean("taskExecutor")
+	@Bean("vblog")
 	public Executor taskExecutor() {
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 		executor.setCorePoolSize(10);

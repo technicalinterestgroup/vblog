@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.AskMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.Ask">
+        <result column="title" property="title"/>
+        <result column="tag_id" property="tagId"/>
+        <result column="user_name" property="userName"/>
+        <result column="description" property="description"/>
+        <result column="content_format" property="contentFormat"/>
+        <result column="content" property="content"/>
+        <result column="read_count" property="readCount"/>
+        <result column="reply_count" property="replyCount"/>
+        <result column="state" property="state"/>
+        <result column="id" property="id"/>
+        <result column="is_del" property="isDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `title`,
+        `tag_id`,
+        `user_name`,
+        `description`,
+        `content_format`,
+        `content`,
+        `read_count`,
+        `reply_count`,
+        `state`,
+        `id`,
+        `is_del`,
+        `create_time`,
+        `update_time`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_ask (
+            `title`,
+            `tag_id`,
+            `user_name`,
+            `description`,
+            `content_format`,
+            `content`,
+            `read_count`,
+            `reply_count`,
+            `state`,
+            `id`,
+            `is_del`,
+            `create_time`,
+            `update_time`
+        ) VALUES (
+            #{pojo.title},
+            #{pojo.tagId},
+            #{pojo.userName},
+            #{pojo.description},
+            #{pojo.contentFormat},
+            #{pojo.content},
+            #{pojo.readCount},
+            #{pojo.replyCount},
+            #{pojo.state},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+        )
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_ask
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.title!=null"> `title`,</if>
+            <if test="pojo.tagId!=null"> `tag_id`,</if>
+            <if test="pojo.userName!=null"> `user_name`,</if>
+            <if test="pojo.description!=null"> `description`,</if>
+            <if test="pojo.contentFormat!=null"> `content_format`,</if>
+            <if test="pojo.content!=null"> `content`,</if>
+            <if test="pojo.readCount!=null"> `read_count`,</if>
+            <if test="pojo.replyCount!=null"> `reply_count`,</if>
+            <if test="pojo.state!=null"> `state`,</if>
+            <if test="pojo.id!=null"> `id`,</if>
+            <if test="pojo.isDel!=null"> `is_del`,</if>
+            <if test="pojo.createTime!=null"> `create_time`,</if>
+            <if test="pojo.updateTime!=null"> `update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.title!=null">#{pojo.title},</if>
+            <if test="pojo.tagId!=null">#{pojo.tagId},</if>
+            <if test="pojo.userName!=null">#{pojo.userName},</if>
+            <if test="pojo.description!=null">#{pojo.description},</if>
+            <if test="pojo.contentFormat!=null">#{pojo.contentFormat},</if>
+            <if test="pojo.content!=null">#{pojo.content},</if>
+            <if test="pojo.readCount!=null">#{pojo.readCount},</if>
+            <if test="pojo.replyCount!=null">#{pojo.replyCount},</if>
+            <if test="pojo.state!=null">#{pojo.state},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO v_ask (
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.title},
+            #{pojo.tagId},
+            #{pojo.userName},
+            #{pojo.description},
+            #{pojo.contentFormat},
+            #{pojo.content},
+            #{pojo.readCount},
+            #{pojo.replyCount},
+            #{pojo.state},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE v_ask
+        <set>
+            <if test="pojo.title != null"> `title` = #{pojo.title}, </if>
+            <if test="pojo.tagId != null"> `tag_id` = #{pojo.tagId}, </if>
+            <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
+            <if test="pojo.description != null"> `description` = #{pojo.description}, </if>
+            <if test="pojo.contentFormat != null"> `content_format` = #{pojo.contentFormat}, </if>
+            <if test="pojo.content != null"> `content` = #{pojo.content}, </if>
+            <if test="pojo.readCount != null"> `read_count` = #{pojo.readCount}, </if>
+            <if test="pojo.replyCount != null"> `reply_count` = #{pojo.replyCount}, </if>
+            <if test="pojo.state != null"> `state` = #{pojo.state}, </if>
+            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
+            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
+            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="getAsk" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Ask">
+        select <include refid="all_column"/> from v_ask where is_del=0
+        <if test="pojo.id!= null "> and id=#{pojo.id}</if>
+        <if test="pojo.userName!= null and pojo.userName!=''"> and userName=#{pojo.userName}</if>
+        <if test="pojo.title!= null and pojo.title!=''"> and title like concat(#{pojo.title},'%') </if>
+        <if test="pojo.title!= null and pojo.title!=''"> and description like concat(#{pojo.title},'%') </if>
+    </select>
+
+    <select id="getAskById" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Ask">
+        select <include refid="all_column"/> from v_ask where is_del=0
+        <if test="id!= null "> and id=#{id}</if>
+    </select>
+
+    <select id="getAskList"  resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Ask">
+        select <include refid="all_column"/> from v_ask where is_del=0
+        <if test="pojo.id!= null "> and id=#{pojo.id}</if>
+        <if test="pojo.userName!= null and pojo.userName!=''"> and userName=#{pojo.userName}</if>
+        <if test="pojo.title!= null and pojo.title!=''"> and title like concat(#{pojo.title},'%') </if>
+        <if test="pojo.title!= null and pojo.title!=''"> and description like concat(#{pojo.title},'%') </if>
+         order by id desc
+    </select>
+    <select id="getAskListCount"  resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dao.Ask">
+        select count(1) from v_ask where is_del=0
+        <if test="pojo.id!= null "> and id=#{pojo.id}</if>
+        <if test="pojo.userName!= null and pojo.userName!=''"> and userName=#{pojo.userName}</if>
+        <if test="pojo.title!= null and pojo.title!=''"> and title like concat(#{pojo.title},'%') </if>
+        <if test="pojo.title!= null and pojo.title!=''"> and description like concat(#{pojo.title},'%') </if>
+    </select>
+
+    <update id="updateReadCount">
+        UPDATE v_ask set read_count=read_count+1 WHERE id = #{id}
+    </update>
+</mapper>
+
