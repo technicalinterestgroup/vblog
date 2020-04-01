@@ -54,5 +54,9 @@ public class User extends BaseDao {
 	 * 个人简介
 	 */
 	private String userSummary;
+	/**
+	 * 文件上传次数限制
+	 */
+	private Integer uploadNum;
 
 }

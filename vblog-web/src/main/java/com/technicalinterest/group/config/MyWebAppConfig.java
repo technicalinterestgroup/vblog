@@ -64,7 +64,7 @@ public class MyWebAppConfig extends WebMvcConfigurerAdapter {
 //		}
 		registry.addInterceptor(getRequestHeaderContextInterceptor()).addPathPatterns("/**");
 		registry.addInterceptor(getRequestLimitInterceptor()).addPathPatterns("/**");
-//		registry.addInterceptor(getIpUrlLimitInterceptor()).addPathPatterns("/**");
+		registry.addInterceptor(getIpUrlLimitInterceptor()).addPathPatterns("/**");
         super.addInterceptors(registry);
     }
 

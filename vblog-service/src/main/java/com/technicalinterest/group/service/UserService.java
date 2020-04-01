@@ -2,6 +2,7 @@ package com.technicalinterest.group.service;
 
 
 import com.technicalinterest.group.dao.User;
+import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
@@ -74,14 +75,6 @@ public interface UserService {
      */
     ReturnClass activationUser(String key);
 
-    /**
-     * @Description: 根据toke获取用户信息
-     * @author: shuyu.wang
-     * @date: 2019-07-28 19:43
-     * @return null
-    */
-    ReturnClass getUserByToken();
-    
 
     /**
      * @Description:根据用户名查询用户信息
@@ -99,17 +92,6 @@ public interface UserService {
      * @return null
      */
     ReturnClass getUserDetail();
-
-
-    
-    /**
-     * @Description: 判断用户名是否是当前操作登录的用户
-     * @author: shuyu.wang
-     * @date: 2019-08-08 13:12
-     * @param userName
-     * @return null
-    */
-    ReturnClass userNameIsLoginUser(String userName);
 
 
     /**
@@ -160,6 +142,12 @@ public interface UserService {
      * @return
      */
     String getUserNameByLoginToken();
+
+  /**
+   * 获取信息
+   * @return
+   */
+  UserRoleDTO getUserRoleDTOByLoginToken();
    /**
     * 根据用户名查询用户信息
     * @return

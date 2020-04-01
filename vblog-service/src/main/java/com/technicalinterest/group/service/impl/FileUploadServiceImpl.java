@@ -51,10 +51,10 @@ public class FileUploadServiceImpl implements FileUploadService {
 		if (Objects.isNull(fileUpload)){
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		ReturnClass returnClass = userService.userNameIsLoginUser(fileUpload.getUserName());
-		if (!returnClass.isSuccess()){
-			throw new VLogException(ResultEnum.NO_AUTH);
-		}
+//		ReturnClass returnClass = userService.userNameIsLoginUser(fileUpload.getUserName());
+//		if (!returnClass.isSuccess()){
+//			throw new VLogException(ResultEnum.NO_AUTH);
+//		}
 
 		String path=ROOT_PATH+ File.separator+fileUpload.getFilePath();
 		Integer del = fileUploadMpper.del(id);
@@ -77,10 +77,10 @@ public class FileUploadServiceImpl implements FileUploadService {
 
 	@Override
 	public ReturnClass queryFileList(QueryFileDTO queryFileDTO) {
-		ReturnClass returnClass = userService.getUserByuserName(true, queryFileDTO.getUserName());
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
+//		ReturnClass returnClass = userService.getUserByuserName(true, queryFileDTO.getUserName());
+//		if (!returnClass.isSuccess()) {
+//			throw new VLogException(ResultEnum.NO_URL);
+//		}
 		Integer integer = fileUploadMpper.queryCountFile(queryFileDTO);
 		if (integer < 1) {
 			return ReturnClass.fail(FileConstant.NO_FILE);

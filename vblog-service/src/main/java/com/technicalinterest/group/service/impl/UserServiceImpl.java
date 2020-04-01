@@ -13,6 +13,7 @@ import com.technicalinterest.group.mapper.UserRoleMapper;
 import com.technicalinterest.group.service.MailService;
 import com.technicalinterest.group.service.VSystemService;
 import com.technicalinterest.group.service.Enum.ResultEnum;
+import com.technicalinterest.group.service.constant.RedisKeyConstant;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.*;
@@ -106,6 +107,7 @@ public class UserServiceImpl implements UserService {
     private String LOCK_USER_KEY = "lock_user_";
 
 
+
     /**
      * 登录
      *
@@ -152,19 +154,7 @@ public class UserServiceImpl implements UserService {
         }
         //清除错误登录次数
         redisUtil.del(LOGIN_ERROR_KEY + userDTO.getUserName());
-        //获取权限列表
-//        List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(),null,0L);
-//        if (userRoleDTO.getRoleType() == 1) {
-//            if (!redisUtil.hasKey(UserConstant.ADMIN_AUTH_URL)) {
-//                List<RoleAuthDTO> roleAuth = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 2);
-//                StringBuffer stringBuffer = new StringBuffer();
-//                for (RoleAuthDTO entity : roleAuth) {
-//                    stringBuffer.append(entity.getUrl());
-//                    stringBuffer.append(",");
-//                }
-//                redisUtil.set(UserConstant.ADMIN_AUTH_URL, stringBuffer.toString());
-//            }
-//        }
+        redisUtil.set(RedisKeyConstant.userInfoKey(userDTO.getUserName()),userDTO);
         List<RoleAuthDTO> roleAuthDTOS = getAuthList(userRoleDTO.getRoleId(),0L);
         //生成token
         UserJWTDTO userVO = new UserJWTDTO();
@@ -234,11 +224,14 @@ public class UserServiceImpl implements UserService {
         }
         BeanUtils.copyProperties(newUserDTO, user);
         user.setNickName("小小程序员");
+        user.setUploadNum(UserConstant.UPLOAD_NUM);
         user.setPassWord(newUserDTO.getPassWord() + PASS_SALT);
         int i = userMapper.insertSelective(user);
         if (i != 1) {
             return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
         } else {
+            //缓存文件上传次数
+            redisUtil.incr(RedisKeyConstant.uploadTimeKey(user.getUserName()),UserConstant.UPLOAD_NUM);
             UserRole userRole = new UserRole();
             userRole.setUserId(user.getId());
             userRole.setRoleId((long) 2);
@@ -352,27 +345,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    /**
-     * @return null
-     * @Description: 根据toke获取用户信息
-     * @author: shuyu.wang
-     * @date: 2019-07-28 19:43
-     */
-    @Override
-    public ReturnClass getUserByToken() {
-        String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-        if (!redisUtil.hasKey(accessToken)) {
-            throw new VLogException(ResultEnum.TIME_OUT);
-        }
-        String userName = (String) redisUtil.get(accessToken);
-        User user = User.builder().userName(userName).build();
-        UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user,null);
-        log.info("getUserByToken>>>  token={},userInfo={}", accessToken, userRoleDTO);
-        if (Objects.isNull(userRoleDTO)) {
-            throw new VLogException(ResultEnum.USERINFO_ERROR);
-        }
-        return ReturnClass.success(userRoleDTO);
-    }
 
     /**
      * @param userName
@@ -383,15 +355,6 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public ReturnClass getUserByuserName(Boolean authCheck, String userName) {
-        //获取数据是否是当前用户校验
-        if (authCheck) {
-            ReturnClass returnClass = userNameIsLoginUser(userName);
-            if (!returnClass.isSuccess()) {
-                throw new VLogException(ResultEnum.NO_AUTH);
-            } else {
-                return returnClass;
-            }
-        }
         User user = User.builder().userName(userName).build();
         User userResult = userMapper.getUserByUser(user);
         if (Objects.nonNull(userResult)) {
@@ -412,30 +375,6 @@ public class UserServiceImpl implements UserService {
         User userResult = userMapper.getUserByUser(user);
         if (Objects.nonNull(userResult)) {
             return ReturnClass.success(userResult);
-        }
-        return ReturnClass.fail();
-    }
-
-    /**
-     * @param userName
-     * @return null
-     * @Description: 判断用户名是否是当前操作登录的用户
-     * @author: shuyu.wang
-     * @date: 2019-08-08 13:12
-     */
-    @Override
-    public ReturnClass userNameIsLoginUser(String userName) {
-        String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-        if (!redisUtil.hasKey(accessToken)) {
-            throw new VLogException(ResultEnum.TIME_OUT);
-        }
-        String useName = (String) redisUtil.get(accessToken);
-        User query = new User();
-        query.setUserName(useName);
-        User result = userMapper.getUserByUser(query);
-//		UserDTO userDTO=JSONObject.parseObject(userInfo,UserDTO.class);
-        if (Objects.nonNull(result) && StringUtils.equals(userName, useName)) {
-            return ReturnClass.success(result);
         }
         return ReturnClass.fail();
     }
@@ -528,17 +467,16 @@ public class UserServiceImpl implements UserService {
             return ReturnClass.fail(UserConstant.MAIL_OUTTIME);
         }
     }
-
+    /**
+     * 前后端分离 登录验证码 方案
+     * 后端生成图片 验证码字符串 uuid
+     * uuid为key  验证码字符串为value
+     * 传递bs64图片 和uuid给前端
+     * 前端在登录的时候 传递 账号 密码 验证码 uuid
+     * 通过uuid获取 验证码 验证
+     */
     @Override
     public ReturnClass createImage() {
-        /**
-         * 前后端分离 登录验证码 方案
-         * 后端生成图片 验证码字符串 uuid
-         * uuid为key  验证码字符串为value
-         * 传递bs64图片 和uuid给前端
-         * 前端在登录的时候 传递 账号 密码 验证码 uuid
-         * 通过uuid获取 验证码 验证
-         */
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         //获取验证码
         String text = producer.createText();
@@ -642,6 +580,22 @@ public class UserServiceImpl implements UserService {
         }
         String userName = (String) redisUtil.get(accessToken);
         return userName;
+    }
+
+    /**
+     * 获取信息
+     *
+     * @return
+     */
+    @Override
+    public UserRoleDTO getUserRoleDTOByLoginToken() {
+        String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+        if (!redisUtil.hasKey(accessToken)) {
+            throw new VLogException(ResultEnum.TIME_OUT);
+        }
+        String userName = (String) redisUtil.get(accessToken);
+        UserRoleDTO o = (UserRoleDTO)redisUtil.get(RedisKeyConstant.userInfoKey(userName));
+        return o;
     }
 
     /**

@@ -12,10 +12,12 @@ import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.service.AdminService;
 import com.technicalinterest.group.service.RoleService;
 import com.technicalinterest.group.service.UserService;
+import com.technicalinterest.group.service.constant.RedisKeyConstant;
 import com.technicalinterest.group.service.dto.AuthListDTO;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
+import com.technicalinterest.group.service.util.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
@@ -43,6 +45,8 @@ public class AdminAuthController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     @ApiOperation(value = "用户列表", notes = "用户列表")
     @GetMapping(value = "/user/list")
@@ -63,9 +67,26 @@ public class AdminAuthController {
             BeanUtils.copyProperties(listUser.getData(), pageInfo);
             pageInfo.setPageData(list);
             apiResult.success(pageInfo);
-
         } else {
             apiResult.setMsg(listUser.getMsg());
+        }
+        return apiResult;
+    }
+    @ApiOperation(value = "用户剩余上传次数")
+    @GetMapping(value = "/user/uploadtime/{userName}")
+    public ApiResult<Long> getUserUpload(@PathVariable String username) {
+        ApiResult apiResult = new ApiResult();
+        apiResult.setData(redisUtil.get(RedisKeyConstant.uploadTimeKey(username)));
+        return apiResult;
+    }
+
+    @ApiOperation(value = "充值上传次数")
+    @GetMapping(value = "/user/addupload/{userName}")
+    public ApiResult<Long> assUserUpload(@PathVariable String username,@RequestParam("num")Integer num) {
+        ApiResult apiResult = new ApiResult();
+        ReturnClass returnClass = adminService.addUploadTimes(username, num);
+        if (returnClass.isSuccess()){
+            apiResult.success();
         }
         return apiResult;
     }

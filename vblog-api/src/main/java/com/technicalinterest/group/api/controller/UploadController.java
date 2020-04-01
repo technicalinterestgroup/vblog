@@ -14,11 +14,14 @@ import com.technicalinterest.group.service.AliyunOSSService;
 import com.technicalinterest.group.service.FileUploadService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
+import com.technicalinterest.group.service.constant.RedisKeyConstant;
 import com.technicalinterest.group.service.dto.FileUploadDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
+import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.FileUtil;
+import com.technicalinterest.group.service.util.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -54,12 +57,13 @@ import java.util.Map;
 @RequestMapping("file")
 @Slf4j
 public class UploadController {
-    @Value("${file_path}")
-    private String ROOT_PATH;
+
     @Autowired
     private UserService userService;
     @Autowired
     private FileUploadService fileUploadService;
+    @Autowired
+    private RedisUtil redisUtil;
 
     private static String IMG_TYPE = "png,jpg,jpeg,bmp,gif,";
 
@@ -75,11 +79,6 @@ public class UploadController {
 
     private static final Integer DOC_FILE_SIZE = 600;
 
-    private static final String IMG_PATH = "img";
-
-    private static final String FILE_PATH = "file";
-
-    private static final String PREFIX_PATH = "vblog";
 
     private static final String FILE_EMPTY = "文件不能为空！";
 
@@ -91,9 +90,9 @@ public class UploadController {
     @ApiOperation(value = "图片上传", notes = "图片上传")
     @PostMapping(value = "/img/upload")
     @BlogOperation(value = "图片上传")
-//	@DistributeLock( key = "#file.getOriginalFilename", timeout = 2, expire = 1, errMsg = "00000")
     public ApiResult<String> uploadImg(@RequestParam(value = "file") MultipartFile file) {
-        String userName = userService.getUserNameByLoginToken();
+        //次数校验
+        String userName= checkeUploadTime();
         ApiResult<String> apiResult = new ApiResult<>();
         String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
         if (!IMG_TYPE.contains(suffix)) {
@@ -111,6 +110,7 @@ public class UploadController {
         try {
             String s = aliyunOSSService.uploadImg2Oss(file, userName);
             apiResult.success(s);
+            redisUtil.decr(RedisKeyConstant.uploadTimeKey(userName),-1);
         } catch (Exception e) {
             log.error("图片上传异常", e);
             apiResult.fail("图片上传异常");
@@ -120,12 +120,15 @@ public class UploadController {
 
     @RequestMapping(value = "/avatar/upload", method = RequestMethod.POST)
     public ApiResult<String> uploadUserAvatar(MultipartHttpServletRequest request, HttpServletResponse response) {
-        String userName = userService.getUserNameByLoginToken();
+        //次数校验
+        String userName=  checkeUploadTime();
         ApiResult<String> apiResult = new ApiResult<>();
-        Map<String, MultipartFile> files = request.getFileMap();//得到文件map对象
+        //得到文件map对象
+        Map<String, MultipartFile> files = request.getFileMap();
         for (MultipartFile pic : files.values()) {
             try {
                 String s = aliyunOSSService.uploadImg2Oss(pic, userName);
+                redisUtil.decr(RedisKeyConstant.uploadTimeKey(userName),-1);
                 apiResult.success(s);
             } catch (Exception e) {
                 log.error("头像上传异常", e);
@@ -138,7 +141,6 @@ public class UploadController {
     @ApiOperation(value = "文件上传", notes = "文件上传")
     @PostMapping(value = "/file/upload")
     @BlogOperation(value = "文件上传")
-    @DistributeLock(key = "#file.getOriginalFilename", timeout = 2, expire = 1, errMsg = "00000")
     public ApiResult<String> uploadFile(@RequestParam(value = "file") MultipartFile file, @RequestParam(value = "filePaht", required = false) String filePaht) {
         String userName = userService.getUserNameByLoginToken();
         ApiResult<String> apiResult = new ApiResult<>();
@@ -156,8 +158,8 @@ public class UploadController {
                 apiResult.fail(SIZE_ERROR);
                 return apiResult;
             }
-            String s = saveFiles(file, userName, filePaht, FILE_PATH);
-            apiResult.success("文件上传成功", s);
+//            String s = saveFiles(file, userName, filePaht, FILE_PATH);
+//            apiResult.success("文件上传成功", s);
             log.info("------>>>>>>文件上传成功!<<<<<<------");
         } catch (Exception e) {
             log.error("文件上传异常", e);
@@ -236,64 +238,14 @@ public class UploadController {
         return apiResult;
     }
 
-    private String getTime() {
-        Date d = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddHHmmsssss");
-        return sdf.format(d);
-    }
 
-
-    /**
-     * @param file
-     * @return null
-     * @Description: 保存文件
-     * @author: shuyu.wang
-     * @date: 2019-08-25 15:40
-     */
-    private String saveFiles(MultipartFile file, String userName, String filePah, String pathType) throws IOException {
-        FileUploadDTO fileUploadDTO = new FileUploadDTO();
-        //获取文件相关信息
-        byte[] bytes = file.getBytes();
-        String filename = file.getOriginalFilename();
-        int r = (int) ((Math.random() * 9 + 1) * 100000);
-        String attachId = getTime() + String.valueOf(r).substring(0, 4);
-        String ext = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
-        String newFilename = (attachId + "." + ext).toLowerCase();
-        //保存文件
-        String attachPath = null;
-        if (StringUtils.isEmpty(filePah)) {
-            attachPath = userName + File.separator + pathType;
-        } else {
-            attachPath = userName + File.separator + pathType + File.separator + filePah;
+    private String checkeUploadTime(){
+        String username= userService.getUserNameByLoginToken();
+        long o = (long)redisUtil.get(RedisKeyConstant.uploadTimeKey(username));
+        if (o<=0){
+            throw new VLogException("上传次数达到上限，请联系管理员充值!");
         }
-        String resultPath = attachPath + File.separator + newFilename;
-        String savePath = getRootPath(attachPath) + File.separator + newFilename;
-        File fileToSave = new File(savePath);
-        FileCopyUtils.copy(bytes, fileToSave);
-        //保存数据记录
-        fileUploadDTO.setFileName(filename);
-        fileUploadDTO.setNewFileName(newFilename);
-        fileUploadDTO.setFilePath(resultPath);
-        fileUploadDTO.setFileSize(FileUtil.getFileSize(file.getSize(), "K"));
-        fileUploadDTO.setUserName(userName);
-        if (StringUtils.equals(FILE_PATH, pathType)) {
-            fileUploadDTO.setFileType((short) 2);
-        } else {
-            fileUploadDTO.setFileType((short) 1);
-        }
-        fileUploadService.insert(fileUploadDTO);
-        return resultPath;
-    }
-
-    private String getRootPath(String filePath) {
-        String rootFile = ROOT_PATH + File.separator + filePath;
-        log.info("文件路径：{}", rootFile);
-        File file = new File(rootFile);
-        if (!file.exists()) {
-            log.info("不存在新建");
-            file.mkdirs();
-        }
-        return rootFile;
+        return username;
     }
 
 

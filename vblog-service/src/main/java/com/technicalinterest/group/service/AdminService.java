@@ -69,5 +69,13 @@ public interface AdminService {
 	 */
 	ReturnClass updateUser(EditUserDTO editUserDTO);
 
+	/**
+	 * 增加文件上传次数
+	 * @param userName
+	 * @param uploadTime
+	 * @return
+	 */
+	ReturnClass addUploadTimes(String userName,Integer uploadTime);
+
 
 }

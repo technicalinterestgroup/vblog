@@ -72,10 +72,6 @@ public class AdminController {
 	}
 
 
-	//用户禁用
-	//角色管理
-	//菜单管理
-
 	@ApiOperation(value = "文件列表", notes = "文件列表")
 	@GetMapping(value = "/list/file")
 	public ApiResult<PageBean<FileInfoVO>> listFile(QueryFileParam queryFileParam) {
@@ -120,6 +116,8 @@ public class AdminController {
 		}
 		return apiResult;
 	}
+
+
 
 
 }

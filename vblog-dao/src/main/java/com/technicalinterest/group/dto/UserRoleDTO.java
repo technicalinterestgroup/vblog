@@ -49,6 +49,10 @@ public class UserRoleDTO extends PageBase {
 	 * 角色类型
 	 */
 	private Short roleType;
+	/**
+	 * 文件上传次数限制
+	 */
+	private Integer uploadNum;
 
 	private Date createTime;
 }

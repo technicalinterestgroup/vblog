@@ -8,6 +8,7 @@ import com.technicalinterest.group.service.AdminService;
 import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.constant.ArticleConstant;
 import com.technicalinterest.group.service.constant.FileConstant;
+import com.technicalinterest.group.service.constant.RedisKeyConstant;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.EditUserDTO;
@@ -15,6 +16,7 @@ import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.HtmlUtil;
+import com.technicalinterest.group.service.util.RedisUtil;
 import com.technicalinterest.group.service.util.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +52,8 @@ public class AdminServiceImpl implements AdminService {
 	private AuthMapper authMapper;
 	@Autowired
 	private RoleAuthMapper roleAuthMapper;
+	@Autowired
+	private RedisUtil redisUtil;
 
 	/**
 	 * @Description:查询全部博客用户
@@ -160,5 +164,28 @@ public class AdminServiceImpl implements AdminService {
 		} else {
 			return ReturnClass.success(UserConstant.EDIT_USER_SUS);
 		}
+	}
+
+	/**
+	 * 增加文件上传次数
+	 *
+	 * @param userName
+	 * @param uploadTime
+	 * @return
+	 */
+	@Override
+	public ReturnClass addUploadTimes(String userName, Integer uploadTime) {
+		User user=User.builder().userName(userName).build();
+		User userByUser = userMapper.getUserByUser(user);
+		if (Objects.isNull(userByUser)){
+			throw new VLogException(ResultEnum.NO_DATA);
+		}
+		userByUser.setUploadNum(uploadTime);
+		Integer update = userMapper.update(user);
+		if (update>0){
+			redisUtil.incr(RedisKeyConstant.uploadTimeKey(userName),(long)uploadTime);
+			return ReturnClass.success();
+		}
+		return ReturnClass.fail();
 	}
 }
