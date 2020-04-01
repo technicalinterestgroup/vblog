@@ -16,5 +16,5 @@ public interface ReplyMapper {
 
     int update(@Param("pojo") Reply pojo);
 
-
+    Reply getOneReply(@Param("id") Long id);
 }

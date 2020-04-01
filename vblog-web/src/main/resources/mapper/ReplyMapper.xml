@@ -31,7 +31,7 @@
 
     <!--auto generated Code-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
-        INSERT INTO reply (
+        INSERT INTO v_reply (
             `ask_id`,
             `user_name`,
             `content_format`,
@@ -58,7 +58,7 @@
 
     <!--auto generated Code-->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
-        INSERT INTO reply
+        INSERT INTO v_reply
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.askId!=null"> `ask_id`,</if>
             <if test="pojo.userName!=null"> `user_name`,</if>
@@ -88,7 +88,7 @@
 
     <!--auto generated Code-->
     <insert id="insertList">
-        INSERT INTO reply (
+        INSERT INTO v_reply (
         <include refid="all_column"/>
         )VALUES
         <foreach collection="pojos" item="pojo" index="index" separator=",">
@@ -109,7 +109,7 @@
 
     <!--auto generated Code-->
     <update id="update">
-        UPDATE reply
+        UPDATE v_reply
         <set>
             <if test="pojo.askId != null"> `ask_id` = #{pojo.askId}, </if>
             <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
@@ -124,5 +124,9 @@
         </set>
         WHERE id = #{pojo.id}
     </update>
+
+    <select id="getOneReply" resultMap="AllColumnMap">
+        select <include refid="all_column"/> from v_reply where id=#{id} limit 1
+    </select>
 </mapper>
 

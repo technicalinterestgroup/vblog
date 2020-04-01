@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.ArticleContentVO;
 import com.technicalinterest.group.api.vo.AskVO;
+import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeDetailVO;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.AskService;
 import com.technicalinterest.group.service.Enum.ResultEnum;
+import com.technicalinterest.group.service.WebsiteNoticeService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.annotation.VBlogReadCount;
 import com.technicalinterest.group.service.util.IpAdrressUtil;
@@ -42,6 +44,8 @@ public class BlogReadCountAspect {
 	private ArticleService articleService;
 	@Autowired
 	private AskService askService;
+	@Autowired
+	private WebsiteNoticeService websiteNoticeService;
 	@Autowired
 	private RedisUtil redisUtil;
 
@@ -110,13 +114,13 @@ public class BlogReadCountAspect {
 				//获取用户ip地址
 				HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 				String ip = IpAdrressUtil.getIpAdrress(request);
-				AskVO askVO = (AskVO) result.getData();
+				WebsiteNoticeDetailVO resultVo = (WebsiteNoticeDetailVO) result.getData();
 				try {
 					String key="notice_read_ip="+ip+",id="+id;
 					if (!redisUtil.hasKey(key)) {
 						redisUtil.set(key, key, ARTICL_READ_TIME);
-//						askService.updateReadCount(id);
-						askVO.setReadCount(askVO.getReadCount() + 1);
+						websiteNoticeService.addReadCount(id);
+						resultVo.setReadCount(resultVo.getReadCount() + 1);
 						log.info("新的访问阅读数增加");
 					}else {
 						log.info("重复请求，阅读数不增加！");

@@ -25,4 +25,6 @@ public interface AskMapper {
     Integer getAskListCount(@Param("pojo") Ask pojo);
 
     int updateReadCount(@Param("id") Long id);
+
+    int updateReplayCount(@Param("id") Long id);
 }

@@ -181,5 +181,9 @@
     <update id="updateReadCount">
         UPDATE v_ask set read_count=read_count+1 WHERE id = #{id}
     </update>
+
+    <update id="updateReplayCount">
+         UPDATE v_ask set reply_count=reply_count+1 WHERE id = #{id}
+    </update>
 </mapper>
 

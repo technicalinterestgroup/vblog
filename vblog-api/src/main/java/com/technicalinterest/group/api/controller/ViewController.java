@@ -8,6 +8,7 @@ import com.technicalinterest.group.api.vo.*;
 import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeDetailVO;
 import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeVO;
 import com.technicalinterest.group.dao.Ask;
+import com.technicalinterest.group.dao.Reply;
 import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.*;
 import com.technicalinterest.group.service.Enum.ArticleOrderEnum;
@@ -60,6 +61,8 @@ public class ViewController {
 	private WebsiteNoticeService websiteNoticeService;
 	@Autowired
 	private AskService askService;
+	@Autowired
+	private ReplayService replayService;
 
 	private static final Boolean authCheck = false;
 
@@ -632,7 +635,7 @@ public class ViewController {
 	}
 	@ApiOperation(value = "通告详情查询")
 	@GetMapping(value = "/notice/{id}")
-	//TODO 增加阅读数
+	@VBlogReadCount(type = "3")
 	public ApiResult<WebsiteNoticeDetailVO> getNoticeDetail(@PathVariable long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass carousels = websiteNoticeService.getWebsiteNoticeDetail(id);
@@ -647,7 +650,7 @@ public class ViewController {
 	}
 
 	@ApiOperation(value = "问题列表")
-	@GetMapping(value = "/list")
+	@GetMapping(value = "/ask/list")
 	public ApiResult<PageBean<AskListVO>> getAskList(QueryAskParam queryAskParam) {
 		log.info("问题发布 参数{}", JSONObject.toJSON(queryAskParam));
 		ApiResult apiResult = new ApiResult();
@@ -668,7 +671,7 @@ public class ViewController {
 	}
 
 	@ApiOperation(value = "问题详情")
-	@GetMapping(value = "/detail/{id}")
+	@GetMapping(value = "/ask/detail/{id}")
 	@VBlogReadCount(type = "2")
 	public ApiResult<AskVO> getAskDetail(@PathVariable Long id) {
 		ApiResult apiResult = new ApiResult();
@@ -682,7 +685,19 @@ public class ViewController {
 		}
 		return apiResult;
 	}
-
+	@ApiOperation(value = "问题回答列表")
+	@PostMapping(value = "/{id}/replys")
+	public ApiResult<List<ReplyVO>> getReplyList(@PathVariable Long id) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass<List<Reply>> result=replayService.getReplyList(id);
+		if (result.isSuccess()) {
+			List<ReplyVO> replyVOS = ListBeanUtils.copyProperties(result.getData(), ReplyVO.class);
+			apiResult.success(replyVOS);
+		} else {
+			apiResult.fail(result.getMsg());
+		}
+		return apiResult;
+	}
 	@ApiOperation(value = "测试ws")
 	@GetMapping(value = "/socket")
 	public ApiResult<List<BlogUserVO>> test(@RequestParam("userName")String userName,@RequestParam(value = "msg")String msg) {

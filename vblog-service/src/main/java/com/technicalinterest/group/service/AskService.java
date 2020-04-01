@@ -30,5 +30,15 @@ public interface AskService {
 
     ReturnClass<String> updateState(Ask askDTO);
 
+    /**
+     * 增加阅读数
+     * @param id
+     */
     void updateReadCount(Long id);
+
+    /**
+     * 增加回答数
+     * @param id
+     */
+    void updateReplayCount(Long id);
 }

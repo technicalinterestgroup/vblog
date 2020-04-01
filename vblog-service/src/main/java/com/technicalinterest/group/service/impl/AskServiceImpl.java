@@ -149,4 +149,15 @@ public class AskServiceImpl implements AskService {
         }
         log.error("阅读数增加失败,id={}",id);
     }
+
+    /**
+     * 增加回答数
+     *
+     * @param id
+     */
+    @Override
+    @Async("vblog")
+    public void updateReplayCount(Long id) {
+        askMapper.updateReplayCount(id);
+    }
 }
