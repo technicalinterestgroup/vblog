@@ -1,5 +1,6 @@
 package com.technicalinterest.group.mapper;
 
+import com.technicalinterest.group.dto.AskDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,7 +21,7 @@ public interface AskMapper {
 
     Ask getAskById(@Param("id") Long id);
 
-    List<Ask> getAskList(@Param("pojo") Ask pojo);
+    List<AskDTO> getAskList(@Param("pojo") Ask pojo);
 
     Integer getAskListCount(@Param("pojo") Ask pojo);
 

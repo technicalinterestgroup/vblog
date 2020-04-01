@@ -30,9 +30,7 @@
         `reply_count`,
         `state`,
         `id`,
-        `is_del`,
-        `create_time`,
-        `update_time`
+        `create_time`
     </sql>
 
     <!--auto generated Code-->
@@ -162,12 +160,20 @@
         <if test="id!= null "> and id=#{id}</if>
     </select>
 
-    <select id="getAskList"  resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Ask">
-        select <include refid="all_column"/> from v_ask where is_del=0
-        <if test="pojo.id!= null "> and id=#{pojo.id}</if>
-        <if test="pojo.userName!= null and pojo.userName!=''"> and userName=#{pojo.userName}</if>
-        <if test="pojo.title!= null and pojo.title!=''"> and title like concat(#{pojo.title},'%') </if>
-        <if test="pojo.title!= null and pojo.title!=''"> and description like concat(#{pojo.title},'%') </if>
+    <select id="getAskList"  resultType="com.technicalinterest.group.dto.AskDTO" parameterType="com.technicalinterest.group.dao.Ask">
+        select `title`,
+        `user_name` as userName,
+        `description`,
+        `read_count` as readCount,
+        `reply_count` as replyCount,
+        `state`,
+        `id`,
+        `create_time` as createTime,(select t2.name from v_tag t2 where t1.tag_id=t2.id limit 1)as tagCN,t1.tag_id as tagId
+        from v_ask t1 where t1.is_del=0
+        <if test="pojo.id!= null "> and  t1.id=#{pojo.id}</if>
+        <if test="pojo.userName!= null and pojo.userName!=''"> and  t1.userName=#{pojo.userName}</if>
+        <if test="pojo.title!= null and pojo.title!=''"> and  t1.title like concat(#{pojo.title},'%') </if>
+        <if test="pojo.title!= null and pojo.title!=''"> and  t1.description like concat(#{pojo.title},'%') </if>
          order by id desc
     </select>
     <select id="getAskListCount"  resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dao.Ask">

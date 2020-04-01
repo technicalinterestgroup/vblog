@@ -1,20 +1,19 @@
-package com.technicalinterest.group.api.vo;
+package com.technicalinterest.group.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModelProperty;
+import com.technicalinterest.group.dao.BaseDao;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * @ClassName: AskVO
+ * @ClassName: Ask
  * @Author: shuyu.wang
  * @Description:
- * @Date: 2020/3/31 17:32
+ * @Date: 2020/3/31 15:16
  * @Version: 1.0
  */
 @Data
-public class AskListVO {
+public class AskDTO{
 
     private Long id;
 
@@ -29,6 +28,7 @@ public class AskListVO {
      * 标签id
      */
     private String  tagCN;
+
     /**
      * 作者
      */
@@ -53,7 +53,7 @@ public class AskListVO {
      */
     private Short  state;
 
-    @ApiModelProperty(value = "发布时间")
-    @JsonFormat(pattern = "yyyy-MM-dd")
+
     private Date createTime;
+
 }

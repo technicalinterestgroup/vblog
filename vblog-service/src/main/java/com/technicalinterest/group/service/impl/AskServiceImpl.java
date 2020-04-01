@@ -71,7 +71,7 @@ public class AskServiceImpl implements AskService {
     }
 
     @Override
-    public ReturnClass<PageBean<Ask>> getAskPage(AskDTO askDTO) {
+    public ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPage(AskDTO askDTO) {
         Ask query=new Ask();
         BeanUtils.copyProperties(askDTO,query);
         Integer askListCount = askMapper.getAskListCount(query);
@@ -79,13 +79,13 @@ public class AskServiceImpl implements AskService {
             return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
         }
         PageHelper.startPage(askDTO.getCurrentPage(), askDTO.getPageSize());
-        List<Ask> askList = askMapper.getAskList(query);
-        PageBean<Ask> pageBean = new PageBean<>(askList, askDTO.getCurrentPage(), askDTO.getPageSize(), askListCount);
+        List<com.technicalinterest.group.dto.AskDTO> askList = askMapper.getAskList(query);
+        PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = new PageBean<>(askList, askDTO.getCurrentPage(), askDTO.getPageSize(), askListCount);
         return ReturnClass.success(pageBean);
     }
 
     @Override
-    public ReturnClass<PageBean<Ask>> getAskPageByToken(AskDTO askDTO) {
+    public ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPageByToken(AskDTO askDTO) {
         Ask query=new Ask();
         BeanUtils.copyProperties(askDTO,query);
         query.setUserName(userService.getUserNameByLoginToken());
@@ -94,8 +94,8 @@ public class AskServiceImpl implements AskService {
             return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
         }
         PageHelper.startPage(askDTO.getCurrentPage(), askDTO.getPageSize());
-        List<Ask> askList = askMapper.getAskList(query);
-        PageBean<Ask> pageBean = new PageBean<>(askList, askDTO.getCurrentPage(), askDTO.getPageSize(), askListCount);
+        List<com.technicalinterest.group.dto.AskDTO> askList = askMapper.getAskList(query);
+        PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = new PageBean<>(askList, askDTO.getCurrentPage(), askDTO.getPageSize(), askListCount);
         return ReturnClass.success(pageBean);
     }
 

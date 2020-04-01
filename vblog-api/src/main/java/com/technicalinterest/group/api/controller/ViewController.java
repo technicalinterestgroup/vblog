@@ -16,6 +16,7 @@ import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.annotation.VBlogReadCount;
 import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.dto.*;
+import com.technicalinterest.group.service.dto.AskDTO;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.ListBeanUtils;
 import com.technicalinterest.group.service.util.WebSocketUtils;
@@ -656,10 +657,10 @@ public class ViewController {
 		ApiResult apiResult = new ApiResult();
 		AskDTO ask=new AskDTO();
 		BeanUtils.copyProperties(queryAskParam, ask);
-		ReturnClass<PageBean<Ask>> saveArticle = askService.getAskPage(ask);
+		ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> saveArticle = askService.getAskPage(ask);
 		if (saveArticle.isSuccess()) {
 			PageBean<AskListVO> result=new  PageBean<AskListVO>();
-			PageBean<Ask> pageBean = saveArticle.getData();
+			PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = saveArticle.getData();
 			List list = ListBeanUtils.copyProperties(pageBean.getPageData(), AskListVO.class);
 			BeanUtils.copyProperties(pageBean,result);
 			result.setPageData(list);

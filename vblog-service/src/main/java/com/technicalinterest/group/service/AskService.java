@@ -20,9 +20,9 @@ public interface AskService {
      */
     ReturnClass saveOrUpdateAsk(Ask ask);
 
-    ReturnClass<PageBean<Ask>> getAskPage(AskDTO askDTO);
+    ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPage(AskDTO askDTO);
 
-    ReturnClass<PageBean<Ask>> getAskPageByToken(AskDTO askDTO);
+    ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPageByToken(AskDTO askDTO);
 
     ReturnClass<Ask> getAskDetailById(Long id);
 

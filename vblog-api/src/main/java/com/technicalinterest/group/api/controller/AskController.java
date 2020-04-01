@@ -66,10 +66,10 @@ public class AskController {
         ApiResult apiResult = new ApiResult();
         AskDTO ask=new AskDTO();
         BeanUtils.copyProperties(queryAskParam, ask);
-        ReturnClass<PageBean<Ask>> saveArticle = askService.getAskPageByToken(ask);
+        ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> saveArticle = askService.getAskPageByToken(ask);
         if (saveArticle.isSuccess()) {
             PageBean<AskListVO> result=new  PageBean<AskListVO>();
-            PageBean<Ask> pageBean = saveArticle.getData();
+            PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = saveArticle.getData();
             List list = ListBeanUtils.copyProperties(pageBean.getPageData(), AskListVO.class);
             BeanUtils.copyProperties(pageBean,result);
             result.setPageData(list);
