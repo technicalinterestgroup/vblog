@@ -16,6 +16,7 @@
         <result column="pass_word" property="passWord"/>
         <result column="grade" property="grade"/>
         <result column="user_summary" property="userSummary"/>
+        <result column="upload_num" property="uploadNum"/>
     </resultMap>
 
     <!--auto generated Code-->
@@ -31,7 +32,9 @@
         `is_del`,
         `state`,
         `grade`,
-        `user_summary`
+        `user_summary`,
+         pass_word,
+        `upload_num`
 </sql>
 
 
@@ -46,6 +49,7 @@
             <if test="pojo.id!=null">`id`,</if>
             <if test="pojo.createTime!=null">`create_time`,</if>
             <if test="pojo.updateTime!=null">`update_time`,</if>
+            <if test="pojo.uploadNum!=null">`upload_num`,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -56,6 +60,7 @@
             <if test="pojo.id!=null">#{pojo.id},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
             <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+            <if test="pojo.uploadNum!=null">#{pojo.uploadNum},</if>
         </trim>
     </insert>
 
@@ -73,8 +78,26 @@
             <if test="pojo.state != null">`state` = #{pojo.state},</if>
             <if test="pojo.grade != null">`grade` = #{pojo.grade},</if>
             <if test="pojo.userSummary != null">`user_summary` = #{pojo.userSummary},</if>
+            <if test="pojo.uploadNum!=null">upload_num=#{pojo.uploadNum},</if>
         </set>
         WHERE id = #{pojo.id}
+    </update>
+
+    <update id="updateByUserName">
+        UPDATE v_user
+        <set>
+            <if test="pojo.nickName!=null">nick_name=#{pojo.nickName},</if>
+            <if test="pojo.passWord != null">`pass_word` =  MD5(#{pojo.passWord}),</if>
+            <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime},</if>
+            <if test="pojo.photo != null">`photo` = #{pojo.photo},</if>
+            <if test="pojo.integral != null">`integral` = integral+#{pojo.integral},</if>
+            <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
+            <if test="pojo.state != null">`state` = #{pojo.state},</if>
+            <if test="pojo.grade != null">`grade` = #{pojo.grade},</if>
+            <if test="pojo.userSummary != null">`user_summary` = #{pojo.userSummary},</if>
+            <if test="pojo.uploadNum!=null">upload_num=#{pojo.uploadNum},</if>
+        </set>
+        WHERE user_name = #{pojo.userName}
     </update>
 
     <select id="getUserByUser" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.User">
@@ -94,27 +117,42 @@
         SELECT t1.user_name,t1.nick_name,(
         SELECT count(1)FROM v_article t2 WHERE t2.user_name=t1.user_name) as blogNum,user_summary as userSummary,
         t1.photo
-        from v_user t1
-        <if test="userName!=null and userName!=''">where t1.user_name=#{userName}</if>
-        <if test="userName==null or userName==''">order by integral desc limit 4</if>
+        from v_user t1 where id!=1
+        <if test="userName!=null and userName!=''">and t1.user_name=#{userName}</if>
+        <if test="userName==null or userName==''">order by integral desc limit 5</if>
     </select>
 
     <select id="queryUserRoleDTO" resultType="com.technicalinterest.group.dto.UserRoleDTO" parameterType="com.technicalinterest.group.dao.User">
         SELECT  t1.id,t1.user_name AS userName,t1.nick_name AS nickName,t1.photo,t1.state,t1.is_del as isDel,t3.id as roleId,t3.`name` AS roleName,
-        t3.type as roleType
+        t3.type as roleType,t1.upload_num as uploadNum
         from v_user t1 INNER JOIN v_user_role t2 on t1.id=t2.user_id INNER JOIN v_role t3
         on t2.role_id=t3.id
         <where>
+            <if test="type !=null">and  t3.type=#{type}</if>
             <if test="user.userName!=null">and t1.user_name=#{user.userName}</if>
             <if test="user.passWord!=null">and t1.pass_word=MD5(#{user.passWord})</if>
         </where>
+        limit 1
     </select>
-
-    <select id="queryAllUser" resultType="com.technicalinterest.group.dto.UserRoleDTO" parameterType="com.technicalinterest.group.dao.User">
+    <select id="queryAllUser" resultType="com.technicalinterest.group.dto.UserRoleDTO" parameterType="com.technicalinterest.group.dto.UserRoleDTO">
         SELECT t1.user_name AS userName,t1.nick_name AS nickName,t1.photo,t1.state,t1.is_del as isDel,t3.id as roleId,t3.`name` AS roleName,
-        t3.type as roleType,(select count(1) from v_article t4 where t4.user_name=t1.user_name)as blogNum
+        t3.type as roleType,t1.create_time as createTime
         from v_user t1 INNER JOIN v_user_role t2 on t1.id=t2.user_id INNER JOIN v_role t3
-        on t2.role_id=t3.id where t3.type=2 order by t1.id desc
+        on t2.role_id=t3.id where t1.is_del=0
+        <if test="user.roleType!=null">and t3.type=#{user.roleType}</if>
+        <if test="user.userName!=null and user.userName!=''">and t1.user_name=#{user.userName}</if>
+        <if test="user.state!=null">and t1.state=#{user.state}</if>
+        <if test="user.roleName!=null and user.roleName!=''">and t3.`name`=#{user.roleName}</if>
+        order by t1.id desc
+    </select>
+    <select id="queryAllUserCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dto.UserRoleDTO">
+        SELECT count(t1.id)
+        from v_user t1 INNER JOIN v_user_role t2 on t1.id=t2.user_id INNER JOIN v_role t3
+        on t2.role_id=t3.id where t1.is_del=0
+        <if test="user.roleType!=null">and t3.type=#{user.roleType}</if>
+        <if test="user.userName!=null and user.userName!=''">and t1.user_name=#{user.userName}</if>
+        <if test="user.state!=null">and t1.state=#{user.state}</if>
+        <if test="user.roleName!=null and user.roleName!=''">and t3.`name`=#{user.roleName}</if>
     </select>
 </mapper>
 

@@ -25,8 +25,11 @@ public class CommentNoticeVO {
 	@ApiModelProperty(value = "用户名")
 	private String userName;
 
-	@ApiModelProperty(value = "博客id")
-	private Long articleId;
+	private String sourceUserName;
+	/**
+	 * id
+	 */
+	private Long sourceId;
 
 	@ApiModelProperty(value = "博客标题")
 	private String title;
@@ -35,6 +38,25 @@ public class CommentNoticeVO {
 	private Short isView;
 
 	@ApiModelProperty(value = "评论时间")
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date createTime;
+
+	@ApiModelProperty(value = "点赞类型",allowableValues = "1:博客，2:评论")
+	private Short type;
+
+	private String typeCN;
+
+	public void setTypeCN() {
+		if (this.type==null){
+			this.typeCN="博客";
+			return;
+		}
+		if (this.type==1){
+			this.typeCN="博客";
+		}else if(this.type==2){
+			this.typeCN="评论";
+		}
+	}
+
+
 }

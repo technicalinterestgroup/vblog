@@ -1,6 +1,9 @@
 package com.technicalinterest.group.dto;
 
+import com.technicalinterest.group.dao.PageBase;
 import lombok.Data;
+
+import java.util.Date;
 
 /**
  * @package: com.technicalinterest.group.dto
@@ -11,7 +14,7 @@ import lombok.Data;
  * @since: 0.1
  **/
 @Data
-public class UserRoleDTO {
+public class UserRoleDTO extends PageBase {
 
 	private Long id;
 	/**
@@ -46,4 +49,10 @@ public class UserRoleDTO {
 	 * 角色类型
 	 */
 	private Short roleType;
+	/**
+	 * 文件上传次数限制
+	 */
+	private Integer uploadNum;
+
+	private Date createTime;
 }

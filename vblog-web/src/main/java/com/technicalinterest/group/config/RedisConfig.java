@@ -40,6 +40,9 @@ public class RedisConfig {
     @Value("${spring.redis.password}")
     private String password;
 
+    @Value("${spring.redis.max-wait}")
+    private long maxWait;
+
     @Value("${spring.redis.timeout}")
     private int timeout;
 
@@ -70,6 +73,7 @@ public class RedisConfig {
         poolConfig.setMaxIdle(maxIdle);
         poolConfig.setMaxTotal(maxTotal);
         poolConfig.setTestOnBorrow(testOnBorrow);
+        poolConfig.setMaxWaitMillis(maxWait);
         return poolConfig;
     }
 

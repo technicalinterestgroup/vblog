@@ -1,23 +1,20 @@
 package com.technicalinterest.group.service.impl;
 
-import com.technicalinterest.group.dao.Category;
 import com.technicalinterest.group.dao.Tag;
 import com.technicalinterest.group.dto.TagDTO;
 import com.technicalinterest.group.mapper.TagMapper;
 import com.technicalinterest.group.service.TagService;
 import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.constant.TagConstant;
 import com.technicalinterest.group.service.dto.EditTagDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
-import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.exception.VLogException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,13 +31,7 @@ public class TagServiceImpl implements TagService {
 	public ReturnClass insertSelective(EditTagDTO pojo) {
 		Tag tag = new Tag();
 		BeanUtils.copyProperties(pojo, tag);
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
-			tag.setUserName(userDTO.getUserName());
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
+		tag.setUserName(userService.getUserNameByLoginToken());
 		//名称是否重复
 		Tag tag1 = tagMapper.queryTag(Tag.builder().name(tag.getName()).userName(tag.getUserName()).build());
 		if (Objects.nonNull(tag1)) {
@@ -57,14 +48,7 @@ public class TagServiceImpl implements TagService {
 	public ReturnClass update(EditTagDTO pojo) {
 		Tag tag = new Tag();
 		tag.setId(pojo.getId());
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
-			tag.setUserName(userDTO.getUserName());
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-
+		tag.setUserName(userService.getUserNameByLoginToken());
 		//数据是否存在
 		Tag tag1 = tagMapper.queryTag(tag);
 		if (Objects.isNull(tag1)) {
@@ -94,17 +78,12 @@ public class TagServiceImpl implements TagService {
 	 * @Description:文章标签
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 13:00
-	 * @param authCheck
-	 * @param userName
+	 * @param name
 	 * @return com.technicalinterest.group.service.dto.ReturnClass
 	 */
 	@Override
-	public ReturnClass listTagByUser(Boolean authCheck, String userName) {
-		ReturnClass returnClass = userService.getUserByuserName(authCheck, userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
-		List<TagDTO> tagDTOS = tagMapper.queryTagListByUser(userName);
+	public ReturnClass listTagByAdmin(String name) {
+		List<TagDTO> tagDTOS = tagMapper.queryTagListByUser(null,name);
 		if (tagDTOS.isEmpty()) {
 			return ReturnClass.fail(TagConstant.NO_DATA);
 		}
@@ -115,13 +94,7 @@ public class TagServiceImpl implements TagService {
 	public ReturnClass delTag(Long id) {
 		Tag tag = new Tag();
 		tag.setId(id);
-		ReturnClass userByToken = userService.getUserByToken();
-		if (userByToken.isSuccess()) {
-			UserDTO userDTO = (UserDTO) userByToken.getData();
-			tag.setUserName(userDTO.getUserName());
-		} else {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
+		tag.setUserName(userService.getUserNameByLoginToken());
 		//数据是否存在
 		Tag tag1 = tagMapper.queryTag(tag);
 		if (Objects.isNull(tag1)) {
@@ -140,5 +113,22 @@ public class TagServiceImpl implements TagService {
 			return ReturnClass.success(TagConstant.SUS_DEL);
 		}
 		return ReturnClass.fail(TagConstant.FAIL_DEL);
+	}
+
+	/**
+	 * 查询所以标签
+	 *
+	 * @return
+	 */
+	@Override
+	public ReturnClass allTagList(String userName) {
+		List<TagDTO> tagDTOS = tagMapper.allTagList(userName);
+		return ReturnClass.success(tagDTOS);
+	}
+
+	@Override
+	public ReturnClass allTagListDic() {
+		List<TagDTO> tagDTOS = tagMapper.allTagListDic();
+		return ReturnClass.success(tagDTOS);
 	}
 }

@@ -14,7 +14,7 @@ public interface CategoryMapper {
 
     Integer update(@Param("pojo") Category pojo);
 
-    List<CategoryDTO> queryCategoryListByUser(String userName);
+    List<CategoryDTO> queryCategoryListByUser(@Param("userName")String userName,@Param("name")String name);
 
     Category queryCategory(Category pojo);
 
@@ -28,4 +28,11 @@ public interface CategoryMapper {
      * @return null
     */
     Integer getArticleCountCategory(@Param("id")Long id);
+
+    /**
+     * 查询用户的标签分类
+     * @param userName
+     * @return
+     */
+    List<CategoryDTO> queryCategorysByUser(String userName);
 }

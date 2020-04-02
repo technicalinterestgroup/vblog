@@ -1,4 +1,4 @@
-package com.technicalinterest.group.api.controller;
+package com.technicalinterest.group.api.controller.admin;
 
 import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.EditCategoryParam;
@@ -37,26 +37,52 @@ import java.util.List;
  **/
 @Api(tags = "博客标签")
 @RestController
-@RequestMapping("tag")
-public class TagController {
+@RequestMapping("admin/tag")
+public class AdminTagController {
 	@Autowired
 	private TagService tagService;
 
-	private static final Boolean authCheck = true;
 
 	/**
 	 * @Description: 博客标签列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
-	 * @param userName
+	 * @param name
 	 * @return null
 	 */
 	@ApiOperation(value = "博客标签列表", notes = "博客标签")
-	@GetMapping(value = "/list/{userName}")
+	@GetMapping(value = "/list")
 	@BlogOperation(value = "博客标签列表")
-	public ApiResult<List<TagVO>> listCategory(@PathVariable("userName") String userName) {
+	public ApiResult<List<TagVO>> listCategory(@RequestParam(value = "name",required = false) String name) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass listCategory = tagService.listTagByUser(authCheck, userName);
+		ReturnClass listCategory = tagService.listTagByAdmin(name);
+		if (listCategory.isSuccess()) {
+			List<TagVO> list = new ArrayList<TagVO>();
+			List<TagDTO> tagDTOS = (List<TagDTO>) listCategory.getData();
+			for (TagDTO entity : tagDTOS) {
+				TagVO tagVO = new TagVO();
+				BeanUtils.copyProperties(entity, tagVO);
+				list.add(tagVO);
+			}
+			apiResult.success(list);
+		} else {
+			apiResult.setMsg(listCategory.getMsg());
+		}
+		return apiResult;
+	}
+
+	/**
+	 * @Description: 博客标签列表
+	 * @author: shuyu.wang
+	 * @date: 2019-08-15 17:39
+	 * @return null
+	 */
+	@ApiOperation(value = "博客标签列表下拉选择")
+	@GetMapping(value = "/list/dic")
+	@BlogOperation(value = "博客标签列表")
+	public ApiResult<List<TagVO>> listTagDics() {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass listCategory = tagService.allTagListDic();
 		if (listCategory.isSuccess()) {
 			List<TagVO> list = new ArrayList<TagVO>();
 			List<TagDTO> tagDTOS = (List<TagDTO>) listCategory.getData();
@@ -106,7 +132,6 @@ public class TagController {
 	@ApiOperation(value = "新增博客标签", notes = "新增")
 	@PostMapping(value = "/new")
 	@BlogOperation(value = "新增博客标签")
-	@DistributeLock( key = "#newTagParam.userName", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> newCategory(@Valid @RequestBody NewTagParam newTagParam) {
 		ApiResult apiResult = new ApiResult();
 		EditTagDTO editTagDTO = new EditTagDTO();

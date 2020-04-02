@@ -3,15 +3,12 @@ package com.technicalinterest.group.interceptor;
 import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.constant.UrlConstant;
-import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.constant.ResultEnum;
-import com.technicalinterest.group.service.constant.UserConstant;
-import com.technicalinterest.group.service.dto.ReturnClass;
-import com.technicalinterest.group.service.dto.UserDTO;
+import com.technicalinterest.group.dao.User;
+import com.technicalinterest.group.mapper.UserMapper;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,7 +33,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	@Autowired
 	private RedisUtil redisUtil;
 	@Autowired
-	private UserService userService;
+	private UserMapper userMapper;
 
 	private static final long ACTIVATION_TIME = 60 * 60 * 24;
 
@@ -61,32 +58,34 @@ public class MyInterceptor implements HandlerInterceptor {
 
 		String url = request.getRequestURI();
 		String ACCESS_TOKEN_STRING = request.getHeader(UrlConstant.ACCESS_TOKEN_STRING);
-		if (!url.startsWith(UrlConstant.NOT_AUTH_URL_STRING) && !url.contains(UrlConstant.DOC_URL_STRING)) {
-			if (!Objects.isNull(ACCESS_TOKEN_STRING)) {
+		if (!url.startsWith(UrlConstant.NOT_AUTH_URL_STRING)&&!url.contains(UrlConstant.NOT_AUTH_ADMIN_LOGIN_STRING) && !url.contains(UrlConstant.DOC_URL_STRING)) {
+			if (Objects.nonNull(ACCESS_TOKEN_STRING)) {
 				if (!redisUtil.hasKey(ACCESS_TOKEN_STRING)) {
 					log.error(">>>无效请求：登录超时;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
 					printJson(response, ResultEnum.TIME_OUT);
 					return false;
 				}
-				String userInfo = (String) redisUtil.get(ACCESS_TOKEN_STRING);
-				UserDTO userDTO = JSONObject.parseObject(userInfo, UserDTO.class);
-				if (Objects.nonNull(userDTO)&& StringUtils.isNotEmpty(userDTO.getUserName())) {
-					//判断是否是普通用户
-					if (userDTO.getRoleType() == 2) {
-						String o = (String) redisUtil.get(UserConstant.ADMIN_AUTH_URL);
-						if (o.contains(url + ",")) {
-							log.error(">>>非法请求：普通用户请求管理员接口;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
-							printJson(response, ResultEnum.NO_AUTH);
-							return false;
-						}
-					}
-					redisUtil.expire(ACCESS_TOKEN_STRING, ACTIVATION_TIME);
-					return true;
-				}else {
-					log.error(">>>无效请求：用户不存在;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
-					printJson(response, ResultEnum.USERINFO_ERROR);
-					return false;
-				}
+				String userNmae = (String) redisUtil.get(ACCESS_TOKEN_STRING);
+				User user = new User();
+				user.setUserName(userNmae);
+//				UserRoleDTO userDTO = userMapper.queryUserRoleDTO(user);
+//				if (Objects.nonNull(userDTO)&& StringUtils.isNotEmpty(userDTO.getUserName())) {
+//					//判断是否是普通用户
+//					if (userDTO.getRoleType() == 2) {
+//						String o = (String) redisUtil.get(UserConstant.ADMIN_AUTH_URL);
+//						if (o.contains(url + ",")) {
+//							log.error(">>>非法请求：普通用户请求管理员接口;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
+//							printJson(response, ResultEnum.NO_AUTH);
+//							return false;
+//						}
+//					}
+//					redisUtil.expire(ACCESS_TOKEN_STRING, ACTIVATION_TIME);
+//					return true;
+//				}else {
+//					log.error(">>>无效请求：用户不存在;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
+//					printJson(response, ResultEnum.USERINFO_ERROR);
+//					return false;
+//				}
 			} else {
 				log.error(">>>非法请求：无token;ip:【{}】,url:【{}】", IpAdrressUtil.getIpAdrress(request), request.getRequestURL().toString());
 				printJson(response, ResultEnum.ACCESTOKEN_NULL);
@@ -133,7 +132,7 @@ public class MyInterceptor implements HandlerInterceptor {
 	private void printJson(HttpServletResponse response, ResultEnum resultEnum) {
 		try {
 			response.setContentType(UrlConstant.CONTENT_TYPE_STRING);
-			ApiResult result = new ApiResult(ResultEnum.NO_AUTH);
+			ApiResult result = new ApiResult(resultEnum);
 			PrintWriter out = response.getWriter();
 			out.write(JSONObject.toJSONString(result));
 			out.close();

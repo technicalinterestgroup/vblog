@@ -31,7 +31,20 @@
         `create_time`,
         `update_time`,
         `is_view`
-</sql>
+    </sql>
+    <!--auto generated Code-->
+    <sql id="commnet_column">
+        t1.`comment_content`,
+        t1.`user_name`,
+        `ip_address`,
+        t1.`volt_number`,
+        t1.`article_id`,
+        t1.`parent_id`,
+        t1.`is_auther`,
+        t1.`id`,
+        t1.`create_time`,
+        t2.photo as avatar
+    </sql>
 
     <!--auto generated Code-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
@@ -150,8 +163,8 @@
 
     <select id="queryListComment" resultType="com.technicalinterest.group.dto.CommentDTO">
         select
-        <include refid="all_column"/>
-        from v_comment
+        <include refid="commnet_column"/>
+        from v_comment t1 inner join v_user t2 on t1.user_name=t2.user_name
         <where>
             <if test="userName!=null and userName!=''">and user_name=#{userName}</if>
             <if test="articleId!=null">and article_id=#{articleId} and parent_id=0</if>
@@ -161,7 +174,7 @@
     </select>
 
     <select id="queryListCommentNotice" resultType="com.technicalinterest.group.dto.CommentNoticeDTO">
-        SELECT t1.title,t2.id,t2.article_id as articleId,t2.user_name as userName,t2.create_time as createTime,t2.is_view as isView FROM v_article t1 INNER JOIN v_comment t2 on t1.id=t2.article_id
+        SELECT t1.title,t1.user_name as sourceUserName,t2.id,t1.id as sourceId,t2.user_name as userName,t2.create_time as createTime,t2.is_view as isView FROM v_article t1 INNER JOIN v_comment t2 on t1.id=t2.article_id
 	    AND t2.parent_id=0
         <where>
             <if test="userName!=null"> and t1.user_name=#{userName}</if>

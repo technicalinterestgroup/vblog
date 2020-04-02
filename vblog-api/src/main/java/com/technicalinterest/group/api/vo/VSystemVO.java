@@ -71,16 +71,47 @@ public class VSystemVO{
 	 * 通知开关
 	 */
 	@ApiModelProperty(value = "通知开关")
-	private String noticeSwitch;
+	private Boolean noticeSwitch;
 	/**
 	 * 评论开关
 	 */
 	@ApiModelProperty(value = "评论开关")
-	private String commentSwitch;
+	private Boolean commentSwitch;
 
 	/**
 	 * 系统主题
 	 */
 	@ApiModelProperty(value = "系统主题")
 	private String theme;
+
+	/**
+	 * 最新文章
+	 */
+	@JsonProperty("vNew")
+	private Boolean vNew;
+	/**
+	 * 推荐文章
+	 */
+	@JsonProperty("vRecommend")
+	private Boolean vRecommend;
+	/**
+	 * 热门文章
+	 */
+	@JsonProperty("vHot")
+	private Boolean vHot;
+	/**
+	 * 归档
+	 */
+	@JsonProperty("vArchive")
+	private Boolean vArchive;
+	/**
+	 * 标签
+	 */
+	@JsonProperty("vTag")
+	private Boolean vTag;
+	/**
+	 * 最新评论
+	 */
+	@JsonProperty("vComment")
+	private Boolean vComment;
 }

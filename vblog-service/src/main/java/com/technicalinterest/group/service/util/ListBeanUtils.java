@@ -24,7 +24,7 @@ public class ListBeanUtils {
 	 * @param list
 	 * @return java.util.List
 	 */
-	public static <T> List copyProperties(Object list, Class<T> clazz) {
+	public static <T> List<T> copyProperties(Object list, Class<T> clazz) {
 		if (Objects.isNull(list)) {
 			return new ArrayList();
 		}

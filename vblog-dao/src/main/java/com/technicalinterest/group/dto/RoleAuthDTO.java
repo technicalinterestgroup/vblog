@@ -2,6 +2,8 @@ package com.technicalinterest.group.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @package: com.technicalinterest.group.dto
  * @className: RoleAuthDTO
@@ -24,4 +26,9 @@ public class RoleAuthDTO {
 	private String url;
 
 	private String authType;
+
+	private String icon;
+
+	private List<RoleAuthDTO> children;
+
 }

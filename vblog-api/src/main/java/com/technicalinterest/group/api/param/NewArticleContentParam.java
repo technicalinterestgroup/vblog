@@ -6,6 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
+
 
 /**
  * @package: com.technicalinterest.group.service.dto
@@ -51,25 +53,23 @@ public class NewArticleContentParam {
 	 * 文章内容html格式
 	 */
 	@ApiModelProperty(value = "文章内容html格式")
-	private String content;
+	@NotNull(message = "文章内容不能为空")
+	private String contentFormat;
 
 	/**
 	 * 文章内容markdown格式
 	 */
 	@ApiModelProperty(value = "文章内容markdown格式")
-	@JsonProperty("contentMD")
-	private String contentMD;
+	@NotNull(message = "文章内容不能为空")
+	private String content;
 	/**
 	 * 文章状态 0：草稿，1：发布
 	 */
 	@ApiModelProperty(value = "文章状态",allowableValues = "0：草稿，1：发布")
+	@NotNull(message = "文章状态不能为空")
 	private Short state;
 
-	public String getContentMD() {
-		return contentMD;
-	}
+	@NotNull(message = "文章描述不能为空")
+	private String description;
 
-	public void setContentMD(String contentMD) {
-		this.contentMD = contentMD;
-	}
 }

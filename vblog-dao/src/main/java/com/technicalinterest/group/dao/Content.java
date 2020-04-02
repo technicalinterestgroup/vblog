@@ -18,10 +18,10 @@ public class Content extends BaseDao {
 	/** 
 	* 文章内容html格式
 	*/ 
-	private String content;
+	private String contentFormat;
 
 	/**
 	 * 文章内容md格式
 	 */
-	private String contentMD;
+	private String content;
 }

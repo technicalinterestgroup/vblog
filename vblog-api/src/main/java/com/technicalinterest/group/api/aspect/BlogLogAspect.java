@@ -1,23 +1,19 @@
 package com.technicalinterest.group.api.aspect;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.technicalinterest.group.api.vo.ApiResult;
-import com.technicalinterest.group.api.vo.ArticleContentVO;
 import com.technicalinterest.group.dao.Log;
+import com.technicalinterest.group.dao.User;
+import com.technicalinterest.group.dto.UserRoleDTO;
+import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.service.LogService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
-import com.technicalinterest.group.service.constant.ResultEnum;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
-import com.technicalinterest.group.service.dto.ReturnClass;
-import com.technicalinterest.group.service.dto.UserDTO;
 import com.technicalinterest.group.service.util.IpAdrressUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
 import com.technicalinterest.group.service.util.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,10 +24,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
@@ -52,23 +46,32 @@ public class BlogLogAspect {
 	@Autowired
 	private LogService logService;
 
+	/**
+	 * 请求切点方法(已提供@RequestMapping,@GetMapping,@PostMapping注解，需要其它请增加)
+	 */
+	@Pointcut(" @annotation(org.springframework.web.bind.annotation.RequestMapping) || " +
+			"   @annotation(org.springframework.web.bind.annotation.GetMapping) || " +
+			"   @annotation(org.springframework.web.bind.annotation.PostMapping)")
+	void requestMapping() {
+	}
+
 	@Pointcut("@annotation(com.technicalinterest.group.service.annotation.BlogOperation)")
 	public void logPoinCut() {
 	}
 
-	@AfterReturning(value = "logPoinCut()", returning = "result")
+	@AfterReturning(value = "requestMapping() && logPoinCut()", returning = "result")
 	public void doAfterReturningAdvice1(JoinPoint joinPoint, ApiResult result) {
 		log.info(">>>日志拦截AOP开始");
 		//获取用户ip地址
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 		BlogLogAspect blogLogAspect=SpringContextUtil.getBean(BlogLogAspect.class);
 		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		blogLogAspect.analisy(joinPoint,result,request.getRequestURL().toString(),IpAdrressUtil.getIpAdrress(request),accessToken);
+		blogLogAspect.analisy(joinPoint,result,request.getRequestURL().toString(), IpAdrressUtil.getIpAdrress(request),accessToken);
 		log.info(">>>日志拦截AOP结束");
 	}
     @Async
 	public void analisy(JoinPoint joinPoint, ApiResult result,String url,String ip,String token){
-        log.info("异步报错AOP日志");
+        log.info("异步AOP日志");
 		//从切面织入点处通过反射机制获取织入点处的方法
 		MethodSignature signature = (MethodSignature) joinPoint.getSignature();
 		//获取切入点所在的方法
@@ -93,15 +96,10 @@ public class BlogLogAspect {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String userInfo = (String) redisUtil.get(token);
-		UserDTO userDTO = JSONObject.parseObject(userInfo, UserDTO.class);
-		if (Objects.nonNull(userDTO)){
-			log.info(">>>url:【{}】,ip:【{}】,userName:【{}】,classMethod:【{}】,operation:【{}】,params:【{}】", url, ip,
-					userDTO.getUserName(), methodStr, operationName, params);
-		}
+		String userName = (String) redisUtil.get(token);
 		log.info(">>>请求返回结果：{}", JSONObject.toJSON(result));
 		try {
-			Log log = Log.builder().url(url).ip(ip).userName(userDTO==null?"":userDTO.getUserName()).classMethod(methodStr)
+			Log log = Log.builder().url(url).ip(ip).userName(userName).classMethod(methodStr)
 					.operation(operationName).params(params).result(result.getMsg()).build();
 			logService.insert(log);
 		} catch (Exception e) {

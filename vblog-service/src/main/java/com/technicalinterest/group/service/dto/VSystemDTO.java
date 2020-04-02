@@ -56,13 +56,37 @@ public class VSystemDTO{
 	/**
 	 * 通知开关
 	 */
-	private String noticeSwitch;
+	private Boolean noticeSwitch;
 	/**
 	 * 评论开关
 	 */
-	private String commentSwitch;
+	private Boolean commentSwitch;
 	/**
 	 * 系统主题
 	 */
 	private String theme;
+	/**
+	 * 最新文章
+	 */
+	private Boolean vNew;
+	/**
+	 * 推荐文章
+	 */
+	private Boolean vRecommend;
+	/**
+	 * 热门文章
+	 */
+	private Boolean vHot;
+	/**
+	 * 归档
+	 */
+	private Boolean vArchive;
+	/**
+	 * 标签
+	 */
+	private Boolean vTag;
+	/**
+	 * 最新评论
+	 */
+	private Boolean vComment;
 }

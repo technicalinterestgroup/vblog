@@ -12,7 +12,8 @@ import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.mapper.UserRoleMapper;
 import com.technicalinterest.group.service.MailService;
 import com.technicalinterest.group.service.VSystemService;
-import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.Enum.ResultEnum;
+import com.technicalinterest.group.service.constant.RedisKeyConstant;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.*;
@@ -50,498 +51,565 @@ import java.util.UUID;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	private UserMapper userMapper;
-	@Autowired
-	private RoleAuthMapper roleAuthMapper;
-	@Autowired
-	private UserRoleMapper userRoleMapper;
-	@Autowired
-	private RedisUtil redisUtil;
-	@Autowired
-	private MailService mailService;
-	@Autowired
-	private VSystemService systemService;
-	@Autowired
-	private DefaultKaptcha producer;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
+    private RoleAuthMapper roleAuthMapper;
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+    @Autowired
+    private RedisUtil redisUtil;
+    @Autowired
+    private MailService mailService;
+    @Autowired
+    private VSystemService systemService;
+    @Autowired
+    private DefaultKaptcha producer;
 
-	@Value("${server}")
-	private String SERVER;
+    @Value("${server}")
+    private String SERVER;
 
-	@Value("${activation_web_url}")
-	private String ACTIVATION_WEB_URL;
+    @Value("${activation_web_url}")
+    private String ACTIVATION_WEB_URL;
 
-	@Value("${reset_web_url}")
-	private String REST_WEB_URL;
-	/**
-	*
-	*/
-	@Value("${activation_time}")
-	private Long ACTIVATION_TIME;
-	/**
-	* 登录过期时间
-	*/
-	@Value("${login_time}")
-	private Long LOGIN_TIME;
-	/**
-	* 验证码过期时间
-	*/
-	@Value("${img_time}")
-	private Long IMG_TIME;
-	/**
-	 * 登录错误次数
-	 */
-	@Value("${login_error_times}")
-	private Integer LOGIN_ERROR_TIMES;
-	/**
-	 * 用户锁住时间
-	 */
-	@Value("${lock_user_time}")
-	private Long LOCK_USER_TIME;
+    @Value("${reset_web_url}")
+    private String REST_WEB_URL;
+    /**
+     *
+     */
+    @Value("${activation_time}")
+    private Long ACTIVATION_TIME;
+    /**
+     * 登录过期时间
+     */
+    @Value("${login_time}")
+    private Long LOGIN_TIME;
+    /**
+     * 验证码过期时间
+     */
+    @Value("${img_time}")
+    private Long IMG_TIME;
+    /**
+     * 登录错误次数
+     */
+    @Value("${login_error_times}")
+    private Integer LOGIN_ERROR_TIMES;
+    /**
+     * 用户锁住时间
+     */
+    @Value("${lock_user_time}")
+    private Long LOCK_USER_TIME;
 
-	private static final String PASS_SALT = "3edc4rfv!@#";
+    private static final String PASS_SALT = "3edc4rfv!@#";
 
-	private static final String LOGIN_ERROR_KEY = "login_error_";
+    private static final String LOGIN_ERROR_KEY = "login_error_";
 
-	private String LOCK_USER_KEY = "lock_user_";
+    private String LOCK_USER_KEY = "lock_user_";
 
 
-	/**
-	 * 登录
-	 * @param userDTO
-	 * @return ReturnClass<UserDTO>
-	 * @author: shuyu.wang
-	 * @date: 2019-07-14 18:48
-	 */
-	@Override
-	public ReturnClass login(EditUserDTO userDTO) {
-		//验证码校验
-		//		ReturnClass returnClass = validImg(userDTO.getToken(), userDTO.getImg());
-		//		if (!returnClass.isSuccess()) {
-		//			return returnClass;
-		//		}
-		//判断登录错误次数
-		ReturnClass loginErrorTimes = loginErrorTimes(userDTO.getUserName());
-		if (!loginErrorTimes.isSuccess()) {
-			return loginErrorTimes;
-		}
-		User user = new User();
-		user.setUserName(userDTO.getUserName());
-		//用户名判断
-		UserRoleDTO userRoleDTO1 = userMapper.queryUserRoleDTO(user);
-		if (Objects.isNull(userRoleDTO1)) {
-			return ReturnClass.fail(UserConstant.NO_USER);
-		}
-		if (userRoleDTO1.getState() == 0) {
-			return ReturnClass.fail(UserConstant.NO_ACTIVATION);
-		}
-		if (userRoleDTO1.getIsDel() == 1) {
-			return ReturnClass.fail(UserConstant.USER_DISABLE);
-		}
-		//密码判断
-		user.setPassWord(userDTO.getPassWord() + PASS_SALT);
-		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
-		if (Objects.isNull(userRoleDTO)) {
-			//累加错误次数
-			ReturnClass returnClass1 = addErrorSum(userDTO.getUserName());
-			if (!returnClass1.isSuccess()) {
-				return returnClass1;
-			}
-			return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
-		}
-		//清除错误登录次数
-		redisUtil.del(LOGIN_ERROR_KEY + userDTO.getUserName());
-		//获取权限列表
-		List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 1);
-		if (userRoleDTO.getRoleType() == 1) {
-			if (!redisUtil.hasKey(UserConstant.ADMIN_AUTH_URL)) {
-				List<RoleAuthDTO> roleAuth = roleAuthMapper.queryAuthByRole(userRoleDTO.getRoleId(), (short) 2);
-				StringBuffer stringBuffer = new StringBuffer();
-				for (RoleAuthDTO entity : roleAuth) {
-					stringBuffer.append(entity.getUrl());
-					stringBuffer.append(",");
-				}
-				redisUtil.set(UserConstant.ADMIN_AUTH_URL, stringBuffer.toString());
-			}
-		}
-		//生成token
-		UserJWTDTO userVO = new UserJWTDTO();
-		userVO.setUserName(userRoleDTO.getUserName());
-		userVO.setNickName(userRoleDTO.getNickName());
-		userVO.setRoleType(userRoleDTO.getRoleType());
-		userVO.setPhoto(userRoleDTO.getPhoto());
-		userVO.setAuthList(roleAuthDTOS);
-		userVO.setUserToken(setToken(userVO,userRoleDTO));
-		return ReturnClass.success(UserConstant.LOGIN_SUCCESS, userVO);
-	}
 
-	private String setToken(UserJWTDTO userVO,UserRoleDTO userRoleDTO) {
-		String token = JWTUtil.generateToken(userVO);
-		redisUtil.set(token, JSONObject.toJSONString(userRoleDTO), LOGIN_TIME);
-		return token;
-	}
+    /**
+     * 登录
+     *
+     * @param userDTO
+     * @return ReturnClass<UserDTO>
+     * @author: shuyu.wang
+     * @date: 2019-07-14 18:48
+     */
+    @Override
+    public ReturnClass login(EditUserDTO userDTO,Short type) {
+        //验证码校验
+        ReturnClass returnClass = validImg(userDTO.getToken(), userDTO.getImg());
+        if (!returnClass.isSuccess()) {
+            return returnClass;
+        }
+        //判断登录错误次数
+        ReturnClass loginErrorTimes = loginErrorTimes(userDTO.getUserName());
+        if (!loginErrorTimes.isSuccess()) {
+            return loginErrorTimes;
+        }
+        User user = new User();
+        user.setUserName(userDTO.getUserName());
+        //用户名判断
+        UserRoleDTO userRoleDTO1 = userMapper.queryUserRoleDTO(user,type);
+        if (Objects.isNull(userRoleDTO1)) {
+            return ReturnClass.fail(UserConstant.NO_USER);
+        }
+        if (userRoleDTO1.getState() == 0) {
+            return ReturnClass.fail(UserConstant.NO_ACTIVATION);
+        }
+        if (userRoleDTO1.getIsDel() == 1) {
+            return ReturnClass.fail(UserConstant.USER_DISABLE);
+        }
+        //密码判断
+        user.setPassWord(userDTO.getPassWord() + PASS_SALT);
+        UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user,type);
+        if (Objects.isNull(userRoleDTO)) {
+            //累加错误次数
+            ReturnClass returnClass1 = addErrorSum(userDTO.getUserName());
+            if (!returnClass1.isSuccess()) {
+                return returnClass1;
+            }
+            return ReturnClass.fail(UserConstant.PASSWORD_ERROR);
+        }
+        //清除错误登录次数
+        redisUtil.del(LOGIN_ERROR_KEY + userDTO.getUserName());
+        redisUtil.set(RedisKeyConstant.userInfoKey(userDTO.getUserName()),userDTO);
+        List<RoleAuthDTO> roleAuthDTOS = getAuthList(userRoleDTO.getRoleId(),0L);
+        //生成token
+        UserJWTDTO userVO = new UserJWTDTO();
+        userVO.setUserName(userRoleDTO.getUserName());
+        userVO.setNickName(userRoleDTO.getNickName());
+        userVO.setRoleType(userRoleDTO.getRoleType());
+        userVO.setPhoto(userRoleDTO.getPhoto());
+        userVO.setAuthList(roleAuthDTOS);
+        userVO.setUserToken(setToken(userRoleDTO.getUserName()));
+        return ReturnClass.success(UserConstant.LOGIN_SUCCESS, userVO);
+    }
 
-	/**
-	 * 注册新用户
-	 * @author: shuyu.wang
-	 * @date: 2019-07-21 21:32
-	 * @param newUserDTO
-	 * @return null
-	 */
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public ReturnClass addUser(EditUserDTO newUserDTO) {
-		//验证码校验
-		ReturnClass returnClass = validImg(newUserDTO.getToken(), newUserDTO.getImg());
-		if (!returnClass.isSuccess()) {
-			return returnClass;
-		}
-		User user = User.builder().userName(newUserDTO.getUserName()).build();
-		User userByUser = userMapper.getUserByUser(user);
-		if (!Objects.isNull(userByUser)) {
-			return ReturnClass.fail(UserConstant.DUPLICATE_USER_NAME);
-		}
-		User email = User.builder().email(newUserDTO.getEmail()).build();
-		User emailResult = userMapper.getUserByUser(email);
-		if (!Objects.isNull(emailResult)) {
-			return ReturnClass.fail(UserConstant.DUPLICATE_USER_EMAIL);
-		}
-		BeanUtils.copyProperties(newUserDTO, user);
-		user.setNickName("小小程序员");
-		user.setPassWord(newUserDTO.getPassWord() + PASS_SALT);
-		int i = userMapper.insertSelective(user);
-		if (i != 1) {
-			return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
-		} else {
-			UserRole userRole = new UserRole();
-			userRole.setUserId(user.getId());
-			userRole.setRoleId((long) 2);
-			int i1 = userRoleMapper.insertSelective(userRole);
-			if (i1 < 1) {
-				throw new VLogException(UserConstant.ADD_USER_ERROR);
-			}
-			VSystemDTO vSystemDTO = VSystemDTO.builder().userName(newUserDTO.getUserName()).vStart(new Date()).build();
-			systemService.insertSelective(vSystemDTO);
-			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
-			redisUtil.set(key, String.valueOf(user.getId()), ACTIVATION_TIME);
-			//发送邮件
-			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
-			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
-					"<p>欢迎!&nbsp" + newUserDTO.getUserName() + "<br>" + "感谢您在技术兴趣博客网站的注册，请点击这里激活您的账号:<br></p>" + "<a href=\"" + ACTIVATION_WEB_URL + UserConstant.ACTIVATION_URL
-							+ key + "\">" + SERVER + UserConstant.ACTIVATION_URL + key + "</a><br>" + "<p>祝您使用愉快，使用过程中您有任何问题请及时联系我们。</p>");
+    private  List<RoleAuthDTO> getAuthList(Long roleId,Long parentId){
+        List<RoleAuthDTO> roleAuthDTOS = roleAuthMapper.queryAuthByRole(roleId,null,parentId);
+        for (RoleAuthDTO entity:roleAuthDTOS) {
+            List<RoleAuthDTO> roleAuthDTOS1 = roleAuthMapper.queryAuthByRole(roleId, null, entity.getAuthId());
+            if (!roleAuthDTOS1.isEmpty()){
+                entity.setChildren(roleAuthDTOS1);
+            }
 
-			return ReturnClass.success(UserConstant.ADD_EMAIL_SEND);
-		}
-	}
+        }
+        return roleAuthDTOS;
+    }
 
-	/**
-	 * 更新用户信息
-	 * @author: shuyu.wang
-	 * @date: 2019-07-21 22:11
-	 * @param editUserDTO
-	 * @return null
-	 */
-	@Override
-	public ReturnClass updateUser(Boolean authCheck, EditUserDTO editUserDTO) {
-		User user = new User();
-		ReturnClass userByToken = getUserByToken();
-		if (!userByToken.isSuccess()) {
-			throw new VLogException(ResultEnum.USERINFO_ERROR);
-		}
-		UserDTO userDTO = (UserDTO) userByToken.getData();
-		BeanUtils.copyProperties(editUserDTO, user);
-		user.setId(userDTO.getId());
-		if (StringUtils.isNotEmpty(editUserDTO.getPassWord())) {
-			user.setPassWord(editUserDTO.getPassWord() + PASS_SALT);
-		}
-		int update = userMapper.update(user);
-		if (update != 1) {
-			return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
-		} else {
-			return ReturnClass.success(UserConstant.EDIT_USER_SUS);
-		}
-	}
+    private String setToken(UserJWTDTO userVO, UserRoleDTO userRoleDTO) {
+        String token = JWTUtil.generateToken(userVO);
+        redisUtil.set(token, JSONObject.toJSONString(userRoleDTO), LOGIN_TIME);
+        return token;
+    }
 
-	/**
-	 * @Description: 退出登录
-	 * @author: shuyu.wang
-	 * @date: 2019-07-21 22:22
-	 * @param token
-	 * @return null
-	 */
-	@Override
-	public ReturnClass logout(String token) {
-		if (redisUtil.hasKey(token)) {
-			redisUtil.del(token);
-		}
-		return ReturnClass.success();
-	}
+    private String setToken(String userName) {
+        String token = UUID.randomUUID().toString().replaceAll("-", "");
+        if (redisUtil.hasKey(userName)) {
+            String o = (String) redisUtil.get(userName);
+            redisUtil.del(o);
+        }
+        redisUtil.set(userName, token, LOGIN_TIME);
+        redisUtil.set(token, userName, LOGIN_TIME);
+        return token;
+    }
 
-	/**
-	 * @Description: 账号激活
-	 * @author: shuyu.wang
-	 * @date: 2019/8/5 21:24
-	 * @param key
-	 * @return null
-	 */
-	@Override
-	public ReturnClass activationUser(String key) {
-		String id = (String) redisUtil.get(key);
-		if (!StringUtils.isEmpty(id)) {
-			User user = new User();
-			user.setId(Long.parseLong(id));
-			user.setState((short) 1);
-			int update = userMapper.update(user);
-			if (update < 1) {
-				throw new VLogException(UserConstant.ACTIVATION_FAIL);
-			}
-			redisUtil.del(key);
-			return ReturnClass.success(UserConstant.ACTIVATION_SUC);
-		} else {
-			return ReturnClass.fail(UserConstant.MAIL_OUTTIME);
-		}
-	}
+    /**
+     * 注册新用户
+     *
+     * @param newUserDTO
+     * @return null
+     * @author: shuyu.wang
+     * @date: 2019-07-21 21:32
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ReturnClass addUser(EditUserDTO newUserDTO) {
+        //验证码校验
+        ReturnClass returnClass = validImg(newUserDTO.getToken(), newUserDTO.getImg());
+        if (!returnClass.isSuccess()) {
+            return returnClass;
+        }
+        User user = User.builder().userName(newUserDTO.getUserName()).build();
+        User userByUser = userMapper.getUserByUser(user);
+        if (!Objects.isNull(userByUser)) {
+            return ReturnClass.fail(UserConstant.DUPLICATE_USER_NAME);
+        }
+        User email = User.builder().email(newUserDTO.getEmail()).build();
+        User emailResult = userMapper.getUserByUser(email);
+        if (!Objects.isNull(emailResult)) {
+            return ReturnClass.fail(UserConstant.DUPLICATE_USER_EMAIL);
+        }
+        BeanUtils.copyProperties(newUserDTO, user);
+        user.setNickName("小小程序员");
+        user.setUploadNum(UserConstant.UPLOAD_NUM);
+        user.setPassWord(newUserDTO.getPassWord() + PASS_SALT);
+        int i = userMapper.insertSelective(user);
+        if (i != 1) {
+            return ReturnClass.fail(UserConstant.ADD_USER_ERROR);
+        } else {
+            //缓存文件上传次数
+            redisUtil.incr(RedisKeyConstant.uploadTimeKey(user.getUserName()),UserConstant.UPLOAD_NUM);
+            UserRole userRole = new UserRole();
+            userRole.setUserId(user.getId());
+            userRole.setRoleId((long) 2);
+            int i1 = userRoleMapper.insertSelective(userRole);
+            if (i1 < 1) {
+                throw new VLogException(UserConstant.ADD_USER_ERROR);
+            }
+            VSystemDTO vSystemDTO = VSystemDTO.builder().userName(newUserDTO.getUserName()).vStart(new Date()).build();
+            systemService.insertSelective(vSystemDTO);
+//			String key = newUserDTO.getUserName() + "_" + UUID.randomUUID().toString();
+//			redisUtil.set(key, String.valueOf(user.getId()), ACTIVATION_TIME);
+//			//发送邮件
+//			//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
+//			mailService.sendHtmlMail(newUserDTO.getEmail(), UserConstant.MAIL_TITLE,
+//					"<p>欢迎!&nbsp" + newUserDTO.getUserName() + "<br>" + "感谢您在技术兴趣博客网站的注册，请点击这里激活您的账号:<br></p>" + "<a href=\"" + ACTIVATION_WEB_URL + UserConstant.ACTIVATION_URL
+//							+ key + "\">" + SERVER + UserConstant.ACTIVATION_URL + key + "</a><br>" + "<p>祝您使用愉快，使用过程中您有任何问题请及时联系我们。</p>");
 
-	/**
-	 * @Description: 根据toke获取用户信息
-	 * @author: shuyu.wang
-	 * @date: 2019-07-28 19:43
-	 * @return null
-	 */
-	@Override
-	public ReturnClass getUserByToken() {
-		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		if (!redisUtil.hasKey(accessToken)) {
-			throw new VLogException(ResultEnum.TIME_OUT);
-		}
-		String userInfo = (String) redisUtil.get(accessToken);
-		log.info("getUserByToken>>>  token={},userInfo={}",accessToken,userInfo);
-		UserDTO userDTO = JSONObject.parseObject(userInfo, UserDTO.class);
-		if (Objects.nonNull(userDTO)) {
-			return ReturnClass.success(userDTO);
-		}
-		return ReturnClass.fail();
-	}
+            return ReturnClass.success(UserConstant.ADD_EMAIL_SEND);
+        }
+    }
 
-	/**
-	 * @Description:根据用户名查询用户信息
-	 * @author: shuyu.wang
-	 * @date: 2019-08-08 13:08
-	 * @param userName
-	 * @return null
-	 */
-	@Override
-	public ReturnClass getUserByuserName(Boolean authCheck, String userName) {
-		//获取数据是否是当前用户校验
-		if (authCheck) {
-			ReturnClass returnClass = userNameIsLoginUser(userName);
-			if (!returnClass.isSuccess()) {
-				throw new VLogException(ResultEnum.NO_AUTH);
-			}else {
-				return returnClass;
-			}
-		}
-		User user = User.builder().userName(userName).build();
-		UserRoleDTO userRoleDTO = userMapper.queryUserRoleDTO(user);
-		if (Objects.nonNull(userRoleDTO)) {
-			UserDTO userDTO = new UserDTO();
-			BeanUtils.copyProperties(userRoleDTO, userDTO);
-			return ReturnClass.success(userDTO);
-		}
-		return ReturnClass.fail();
-	}
+    /**
+     * 更新用户信息
+     *
+     * @param editUserDTO
+     * @return null
+     * @author: shuyu.wang
+     * @date: 2019-07-21 22:11
+     */
+    @Override
+    public ReturnClass updateUser(EditUserDTO editUserDTO) {
+        User user = new User();
+        BeanUtils.copyProperties(editUserDTO, user);
+        user.setUserName(getUserNameByLoginToken());
+        int update = userMapper.updateByUserName(user);
+        if (update != 1) {
+            return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
+        } else {
+            return ReturnClass.success(UserConstant.EDIT_USER_SUS);
+        }
+    }
 
-	/**
-	 * @Description: 判断用户名是否是当前操作登录的用户
-	 * @author: shuyu.wang
-	 * @date: 2019-08-08 13:12
-	 * @param userName
-	 * @return null
-	 */
-	@Override
-	public ReturnClass userNameIsLoginUser(String userName) {
-		String accessToken = RequestHeaderContext.getInstance().getAccessToken();
-		if (!redisUtil.hasKey(accessToken)) {
-			throw new VLogException(ResultEnum.TIME_OUT);
-		}
-		String userInfo = (String) redisUtil.get(accessToken);
-		UserDTO userDTO=JSONObject.parseObject(userInfo,UserDTO.class);
-		if (Objects.nonNull(userDTO)&&StringUtils.equals(userName, userDTO.getUserName())) {
-			return ReturnClass.success(userDTO);
-		}
-		return ReturnClass.fail();
-	}
+    /**
+     * 修改密码
+     *
+     * @param editUserDTO
+     * @return null
+     * @author: shuyu.wang
+     * @date: 2019-07-21 22:11
+     */
+    @Override
+    public ReturnClass updateUserPassWord(EditUserDTO editUserDTO) {
+        String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+        if (!redisUtil.hasKey(accessToken)) {
+            throw new VLogException(ResultEnum.TIME_OUT);
+        }
+        String userName = (String) redisUtil.get(accessToken);
+        User user = User.builder().userName(userName).passWord(editUserDTO.getNewPassWord() + PASS_SALT).build();
+        User userByUser = userMapper.getUserByUser(user);
+        if (Objects.isNull(userByUser)) {
+            return ReturnClass.fail("旧密码错误");
+        }
+        user.setPassWord(editUserDTO.getNewPassWord() + PASS_SALT);
+        int update = userMapper.updateByUserName(user);
+        if (update != 1) {
+            return ReturnClass.fail(UserConstant.EDIT_USER_ERROR);
+        } else {
+            return ReturnClass.success(UserConstant.EDIT_USER_SUS);
+        }
+    }
 
-	/**
-	 * @Description:获取博客用户信息
-	 * @author: shuyu.wang
-	 * @date: 2019-08-19 12:56
-	 * @param userName
-	 * @return null
-	 */
-	@Override
-	public ReturnClass getBlogUserInfo(String userName) {
-		List<BlogUserDTO> blogUserDTOS = userMapper.queryUserBlog(userName);
-		if (blogUserDTOS.isEmpty()) {
-			return ReturnClass.fail(UserConstant.NO_USER_INFO);
-		}
-		return ReturnClass.success(blogUserDTOS);
-	}
+    /**
+     * @param token
+     * @return null
+     * @Description: 退出登录
+     * @author: shuyu.wang
+     * @date: 2019-07-21 22:22
+     */
+    @Override
+    public ReturnClass logout(String token) {
+        if (redisUtil.hasKey(token)) {
+            Object o = redisUtil.get(token);
+            redisUtil.del(token);
+            redisUtil.del(o.toString());
+        }
+        return ReturnClass.success();
+    }
 
-	/**
-	 * @Description: 发送忘记密码邮件
-	 * @author: shuyu.wang
-	 * @date: 2019-10-08 17:04
-	 * @param userName
-	 * @return null
-	 */
-	@Override
-	public ReturnClass sendForgetPassMail(String userName, String email, String img, String token) {
-		//验证码校验
-		ReturnClass returnClass = validImg(token, img);
-		if (!returnClass.isSuccess()) {
-			return returnClass;
-		}
-		User user = new User();
-		user.setUserName(userName);
-		//用户名判断
-		User userByUser = userMapper.getUserByUser(user);
-		if (Objects.isNull(userByUser)) {
-			return ReturnClass.fail(UserConstant.NO_USER);
-		}
-		if (userByUser.getState() == 0) {
-			return ReturnClass.fail(UserConstant.NO_ACTIVATION);
-		}
-		if (!StringUtils.equals(email, userByUser.getEmail())) {
-			return ReturnClass.fail(UserConstant.MAIL_FAIL);
-		}
-		String key = userName + "_" + UUID.randomUUID().toString();
-		redisUtil.set(key, String.valueOf(userByUser.getId()), ACTIVATION_TIME);
-		//发送邮件
-		//点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
-		mailService.sendHtmlMail(userByUser.getEmail(), UserConstant.FORGET_PASS_MAIL_TITLE,
-				"<p>您好!&nbsp" + userName + "<br>" + "如果您确认忘记登录密码，请点击这里重置您的登录密码:<br></p>" + "<a href=\"" + REST_WEB_URL + UserConstant.FORGET_PASS_URL + key + "\">" + SERVER
-						+ UserConstant.FORGET_PASS_URL + key + "</a><br>" + "<p>如果操作过程中遇到其他问题请及时联系我们。</p>");
+    /**
+     * @param key
+     * @return null
+     * @Description: 账号激活
+     * @author: shuyu.wang
+     * @date: 2019/8/5 21:24
+     */
+    @Override
+    public ReturnClass activationUser(String key) {
+        String id = (String) redisUtil.get(key);
+        if (!StringUtils.isEmpty(id)) {
+            User user = new User();
+            user.setId(Long.parseLong(id));
+            user.setState((short) 1);
+            int update = userMapper.update(user);
+            if (update < 1) {
+                throw new VLogException(UserConstant.ACTIVATION_FAIL);
+            }
+            redisUtil.del(key);
+            return ReturnClass.success(UserConstant.ACTIVATION_SUC);
+        } else {
+            return ReturnClass.fail(UserConstant.MAIL_OUTTIME);
+        }
+    }
 
-		return ReturnClass.success(UserConstant.FORGET_PASS_MAIL_SEND);
-	}
 
-	/**
-	 * @Description: 修改密码
-	 * @author: shuyu.wang
-	 * @date: 2019-10-08 17:23
-	 * @param editUserDTO
-	 * @return null
-	 */
-	@Override
-	public ReturnClass resetPassWord(String key, EditUserDTO editUserDTO) {
+    /**
+     * @param userName
+     * @return null
+     * @Description:根据用户名查询用户信息
+     * @author: shuyu.wang
+     * @date: 2019-08-08 13:08
+     */
+    @Override
+    public ReturnClass getUserByuserName(Boolean authCheck, String userName) {
+        User user = User.builder().userName(userName).build();
+        User userResult = userMapper.getUserByUser(user);
+        if (Objects.nonNull(userResult)) {
+            return ReturnClass.success(userResult);
+        }
+        return ReturnClass.fail();
+    }
 
-		String id = (String) redisUtil.get(key);
-		if (!StringUtils.isEmpty(id)) {
-			User user = new User();
-			user.setUserName(editUserDTO.getUserName());
-			//用户名判断
-			User userByUser = userMapper.getUserByUser(user);
-			if (Objects.isNull(userByUser)) {
-				return ReturnClass.fail(UserConstant.NO_USER);
-			}
-			if (Long.parseLong(id) != userByUser.getId()) {
-				return ReturnClass.fail(UserConstant.KEY_ERROR);
-			}
-			user.setId(Long.parseLong(id));
-			user.setPassWord(editUserDTO.getPassWord());
-			int update = userMapper.update(user);
-			if (update < 1) {
-				throw new VLogException(UserConstant.CHANGE_PASS_FAIL);
-			}
-			redisUtil.del(key);
-			return ReturnClass.success(UserConstant.CHANGE_PASS_SUC);
-		} else {
-			return ReturnClass.fail(UserConstant.MAIL_OUTTIME);
-		}
-	}
+    /**
+     * @return null
+     * @Description:查询登陆者用户信息
+     * @author: shuyu.wang
+     * @date: 2019-08-08 13:08
+     */
+    @Override
+    public ReturnClass getUserDetail() {
+        User user = User.builder().userName(getUserNameByLoginToken()).build();
+        User userResult = userMapper.getUserByUser(user);
+        if (Objects.nonNull(userResult)) {
+            return ReturnClass.success(userResult);
+        }
+        return ReturnClass.fail();
+    }
 
-	@Override
-	public ReturnClass createImage() {
-		/**
-		 * 前后端分离 登录验证码 方案
-		 * 后端生成图片 验证码字符串 uuid
-		 * uuid为key  验证码字符串为value
-		 * 传递bs64图片 和uuid给前端
-		 * 前端在登录的时候 传递 账号 密码 验证码 uuid
-		 * 通过uuid获取 验证码 验证
-		 */
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		//获取验证码
-		String text = producer.createText();
-		try {
-			BufferedImage image = producer.createImage(text);
-			ImageIO.write(image, "png", out);
-			String base64bytes = Base64.encodeBase64String(out.toByteArray());
-			//该字符串传输至前端放入src即可显示图片，安卓可以去掉data:image/png;base64,
-			String src = "data:image/png;base64," + base64bytes;
-			String token = UUID.randomUUID().toString();
-			redisUtil.set(token, text, IMG_TIME);
-			ImagVerifi imagVerifi = ImagVerifi.builder().img(src.replaceAll("[\\s*\t\n\r]", "")).token(token).build();
-			return ReturnClass.success(imagVerifi);
-		} catch (IOException e) {
-			throw new VLogException(UserConstant.CREAT_IMG_FAIL);
-		}
-	}
+    /**
+     * @param userName
+     * @return null
+     * @Description:获取博客用户信息
+     * @author: shuyu.wang
+     * @date: 2019-08-19 12:56
+     */
+    @Override
+    public ReturnClass getBlogUserInfo(String userName) {
+        List<BlogUserDTO> blogUserDTOS = userMapper.queryUserBlog(userName);
+        if (blogUserDTOS.isEmpty()) {
+            return ReturnClass.fail(UserConstant.NO_USER_INFO);
+        }
+        return ReturnClass.success(blogUserDTOS);
+    }
 
-	/**
-	 * @Description: 校验验证码
-	 * @author: shuyu.wang
-	 * @date: 2019-10-10 17:07
-	 * @param token
-	 * @return null
-	 */
-	private ReturnClass validImg(String token, String img) {
-		if (redisUtil.hasKey(token)) {
-			String result = (String) redisUtil.get(token);
-			if (StringUtils.equals(result, img)) {
-				redisUtil.del(token);
-				return ReturnClass.success(UserConstant.IMG_SUC);
-			}
-			return ReturnClass.fail(UserConstant.IMG_FAIL);
-		}
-		return ReturnClass.fail(UserConstant.IMG_TIME_OUT);
-	}
+    /**
+     * @param userName
+     * @return null
+     * @Description: 发送忘记密码邮件
+     * @author: shuyu.wang
+     * @date: 2019-10-08 17:04
+     */
+    @Override
+    public ReturnClass sendForgetPassMail(String userName, String email, String img, String token) {
+        //验证码校验
+        ReturnClass returnClass = validImg(token, img);
+        if (!returnClass.isSuccess()) {
+            return returnClass;
+        }
+        User user = new User();
+        user.setUserName(userName);
+        //用户名判断
+        User userByUser = userMapper.getUserByUser(user);
+        if (Objects.isNull(userByUser)) {
+            return ReturnClass.fail(UserConstant.NO_USER);
+        }
+        if (userByUser.getState() == 0) {
+            return ReturnClass.fail(UserConstant.NO_ACTIVATION);
+        }
+        if (!StringUtils.equals(email, userByUser.getEmail())) {
+            return ReturnClass.fail(UserConstant.MAIL_FAIL);
+        }
+        String key = userName + "_" + UUID.randomUUID().toString();
+        redisUtil.set(key, String.valueOf(userByUser.getId()), ACTIVATION_TIME);
+        //发送邮件
+        //点击验证邮箱：<a href=\""+domain+"\">"+domain+"</a>"
+        mailService.sendHtmlMail(userByUser.getEmail(), UserConstant.FORGET_PASS_MAIL_TITLE,
+                "<p>您好!&nbsp" + userName + "<br>" + "如果您确认忘记登录密码，请点击这里重置您的登录密码:<br></p>" + "<a href=\"" + REST_WEB_URL + UserConstant.FORGET_PASS_URL + key + "\">" + SERVER
+                        + UserConstant.FORGET_PASS_URL + key + "</a><br>" + "<p>如果操作过程中遇到其他问题请及时联系我们。</p>");
 
-	/**
-	 * @Description: 累加错误次数
-	 * @author: shuyu.wang
-	 * @date: 2019-10-11 18:27
-	 * @param userName
-	 * @return null
-	 */
-	private ReturnClass addErrorSum(String userName) {
-		String key = LOGIN_ERROR_KEY + userName;
-		if (redisUtil.hasKey(key)) {
-			long incr = redisUtil.incr(key, (long) 1);
-			if (incr >= LOGIN_ERROR_TIMES) {
-				redisUtil.set(LOCK_USER_KEY + userName, userName, LOCK_USER_TIME);
-				return ReturnClass.fail(UserConstant.LOGIN_ERROR_OVER_TIMES);
-			}
-		} else {
-			redisUtil.set(key, (long) 1, LOCK_USER_TIME);
-		}
-		return ReturnClass.success();
-	}
+        return ReturnClass.success(UserConstant.FORGET_PASS_MAIL_SEND);
+    }
 
-	/**
-	 * @Description: 判断账号是否被锁定
-	 * @author: shuyu.wang
-	 * @date: 2019/10/11 21:45
-	 * @param userName
-	 * @return com.technicalinterest.group.service.dto.ReturnClass
-	 */
-	private ReturnClass loginErrorTimes(String userName) {
-		String key = LOCK_USER_KEY + userName;
-		if (redisUtil.hasKey(key)) {
-			return ReturnClass.fail(UserConstant.LOGIN_ERROR_OVER_TIMES);
-		}
-		return ReturnClass.success();
-	}
+    /**
+     * @param editUserDTO
+     * @return null
+     * @Description: 修改密码
+     * @author: shuyu.wang
+     * @date: 2019-10-08 17:23
+     */
+    @Override
+    public ReturnClass resetPassWord(String key, EditUserDTO editUserDTO) {
 
+        String id = (String) redisUtil.get(key);
+        if (!StringUtils.isEmpty(id)) {
+            User user = new User();
+            user.setUserName(editUserDTO.getUserName());
+            //用户名判断
+            User userByUser = userMapper.getUserByUser(user);
+            if (Objects.isNull(userByUser)) {
+                return ReturnClass.fail(UserConstant.NO_USER);
+            }
+            if (Long.parseLong(id) != userByUser.getId()) {
+                return ReturnClass.fail(UserConstant.KEY_ERROR);
+            }
+            user.setId(Long.parseLong(id));
+            user.setPassWord(editUserDTO.getPassWord());
+            int update = userMapper.update(user);
+            if (update < 1) {
+                throw new VLogException(UserConstant.CHANGE_PASS_FAIL);
+            }
+            redisUtil.del(key);
+            return ReturnClass.success(UserConstant.CHANGE_PASS_SUC);
+        } else {
+            return ReturnClass.fail(UserConstant.MAIL_OUTTIME);
+        }
+    }
+    /**
+     * 前后端分离 登录验证码 方案
+     * 后端生成图片 验证码字符串 uuid
+     * uuid为key  验证码字符串为value
+     * 传递bs64图片 和uuid给前端
+     * 前端在登录的时候 传递 账号 密码 验证码 uuid
+     * 通过uuid获取 验证码 验证
+     */
+    @Override
+    public ReturnClass createImage() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        //获取验证码
+        String text = producer.createText();
+        try {
+            BufferedImage image = producer.createImage(text);
+            ImageIO.write(image, "png", out);
+            String base64bytes = Base64.encodeBase64String(out.toByteArray());
+            //该字符串传输至前端放入src即可显示图片，安卓可以去掉data:image/png;base64,
+            String src = "data:image/png;base64," + base64bytes;
+            String token ="imagVerifi_"+UUID.randomUUID().toString().replace("-","");
+            redisUtil.set(token, text, IMG_TIME);
+            ImagVerifi imagVerifi = ImagVerifi.builder().img(src.replaceAll("[\\s*\t\n\r]", "")).token(token).build();
+            return ReturnClass.success(imagVerifi);
+        } catch (IOException e) {
+            throw new VLogException(UserConstant.CREAT_IMG_FAIL);
+        }
+    }
+
+    /**
+     * 查询用户信息
+     *
+     * @param userName
+     * @return
+     */
+    @Override
+    public ReturnClass getUserInfo(String userName) {
+        User user = User.builder().userName(userName).build();
+        User userByUser = userMapper.getUserByUser(user);
+        if (Objects.isNull(userByUser)) {
+            throw new VLogException(ResultEnum.NO_URL);
+        }
+        return ReturnClass.success(userByUser);
+    }
+
+    /**
+     * @param token
+     * @return null
+     * @Description: 校验验证码
+     * @author: shuyu.wang
+     * @date: 2019-10-10 17:07
+     */
+    private ReturnClass validImg(String token, String img) {
+        if (redisUtil.hasKey(token)) {
+            String result = (String) redisUtil.get(token);
+            if (StringUtils.equals(result, img)) {
+                redisUtil.del(token);
+                return ReturnClass.success(UserConstant.IMG_SUC);
+            }
+            redisUtil.del(token);
+            return ReturnClass.fail(UserConstant.IMG_FAIL);
+        }
+        return ReturnClass.fail(UserConstant.IMG_TIME_OUT);
+    }
+
+    /**
+     * @param userName
+     * @return null
+     * @Description: 累加错误次数
+     * @author: shuyu.wang
+     * @date: 2019-10-11 18:27
+     */
+    private ReturnClass addErrorSum(String userName) {
+        String key = LOGIN_ERROR_KEY + userName;
+        if (redisUtil.hasKey(key)) {
+            long incr = redisUtil.incr(key, (long) 1);
+            if (incr >= LOGIN_ERROR_TIMES) {
+                redisUtil.set(LOCK_USER_KEY + userName, userName, LOCK_USER_TIME);
+                return ReturnClass.fail(UserConstant.LOGIN_ERROR_OVER_TIMES);
+            }
+        } else {
+            redisUtil.set(key, (long) 1, LOCK_USER_TIME);
+        }
+        return ReturnClass.success();
+    }
+
+    /**
+     * @param userName
+     * @return com.technicalinterest.group.service.dto.ReturnClass
+     * @Description: 判断账号是否被锁定
+     * @author: shuyu.wang
+     * @date: 2019/10/11 21:45
+     */
+    private ReturnClass loginErrorTimes(String userName) {
+        String key = LOCK_USER_KEY + userName;
+        if (redisUtil.hasKey(key)) {
+            return ReturnClass.fail(UserConstant.LOGIN_ERROR_OVER_TIMES);
+        }
+        return ReturnClass.success();
+    }
+
+    /**
+     * 根据登录token获取用户名
+     *
+     * @return
+     */
+    @Override
+    public String getUserNameByLoginToken() {
+        String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+        if (!redisUtil.hasKey(accessToken)) {
+            throw new VLogException(ResultEnum.TIME_OUT);
+        }
+        String userName = (String) redisUtil.get(accessToken);
+        return userName;
+    }
+
+    /**
+     * 获取信息
+     *
+     * @return
+     */
+    @Override
+    public UserRoleDTO getUserRoleDTOByLoginToken() {
+        String accessToken = RequestHeaderContext.getInstance().getAccessToken();
+        if (!redisUtil.hasKey(accessToken)) {
+            throw new VLogException(ResultEnum.TIME_OUT);
+        }
+        String userName = (String) redisUtil.get(accessToken);
+        UserRoleDTO o = (UserRoleDTO)redisUtil.get(RedisKeyConstant.userInfoKey(userName));
+        return o;
+    }
+
+    /**
+     * 根据用户名查询用户信息
+     *
+     * @return
+     */
+    @Override
+    public User getUserByUserName(String userName) {
+        User user = User.builder().userName(userName).build();
+        User result = userMapper.getUserByUser(user);
+        if (Objects.isNull(result)) {
+            throw new VLogException(ResultEnum.USERINFO_ERROR);
+        }
+        return result;
+    }
 }

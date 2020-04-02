@@ -59,9 +59,9 @@ public class MyWebAppConfig extends WebMvcConfigurerAdapter {
         // 多个拦截器组成一个拦截器链
         // addPathPatterns 用于添加拦截规则
         // excludePathPatterns 用户排除拦截
-		if (!StringUtils.equals(LOACL_ENV,profile)){
+//		if (!StringUtils.equals(LOACL_ENV,profile)){
 			registry.addInterceptor(getMyInterceptor()).addPathPatterns("/**");
-		}
+//		}
 		registry.addInterceptor(getRequestHeaderContextInterceptor()).addPathPatterns("/**");
 		registry.addInterceptor(getRequestLimitInterceptor()).addPathPatterns("/**");
 		registry.addInterceptor(getIpUrlLimitInterceptor()).addPathPatterns("/**");

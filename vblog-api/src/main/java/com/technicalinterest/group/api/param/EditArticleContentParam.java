@@ -27,51 +27,13 @@ public class EditArticleContentParam {
 	@NotNull(message = "文章id不能为空！")
 	private Long id;
 
-	/**
-	 * 标题
-	 */
-	@ApiModelProperty(value = "文章标题")
-	@NotBlank(message = "文章标题不能为空！")
-	private String title;
-	/**
-	 * 是否置顶
-	 */
-	@ApiModelProperty(value = "是否置顶",allowableValues = "1:置顶,0:不置顶",example = "1")
-	private Short isTop;
-	/**
-	 * 分类id
-	 */
-	@ApiModelProperty(value = "文章关联分类id")
-	private Long categoryId;
-	/**
-	 * 标签id
-	 */
-	@ApiModelProperty(value = "文章关联标签id")
-	private Long  tagId;
+	@ApiModelProperty(value = "是否为系统推荐文章",allowableValues = "1:是,0:",example = "1")
+	private Short recommend;
 
-	/**
-	 * 文章内容
-	 */
-	@ApiModelProperty(value = "文章内容html格式")
-	private String content;
-
-	/**
-	 * 文章内容markdown格式
-	 */
-	@ApiModelProperty(value = "文章内容markdown格式")
-	@JsonProperty("contentMD")
-	private String contentMD;
 	/**
 	 * 文章状态 0：草稿，1：发布
 	 */
-//	@ApiModelProperty(value = "文章状态",allowableValues = "0：草稿，1：发布")
-//	private Short state;
+	@ApiModelProperty(value = "文章状态",allowableValues = "0：草稿，1：发布")
+	private Short state;
 
-	public String getContentMD() {
-		return contentMD;
-	}
-
-	public void setContentMD(String contentMD) {
-		this.contentMD = contentMD;
-	}
 }

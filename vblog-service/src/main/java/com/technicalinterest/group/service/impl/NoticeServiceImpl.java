@@ -4,7 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.Comment;
 import com.technicalinterest.group.dao.Like;
 import com.technicalinterest.group.dao.PageBase;
-import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.CommentNoticeDTO;
 import com.technicalinterest.group.dto.LikeNoticeDTO;
 import com.technicalinterest.group.mapper.CommentMapper;
@@ -12,7 +11,7 @@ import com.technicalinterest.group.mapper.LikeMapper;
 import com.technicalinterest.group.service.NoticeService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.NoticeConstant;
-import com.technicalinterest.group.service.constant.ResultEnum;
+import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.dto.NoticeCount;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -44,23 +43,19 @@ public class NoticeServiceImpl implements NoticeService {
 	 * @Description:评论通知列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-20 13:05
-	 * @param userName
 	 * @param pageBase
 	 * @return com.technicalinterest.group.service.dto.ReturnClass
 	 */
 	@Override
-	public ReturnClass queryCommentNotice(String userName, PageBase pageBase) {
-		ReturnClass returnClass = userService.userNameIsLoginUser(userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
+	public ReturnClass queryCommentNotice(PageBase pageBase) {
+		String userName=userService.getUserNameByLoginToken();
 		Integer integer = commentMapper.queryCountCommentNotice(userName,null);
 		if (integer < 1) {
 			return ReturnClass.fail(NoticeConstant.NO_COMMENT);
 		}
-		PageHelper.startPage(pageBase.getPageNum(), pageBase.getPageSize());
+		PageHelper.startPage(pageBase.getCurrentPage(), pageBase.getPageSize());
 		List<CommentNoticeDTO> commentNoticeDTOS = commentMapper.queryListCommentNotice(userName,null);
-		PageBean<CommentNoticeDTO> pageBean = new PageBean<>(commentNoticeDTOS, pageBase.getPageNum(), pageBase.getPageSize(), integer);
+		PageBean<CommentNoticeDTO> pageBean = new PageBean<>(commentNoticeDTOS, pageBase.getCurrentPage(), pageBase.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 
@@ -91,23 +86,19 @@ public class NoticeServiceImpl implements NoticeService {
 	 * @Description: 点赞通知列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-23 12:50
-	 * @param userName
 	 * @param pageBase
 	 * @return null
 	 */
 	@Override
-	public ReturnClass queryLikeNotice(String userName, PageBase pageBase) {
-		ReturnClass returnClass = userService.userNameIsLoginUser(userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
+	public ReturnClass queryLikeNotice( PageBase pageBase) {
+		String userName=userService.getUserNameByLoginToken();
 		Integer integer = likeMapper.queryCountLikeNotice(userName,null);
 		if (integer < 1) {
 			return ReturnClass.fail(NoticeConstant.NO_LIKE);
 		}
-		PageHelper.startPage(pageBase.getPageNum(), pageBase.getPageSize());
+		PageHelper.startPage(pageBase.getCurrentPage(), pageBase.getPageSize());
 		List<LikeNoticeDTO> likeNoticeDTOS = likeMapper.queryListLikeNotice(userName,null);
-		PageBean<LikeNoticeDTO> pageBean = new PageBean<>(likeNoticeDTOS, pageBase.getPageNum(), pageBase.getPageSize(), integer);
+		PageBean<LikeNoticeDTO> pageBean = new PageBean<>(likeNoticeDTOS, pageBase.getCurrentPage(), pageBase.getPageSize(), integer);
 		return ReturnClass.success(pageBean);
 	}
 
@@ -139,15 +130,11 @@ public class NoticeServiceImpl implements NoticeService {
 	 * @Description: 获取未读消息数量
 	 * @author: shuyu.wang
 	 * @date: 2019-10-16 17:58
-	 * @param userName
 	 * @return null
 	 */
 	@Override
-	public ReturnClass queryNoticeCount(String userName) {
-		ReturnClass returnClass = userService.userNameIsLoginUser(userName);
-		if (!returnClass.isSuccess()) {
-			throw new VLogException(ResultEnum.NO_URL);
-		}
+	public ReturnClass queryNoticeCount() {
+		String userName=userService.getUserNameByLoginToken();
 		//未查看评论通知数
 		Integer countComment = commentMapper.queryCountCommentNotice(userName,(short)0);
 

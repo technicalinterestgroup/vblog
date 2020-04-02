@@ -17,7 +17,7 @@ public class PageBaseParam {
 	* 页数
 	*/
 	@ApiModelProperty(value = "页数")
-	private Integer pageNum=1;
+	private Integer currentPage=1;
 	/**
 	 * 每页条数
 	 */

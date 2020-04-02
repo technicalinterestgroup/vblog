@@ -22,6 +22,8 @@ public class LikeNoticeDTO {
 	 * 用户名
 	 */
 	private String userName;
+
+	private String sourceUserName;
 	/**
 	 * id
 	 */

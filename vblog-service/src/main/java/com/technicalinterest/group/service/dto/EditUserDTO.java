@@ -22,6 +22,10 @@ public class EditUserDTO {
 	 * 密码
 	 */
 	private String passWord;
+
+	private String oldPassWord;
+
+	private String newPassWord;
 	/**
 	 * 邮箱
 	 */

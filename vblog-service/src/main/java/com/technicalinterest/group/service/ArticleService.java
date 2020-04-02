@@ -2,8 +2,10 @@ package com.technicalinterest.group.service;
 
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
+import com.technicalinterest.group.dto.UserBlogDTO;
 import com.technicalinterest.group.service.dto.ArticleContentDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -48,6 +50,15 @@ public interface ArticleService {
 	 */
 	ReturnClass listArticle(Boolean authCheck,String userName,QueryArticleDTO queryArticleDTO);
 
+	/**
+	 * @Description: 根据登录用户查询
+	 * @author: shuyu.wang
+	 * @date: 2019-08-04 15:12
+	 * @param queryArticleDTO
+	 * @return ReturnClass
+	 */
+	ReturnClass listArticleByLogin(QueryArticleDTO queryArticleDTO);
+
     /**
      * @Description:获取文章详情
      * @author: shuyu.wang
@@ -55,8 +66,16 @@ public interface ArticleService {
      * @param id
      * @return null
     */
-	ReturnClass articleDetail(Boolean authCheck,Long id);
+	ReturnClass articleDetailView(Long id,String userName);
 
+	/**
+	 * @Description:登录用户获取文章详情
+	 * @author: shuyu.wang
+	 * @date: 2019-08-09 16:37
+	 * @param id
+	 * @return null
+	 */
+	ReturnClass articleDetailByLogin(Long id);
 	/**
 	 * @Description: 全站文章列表
 	 * @author: shuyu.wang
@@ -73,7 +92,7 @@ public interface ArticleService {
 	 * @param flag 1:时间排序 2：阅读量排序  3：点赞数  4：评论数
 	 * @return ReturnClass
 	 */
-	ReturnClass listArticleOrderBy(Boolean authCheck,String userName,Integer flag);
+	ReturnClass listArticleOrderBy(String userName,Integer flag);
 
 	/**
 	 * @Description:博客文章归档
@@ -111,5 +130,12 @@ public interface ArticleService {
 	 * @return null
 	*/
 	ReturnClass addReadCount(Long id);
+
+	/**
+	 * 查询用户博客数据
+	 * @param userName
+	 * @return
+	 */
+	ReturnClass getBlogInfoByUser(String userName);
 
 }

@@ -22,8 +22,13 @@ import java.util.Date;
 public class ArticleContentVO {
 	@ApiModelProperty(value = "文章id")
 	private Long id;
+
+	@ApiModelProperty(value = "作者")
+	private String userName;
+
 	@ApiModelProperty(value = "标题")
 	private String title;
+
 	@ApiModelProperty(value = "摘要")
 	private String submit;
 
@@ -47,6 +52,9 @@ public class ArticleContentVO {
 
 	@ApiModelProperty(value = "文章详情")
 	private String content;
+
+	@ApiModelProperty(value = "文章详情")
+	private String contentFormat;
 
 	@ApiModelProperty(value = "是否收藏",allowableValues = "1:是,null:否")
 	@JsonProperty("vCollection")

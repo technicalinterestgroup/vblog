@@ -1,5 +1,6 @@
 package com.technicalinterest.group.mapper;
 
+import com.technicalinterest.group.dto.TreeDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,4 +16,33 @@ public interface AuthMapper {
     int insertList(@Param("pojos") List<Auth> pojo);
 
     int update(@Param("pojo") Auth pojo);
+
+    /**
+     * 查询树
+     * @param type
+     * @return
+     */
+    List<TreeDTO>  getTree(@Param("type")Short type,@Param("parentId")Long parentId);
+
+    /**
+     * 查询列表
+     * @param pojo
+     * @return
+     */
+    Integer getAuthListCount(@Param("pojo") Auth pojo);
+
+    /**
+     * 查询列表
+     * @param pojo
+     * @return
+     */
+    List<Auth> getAuthList(@Param("pojo") Auth pojo);
+    /**
+     * 查询一个权限
+     * @param pojo
+     * @return
+     */
+    Auth getAuth(@Param("pojo") Auth pojo);
+
+    Integer delAuth(@Param("id")Long id);
 }

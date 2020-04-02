@@ -19,15 +19,15 @@ public class Auth extends BaseDao {
 	/**
 	 * 权限类型 1：菜单，2：接口
 	 */
-	private String type;
+	private Short type;
 	/**
 	 * pic地址  或 url 地址
 	 */
 	private String url;
 	/**
-	 * 描述
+	 * 图标
 	 */
-	private String info;
+	private String icon;
 	/**
 	 * 上级权限id
 	 */

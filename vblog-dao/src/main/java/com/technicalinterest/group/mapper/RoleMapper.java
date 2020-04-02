@@ -1,5 +1,6 @@
 package com.technicalinterest.group.mapper;
 
+import com.technicalinterest.group.dto.RoleDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,4 +16,13 @@ public interface RoleMapper {
     int insertList(@Param("pojos") List<Role> pojo);
 
     int update(@Param("pojo") Role pojo);
+
+    /**
+     * 角色列表
+     * @param pojo
+     * @return
+     */
+    List<RoleDTO> getRoleList(@Param("pojo") Role pojo);
+
+    Role getRole(@Param("pojo") Role pojo);
 }

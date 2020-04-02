@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,6 +15,7 @@ import lombok.Data;
  **/
 @Data
 @ApiModel(description = "分类查询返回")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CategoryVO {
 	@ApiModelProperty(value = "分类id")
 	private Long id;

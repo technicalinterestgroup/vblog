@@ -18,10 +18,9 @@ public interface NoticeService {
 	 * @Description: 评论通知列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-23 12:50
-	 * @param userName
 	 * @return null
 	*/
-	ReturnClass queryCommentNotice(String userName, PageBase pageBase);
+	ReturnClass queryCommentNotice(PageBase pageBase);
 
 	/**
 	 * @Description:查看评论，标记为已经查看
@@ -38,10 +37,9 @@ public interface NoticeService {
 	 * @Description: 点赞通知列表
 	 * @author: shuyu.wang
 	 * @date: 2019-08-23 12:50
-	 * @param userName
 	 * @return null
 	*/
-	ReturnClass queryLikeNotice(String userName, PageBase pageBase);
+	ReturnClass queryLikeNotice(PageBase pageBase);
 
 	/**
 	 * @Description:查看评论，标记为已经查看
@@ -56,8 +54,7 @@ public interface NoticeService {
      * @Description: 获取未读消息数量
      * @author: shuyu.wang
      * @date: 2019-10-16 17:58
-     * @param userName
      * @return null
     */
-	ReturnClass queryNoticeCount(String userName);
+	ReturnClass queryNoticeCount();
 }

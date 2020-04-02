@@ -1,10 +1,13 @@
 package com.technicalinterest.group.service;
 
 import com.technicalinterest.group.dao.FileUpload;
-import com.technicalinterest.group.dto.QueryArticleDTO;
-import com.technicalinterest.group.dto.QueryFileDTO;
-import com.technicalinterest.group.dto.QueryLogDTO;
+import com.technicalinterest.group.dao.RoleAuth;
+import com.technicalinterest.group.dto.*;
+import com.technicalinterest.group.service.dto.ArticleContentDTO;
+import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
+
+import java.util.List;
 
 /**
  * @package: com.technicalinterest.group.service
@@ -23,7 +26,7 @@ public interface AdminService {
      * @date: 2019-09-01 15:29
      * @return null
     */
-	ReturnClass userAll();
+	ReturnClass userAll(UserRoleDTO user);
 
     /**
      * @Description:查询全部文章
@@ -33,7 +36,14 @@ public interface AdminService {
      * @return null
     */
 	ReturnClass articleAll(QueryArticleDTO queryArticleDTO);
-
+	/**
+	 * @Description:文章操作
+	 * @author: shuyu.wang
+	 * @date: 2019-09-01 16:43
+	 * @param articleContentDTO
+	 * @return null
+	 */
+	ReturnClass editArticle(ArticleContentDTO articleContentDTO);
 	/**
 	 * @Description:查询全部文件
 	 * @author: shuyu.wang
@@ -51,4 +61,21 @@ public interface AdminService {
 	 * @return null
 	 */
 	ReturnClass logAll(QueryLogDTO queryLogDTO);
+
+	/**
+	 * 修改账号信息
+	 * @param editUserDTO
+	 * @return
+	 */
+	ReturnClass updateUser(EditUserDTO editUserDTO);
+
+	/**
+	 * 增加文件上传次数
+	 * @param userName
+	 * @param uploadTime
+	 * @return
+	 */
+	ReturnClass addUploadTimes(String userName,Integer uploadTime);
+
+
 }

@@ -1,6 +1,8 @@
 package com.technicalinterest.group.service;
 
 
+import com.technicalinterest.group.dao.User;
+import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.UserDTO;
@@ -23,7 +25,7 @@ public interface UserService {
      * @param userDTO
      * @return UserDTO
     */
-    ReturnClass login(EditUserDTO userDTO);
+    ReturnClass login(EditUserDTO userDTO,Short type);
 
 
 
@@ -44,7 +46,16 @@ public interface UserService {
     * @param editUserDTO
     * @return null
    */
-    ReturnClass updateUser(Boolean authCheck,EditUserDTO editUserDTO);
+    ReturnClass updateUser(EditUserDTO editUserDTO);
+
+    /**
+     * 修改密码
+     * @author: shuyu.wang
+     * @date: 2019-07-21 22:11
+     * @param editUserDTO
+     * @return null
+     */
+    ReturnClass updateUserPassWord(EditUserDTO editUserDTO);
 
     /**
      * @Description: 退出登录
@@ -64,14 +75,6 @@ public interface UserService {
      */
     ReturnClass activationUser(String key);
 
-    /**
-     * @Description: 根据toke获取用户信息
-     * @author: shuyu.wang
-     * @date: 2019-07-28 19:43
-     * @return null
-    */
-    ReturnClass getUserByToken();
-    
 
     /**
      * @Description:根据用户名查询用户信息
@@ -82,16 +85,13 @@ public interface UserService {
     */
     ReturnClass getUserByuserName(Boolean authCheck,String userName);
 
-
-    
     /**
-     * @Description: 判断用户名是否是当前操作登录的用户
+     * @Description:查询登陆者用户信息
      * @author: shuyu.wang
-     * @date: 2019-08-08 13:12
-     * @param userName
+     * @date: 2019-08-08 13:08
      * @return null
-    */
-    ReturnClass userNameIsLoginUser(String userName);
+     */
+    ReturnClass getUserDetail();
 
 
     /**
@@ -129,4 +129,28 @@ public interface UserService {
      * @return null
      */
     ReturnClass createImage();
+
+    /**
+     * 查询用户信息
+     * @param userName
+     * @return
+     */
+    ReturnClass getUserInfo(String userName);
+
+    /**
+     * 根据登录token获取用户名
+     * @return
+     */
+    String getUserNameByLoginToken();
+
+  /**
+   * 获取信息
+   * @return
+   */
+  UserRoleDTO getUserRoleDTOByLoginToken();
+   /**
+    * 根据用户名查询用户信息
+    * @return
+    */
+    User getUserByUserName(String userName);
 }

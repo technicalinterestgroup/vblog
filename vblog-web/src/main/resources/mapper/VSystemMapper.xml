@@ -18,6 +18,12 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
         <result column="theme" property="theme"/>
+        <result column="v_new" property="vNew"/>
+        <result column="v_recommend" property="vRecommend"/>
+        <result column="v_hot" property="vHot"/>
+        <result column="v_archive" property="vArchive"/>
+        <result column="v_tag" property="vTag"/>
+        <result column="v_comment" property="vComment"/>
     </resultMap>
 
     <!--auto generated Code-->
@@ -36,7 +42,13 @@
         `is_del`,
         `create_time`,
         `update_time`,
-        `theme`
+        `theme`,
+         v_new,
+         v_recommend,
+         v_hot,
+        `v_archive`,
+        `v_tag`,
+        `v_comment`
 </sql>
 
 
@@ -59,6 +71,12 @@
             <if test="pojo.createTime!=null"> `create_time`,</if>
             <if test="pojo.updateTime!=null"> `update_time`,</if>
             <if test="pojo.theme!=null">`theme`,</if>
+            <if test="pojo.vNew!=null">`v_new`,</if>
+            <if test="pojo.vRecommend!=null">`v_recommend`,</if>
+            <if test="pojo.vHot!=null">`v_hot`,</if>
+            <if test="pojo.vArchive!=null">`v_archive`,</if>
+            <if test="pojo.vTag!=null">`v_tag`,</if>
+            <if test="pojo.vComment!=null">`v_comment`,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -77,6 +95,12 @@
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
             <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
             <if test="pojo.theme!=null">#{pojo.theme},</if>
+            <if test="pojo.vNew!=null">#{pojo.vNew},</if>
+            <if test="pojo.vRecommend!=null">#{pojo.vRecommend},</if>
+            <if test="pojo.vHot!=null">#{pojo.vHot},</if>
+            <if test="pojo.vArchive!=null">#{pojo.vArchive},</if>
+            <if test="pojo.vTag!=null">#{pojo.vTag},</if>
+            <if test="pojo.vComment!=null">#{pojo.vComment},</if>
         </trim>
     </insert>
 
@@ -98,7 +122,13 @@
             <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
             <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
             <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
-            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime}, </if>
+            <if test="pojo.vNew!=null">v_new=#{pojo.vNew},</if>
+            <if test="pojo.vRecommend!=null">v_recommend=#{pojo.vRecommend},</if>
+            <if test="pojo.vHot!=null">v_hot=#{pojo.vHot},</if>
+            <if test="pojo.vArchive!=null">v_archive=#{pojo.vArchive},</if>
+            <if test="pojo.vTag!=null">v_tag=#{pojo.vTag},</if>
+            <if test="pojo.vComment!=null">v_comment=#{pojo.vComment}</if>
         </set>
         WHERE user_name = #{pojo.userName}
     </update>

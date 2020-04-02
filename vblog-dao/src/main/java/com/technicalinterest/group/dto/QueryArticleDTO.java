@@ -16,7 +16,7 @@ public class QueryArticleDTO extends PageBase {
 	/**
 	 * 搜索条件
 	 */
-	private String condition;
+	private String keywords;
 	/**
 	 * 是否置顶
 	 */
@@ -43,4 +43,8 @@ public class QueryArticleDTO extends PageBase {
 	 * 文章状态归档时间
 	 */
 	private String archiveTime;
+    /**
+	 * 排序标志
+     */
+	private Integer orderBy;
 }

@@ -1,11 +1,12 @@
 package com.technicalinterest.group.api.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
-import com.technicalinterest.group.api.param.EditArticleContentParam;
 import com.technicalinterest.group.api.param.NewArticleContentParam;
 import com.technicalinterest.group.api.param.QueryArticleParam;
+import com.technicalinterest.group.api.util.IndexOrderByUtil;
 import com.technicalinterest.group.api.vo.ApiResult;
-import com.technicalinterest.group.api.vo.ArticleContentVO;
+import com.technicalinterest.group.api.vo.ArticleDetailVO;
 import com.technicalinterest.group.api.vo.ArticlesVO;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.QueryArticleDTO;
@@ -18,6 +19,7 @@ import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +39,7 @@ import java.util.List;
 @Api(tags = "博客管理")
 @RestController
 @RequestMapping("article")
+@Slf4j
 public class ArticleController {
 	@Autowired
 	private ArticleService articleService;
@@ -50,6 +53,7 @@ public class ArticleController {
 	@BlogOperation(value = "博客发布")
 	@DistributeLock( key = "#articleContentParam.title", timeout = 2, expire = 1, errMsg = "00000")
 	public ApiResult<String> saveArticle(@Valid @RequestBody NewArticleContentParam articleContentParam) {
+		log.info("博客发布 参数{}", JSONObject.toJSON(articleContentParam));
 		ApiResult apiResult = new ApiResult();
 		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
 		BeanUtils.copyProperties(articleContentParam, articleContentDTO);
@@ -62,32 +66,15 @@ public class ArticleController {
 		return apiResult;
 	}
 
-	@ApiOperation(value = "博客编辑", notes = "博客编辑")
-	@PostMapping(value = "/edit")
-	@BlogOperation(value = "博客编辑")
-	public ApiResult<String> editArticle(@Valid @RequestBody EditArticleContentParam editArticleContentParam) {
-		ApiResult apiResult = new ApiResult();
-		ArticleContentDTO articleContentDTO = new ArticleContentDTO();
-		BeanUtils.copyProperties(editArticleContentParam, articleContentDTO);
-		ReturnClass editArticle = articleService.editArticle(articleContentDTO);
-		if (editArticle.isSuccess()) {
-			apiResult.success(editArticle.getMsg(), null);
-		} else {
-			apiResult.fail(editArticle.getMsg());
-		}
-		return apiResult;
-	}
-
 	@ApiOperation(value = "博客列表", notes = "博客列表")
-	@GetMapping(value = "/list/{userName}")
+	@GetMapping(value = "/list")
 	@BlogOperation(value = "博客列表")
-	public ApiResult<PageBean<ArticlesVO>> listArticle(@PathVariable("userName") String userName, @Valid QueryArticleParam queryArticleParam) {
+	public ApiResult<PageBean<ArticlesVO>> listArticle( @Valid QueryArticleParam queryArticleParam) {
 		ApiResult apiResult = new ApiResult();
-
 		QueryArticleDTO queryArticleDTO = new QueryArticleDTO();
 		BeanUtils.copyProperties(queryArticleParam, queryArticleDTO);
-		queryArticleDTO.setUserName(userName);
-		ReturnClass listArticle = articleService.listArticle(authCheck, userName, queryArticleDTO);
+		queryArticleDTO.setOrderBy(IndexOrderByUtil.getOrderByFlage(queryArticleParam));
+		ReturnClass listArticle = articleService.listArticleByLogin(queryArticleDTO);
 		if (listArticle.isSuccess()) {
 			PageBean<ArticlesDTO> pageBean = (PageBean<ArticlesDTO>) listArticle.getData();
 			List<ArticlesVO> list = new ArrayList<>();
@@ -110,10 +97,10 @@ public class ArticleController {
 	@ApiOperation(value = "博客详情", notes = "博客详情")
 	@GetMapping(value = "/detail/{id}")
 	@BlogOperation(value = "博客列表")
-	public ApiResult<ArticleContentVO> articleDetail(@PathVariable("id") Long id) {
+	public ApiResult<ArticleDetailVO> articleDetail(@PathVariable("id") Long id) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass articleDetail = articleService.articleDetail(authCheck, id);
-		ArticleContentVO articleContentVO = new ArticleContentVO();
+		ReturnClass articleDetail = articleService.articleDetailByLogin(id);
+		ArticleDetailVO articleContentVO = new ArticleDetailVO();
 		if (articleDetail.isSuccess()) {
 			BeanUtils.copyProperties(articleDetail.getData(), articleContentVO);
 			apiResult.success(articleContentVO);

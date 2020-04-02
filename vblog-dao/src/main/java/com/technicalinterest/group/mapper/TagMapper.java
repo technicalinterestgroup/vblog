@@ -14,7 +14,7 @@ public interface TagMapper {
 
     Integer update(@Param("pojo") Tag pojo);
 
-    List<TagDTO> queryTagListByUser(String userName);
+    List<TagDTO> queryTagListByUser(@Param("userName")String userName,@Param("name")String name);
 
     Tag queryTag(Tag pojo);
 
@@ -28,5 +28,17 @@ public interface TagMapper {
      * @return null
     */
     Integer getArticleCountTag(@Param("id")Long id);
+
+    /**
+     * 查询全部标签
+     * @return
+     */
+    List<TagDTO> allTagList(@Param("userName")String userName);
+
+    /**
+     * 查询全部标签
+     * @return
+     */
+    List<TagDTO> allTagListDic();
 
 }

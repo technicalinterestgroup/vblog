@@ -78,4 +78,35 @@ public class EditVSystemParam {
 	@ApiModelProperty(value = "评论开关")
 	@NotBlank(message = "不能为空")
 	private String commentSwitch;
+
+	/**
+	 * 最新文章
+	 */
+	@JsonProperty("vNew")
+	private Boolean vNew;
+	/**
+	 * 推荐文章
+	 */
+	@JsonProperty("vRecommend")
+	private Boolean vRecommend;
+	/**
+	 * 热门文章
+	 */
+	@JsonProperty("vHot")
+	private Boolean vHot;
+	/**
+	 * 归档
+	 */
+	@JsonProperty("vArchive")
+	private Boolean vArchive;
+	/**
+	 * 标签
+	 */
+	@JsonProperty("vTag")
+	private Boolean vTag;
+	/**
+	 * 最新评论
+	 */
+	@JsonProperty("vComment")
+	private Boolean vComment;
 }

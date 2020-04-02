@@ -86,5 +86,23 @@
         </set>
         WHERE id = #{pojo.id}
     </update>
+
+    <select id="getRoleList" resultType="com.technicalinterest.group.dto.RoleDTO" parameterType="com.technicalinterest.group.dao.Role">
+        SELECT t1.id,t1.`type`,t1.name,t1.create_time as createTime,(SELECT COUNT(1) FROM v_user_role t2 WHERE t2.role_id=t1.id GROUP BY t2.role_id)AS userNum FROM v_role t1
+        <where>
+            <if test="pojo.name!=null and pojo.name!=''">and t1.name=#{pojo.name}</if>
+            <if test="pojo.type!=null ">and t1.type=#{pojo.type}</if>
+        </where>
+
+    </select>
+
+    <select id="getRole" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Role">
+        select <include refid="all_column"/> from v_role t1
+        <where>
+            <if test="pojo.id!=null ">and t1.id=#{pojo.id}</if>
+            <if test="pojo.name!=null and pojo.name!=''">and t1.name=#{pojo.name}</if>
+            <if test="pojo.type!=null ">and t1.type=#{pojo.type}</if>
+        </where>
+    </select>
 </mapper>
 

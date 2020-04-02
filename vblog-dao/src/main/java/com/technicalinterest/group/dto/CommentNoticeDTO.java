@@ -22,10 +22,12 @@ public class CommentNoticeDTO {
 	 * 用户名
 	 */
 	private String userName;
+
+	private String sourceUserName;
 	/**
-	 * 博客id
+	 * id
 	 */
-	private Long articleId;
+	private Long sourceId;
 
 	/**
 	 * 博客标题

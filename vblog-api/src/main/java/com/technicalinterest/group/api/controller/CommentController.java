@@ -50,7 +50,7 @@ public class CommentController {
 		editCommentDTO.setIpAddress(IpAdrressUtil.getIpAdrress(request));
 		ReturnClass returnClass = commentService.insert(editCommentDTO);
 		if (returnClass.isSuccess()) {
-			apiResult.success(returnClass.getMsg(), null);
+			apiResult.success(returnClass.getMsg(), returnClass.getData());
 		} else {
 			apiResult.fail(returnClass.getMsg());
 		}

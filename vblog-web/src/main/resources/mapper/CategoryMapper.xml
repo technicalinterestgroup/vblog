@@ -60,7 +60,9 @@
 
     <select id="queryCategoryListByUser" resultType="com.technicalinterest.group.dto.CategoryDTO">
      SELECT t1.id,t1.name,COUNT(t2.id) as articleNum FROM v_category t1 LEFT JOIN v_article t2 on t1.id=t2.category_id
-       WHERE t1.user_name=#{userName}  GROUP BY t1.id
+       WHERE t1.user_name=#{userName}
+       <if test="name!=null and name!=''">and t1.name like concat(#{name},'%')</if>
+        GROUP BY t1.id desc
     </select>
 
     <select id="queryCategory" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Category">
@@ -81,6 +83,11 @@
 
     <select id="getArticleCountCategory" resultType="java.lang.Integer">
         select count(1) from v_article where category_id=#{id}
+    </select>
+
+    <select id="queryCategorysByUser" resultType="com.technicalinterest.group.dto.CategoryDTO">
+        SELECT t1.id,t1.name FROM v_category t1
+       WHERE t1.user_name=#{userName} and t1.is_del=0
     </select>
 </mapper>
 

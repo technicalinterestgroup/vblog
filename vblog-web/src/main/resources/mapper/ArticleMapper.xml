@@ -16,6 +16,10 @@
         <result column="update_time" property="updateTime"/>
         <result column="state" property="state"/>
         <result column="read_count" property="readCount"/>
+        <result column="like_count" property="likeCount"/>
+        <result column="comment_count" property="commentCount"/>
+        <result column="description" property="description"/>
+        <result column="recommend" property="recommend"/>
     </resultMap>
 
     <!--auto generated Code-->
@@ -30,7 +34,11 @@
         `id`,
         `create_time`,
         `update_time`,
-        `state`
+        `state`,
+        `like_count`,
+        `comment_count`,
+        `description`,
+        `recommend`
 </sql>
 
     <!--auto generated Code-->
@@ -47,7 +55,8 @@
             `is_del`,
             `create_time`,
             `update_time`,
-            `state`
+            `state`,
+            description
         ) VALUES (
             #{pojo.title},
             #{pojo.submit},
@@ -60,7 +69,8 @@
             #{pojo.isDel},
             #{pojo.createTime},
             #{pojo.updateTime},
-            #{pojo.state}
+            #{pojo.state},
+            #{pojo.description}
         )
     </insert>
 
@@ -79,7 +89,8 @@
             <if test="pojo.isDel!=null">`is_del`,</if>
             <if test="pojo.createTime!=null">`create_time`,</if>
             <if test="pojo.updateTime!=null">`update_time`,</if>
-            <if test="pojo.state!=null">`state`</if>
+            <if test="pojo.state!=null">`state`,</if>
+            <if test="pojo.description!=null">`description`</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -94,7 +105,8 @@
             <if test="pojo.isDel!=null">#{pojo.isDel},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
             <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
-            <if test="pojo.state!=null">#{pojo.state}</if>
+            <if test="pojo.state!=null">#{pojo.state},</if>
+            <if test="pojo.description!=null">#{pojo.description}</if>
         </trim>
     </insert>
 
@@ -116,7 +128,8 @@
             #{pojo.isDel},
             #{pojo.createTime},
             #{pojo.updateTime},
-            #{pojo.state}
+            #{pojo.state},
+            #{pojo.description}
             )
         </foreach>
     </insert>
@@ -137,8 +150,14 @@
             <if test="pojo.isDel != null">`is_del` = #{pojo.isDel},</if>
             <if test="pojo.createTime != null">`create_time` = #{pojo.createTime},</if>
             <if test="pojo.updateTime != null">`update_time` = #{pojo.updateTime},</if>
-            <if test="pojo.state != null">`state` = #{pojo.state}</if>
-            <if test="pojo.readCount != null">`read_count` = #{pojo.readCount}</if>
+            <if test="pojo.state != null">`state` = #{pojo.state},</if>
+            <if test="pojo.readCount != null">`read_count` = #{pojo.readCount},</if>
+            <if test="pojo.likeCount != null and pojo.likeCount==1">`like_count` = (like_count+1),</if>
+            <if test="pojo.likeCount != null and pojo.likeCount==0">`like_count` = (like_count-1),</if>
+            <if test="pojo.commentCount != null and pojo.commentCount==1">`comment_count` = (comment_count+1),</if>
+            <if test="pojo.commentCount != null and pojo.commentCount==0">`comment_count` = (comment_count-1),</if>
+            <if test="pojo.description != null">`description` = #{pojo.description},</if>
+            <if test="pojo.recommend != null">`recommend` = #{pojo.recommend}</if>
 
         </set>
         WHERE id = #{pojo.id}
@@ -156,18 +175,36 @@
 
     <select id="queryArticleList" resultType="com.technicalinterest.group.dto.ArticlesDTO" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
         select t1.id,title,t1.user_name as userName,t1.submit,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
-        t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount,
-        (SELECT count(1) FROM v_comment t4 WHERE t4.article_id=t1.id and t4.parent_id=0)as commentNum
+        t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount,t1.like_count as likeCount,
+        t1.comment_count as commentCount,t1.recommend as isRecommend
         from v_article t1 left join v_category t2 on t1.category_id=t2.id
         LEFT JOIN v_tag t3 on t1.tag_id=t3.id where t1.is_del=0
             <if test="pojo.userName != null and pojo.userName != ''">and t1.user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">and t1.state=#{pojo.state}</if>
-            <if test="pojo.condition != null and pojo.condition !=''">and t1.title like CONCAT('%',#{pojo.condition},'%')</if>
-            <if test="pojo.condition != null and pojo.condition !=''">and t1.submit like CONCAT('%',#{pojo.condition},'%')</if>
+            <if test="pojo.keywords != null and pojo.keywords !=''">and (t1.title like CONCAT('%',#{pojo.keywords},'%') or t1.submit like CONCAT('%',#{pojo.keywords},'%'))</if>
             <if test="pojo.archiveTime != null ">and date_format(t1.create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
+            <if test="pojo.categoryId != null ">and t1.category_id=#{pojo.categoryId}</if>
         order by
-        <if test="pojo.userName != null and pojo.userName != ''">t1.is_top,</if>
-        t1.id desc
+        <choose>
+            <when test="pojo.userName != null and pojo.userName != ''">
+                t1.is_top DESC
+            </when>
+            <otherwise>
+                t1.recommend DESC
+            </otherwise>
+        </choose>
+        <if test="pojo.orderBy==1">
+            ,t1.id desc
+        </if>
+        <if test="pojo.orderBy==2">
+            ,t1.read_count desc
+        </if>
+        <if test="pojo.orderBy==3">
+            ,t1.like_count desc
+        </if>
+        <if test="pojo.orderBy==4">
+            ,t1.comment_count desc
+        </if>
 
     </select>
 
@@ -175,15 +212,15 @@
         select count(1) from v_article where is_del=0
             <if test="pojo.userName != null and pojo.userName != ''">and user_name=#{pojo.userName}</if>
             <if test="pojo.state != null">and state=#{pojo.state}</if>
-            <if test="pojo.condition != null and pojo.condition !=''">and title like CONCAT('%',#{pojo.condition},'%')</if>
-            <if test="pojo.condition != null and pojo.condition !=''">and submit like CONCAT('%',#{pojo.condition},'%')</if>
+            <if test="pojo.keywords != null and pojo.keywords !=''">and (title like CONCAT('%',#{pojo.keywords},'%') or submit like CONCAT('%',#{pojo.keywords},'%'))</if>
             <if test="pojo.archiveTime != null ">and date_format(create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
+            <if test="pojo.categoryId != null ">and category_id=#{pojo.categoryId}</if>
     </select>
 
     <select id="getArticleInfo" resultType="com.technicalinterest.group.dto.ArticlesDTO">
         select t1.id,t1.title,t1.user_name as userName,t1.submit,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
         t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount,
-        (SELECT count(1) FROM v_like t5 WHERE t5.source_id=t1.id) AS likeCount
+        t1.like_count AS likeCount,t1.comment_count as commentCount
         <if test="userName!=null and userName!=''">
             ,(SELECT count(1) FROM v_collection t4 WHERE t4.article_id=t1.id and t4.user_name=#{userName}) AS vCollection,
             (SELECT count(1) FROM v_like t5 WHERE t5.source_id=t1.id and t5.user_name=#{userName}) AS vLike
@@ -194,13 +231,29 @@
     </select>
 
     <select id="queryArticleListOrderBy" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select id,title,user_name as userName,create_time as createTime from v_article where state=1 and is_del=0
+        select id,title,user_name as userName ,create_time as createTime
+        <if test="flag==2">
+            ,read_count as readCount
+        </if>
+        <if test="flag==3">
+            ,like_count as likeCount
+        </if>
+        <if test="flag==4">
+            ,t1.comment_count as commentCount
+        </if>
+        from v_article where state=1 and is_del=0
         <if test="userName!=null and userName!=''">and user_name=#{userName}</if>
         <if test="flag==1">
-            order by create_time desc
+            order by id desc
         </if>
         <if test="flag==2">
             order by read_count desc
+        </if>
+        <if test="flag==3">
+            order by like_count desc
+        </if>
+        <if test="flag==4">
+            order by t1.comment_count desc
         </if>
         limit 0,#{total}
     </select>
@@ -221,14 +274,14 @@
 
 
     <select id="allArticleList" resultType="com.technicalinterest.group.dto.ArticlesDTO" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
-        select t1.id,title,t1.user_name as userName,t1.submit,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
-        t1.tag_id AS tagId,t3.name AS tagCN,t1.read_count as readCount,t1.is_del as isDel
+        select t1.id,title,t1.user_name as userName,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
+        t1.tag_id AS tagId,t3.name AS tagCN,t1.read_count as readCount,t1.is_del as isDel,t1.recommend as isRecommend
         from v_article t1 left join v_category t2 on t1.category_id=t2.id
         LEFT JOIN v_tag t3 on t1.tag_id=t3.id
         <if test="pojo.userName != null and pojo.userName != ''">and t1.user_name=#{pojo.userName}</if>
         <if test="pojo.state != null">and t1.state=#{pojo.state}</if>
-        <if test="pojo.condition != null and pojo.condition !=''">and t1.title like CONCAT('%',#{pojo.condition},'%')</if>
-        <if test="pojo.condition != null and pojo.condition !=''">and t1.submit like CONCAT('%',#{pojo.condition},'%')</if>
+        <if test="pojo.keywords != null and pojo.keywords !=''">and t1.title like CONCAT('%',#{pojo.keywords},'%')</if>
+        <if test="pojo.keywords != null and pojo.keywords !=''">and t1.submit like CONCAT('%',#{pojo.keywords},'%')</if>
         <if test="pojo.archiveTime != null ">and date_format(t1.create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
         order by t1.create_time desc
 
@@ -236,11 +289,20 @@
 
     <select id="allArticleListCount" resultType="java.lang.Integer" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
         select count(1) from v_article
-        <if test="pojo.userName != null and pojo.userName != ''">and user_name=#{pojo.userName}</if>
-        <if test="pojo.state != null">and state=#{pojo.state}</if>
-        <if test="pojo.condition != null and pojo.condition !=''">and title like CONCAT('%',#{pojo.condition},'%')</if>
-        <if test="pojo.condition != null and pojo.condition !=''">and submit like CONCAT('%',#{pojo.condition},'%')</if>
-        <if test="pojo.archiveTime != null">and date_format(create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
+        <where>
+            <if test="pojo.userName != null and pojo.userName != ''">and user_name=#{pojo.userName}</if>
+            <if test="pojo.state != null">and state=#{pojo.state}</if>
+            <if test="pojo.keywords != null and pojo.keywords !=''">and title like CONCAT('%',#{pojo.keywords},'%')</if>
+            <if test="pojo.keywords != null and pojo.keywords !=''">and submit like CONCAT('%',#{pojo.keywords},'%')</if>
+            <if test="pojo.archiveTime != null">and date_format(create_time,'%Y年%m月' )=#{pojo.archiveTime}</if>
+        </where>
+
     </select>
+
+    <select id="getBlogInfoByUser" resultType="com.technicalinterest.group.dto.UserBlogDTO">
+        SELECT COUNT(id)as blogCount,SUM(read_count)AS readCount,SUM(like_count) AS likeCount,SUM(comment_count)AS commentCount
+         FROM v_article WHERE is_del=0 AND user_name=#{userName}
+    </select>
+
 </mapper>
 

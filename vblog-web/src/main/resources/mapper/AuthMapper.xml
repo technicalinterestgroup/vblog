@@ -6,7 +6,7 @@
         <result column="name" property="name"/>
         <result column="type" property="type"/>
         <result column="url" property="url"/>
-        <result column="info" property="info"/>
+        <result column="icon" property="icon"/>
         <result column="id" property="id"/>
         <result column="is_del" property="isDel"/>
         <result column="create_time" property="createTime"/>
@@ -19,12 +19,9 @@
         `name`,
         `type`,
         `url`,
-        `info`,
+        `icon`,
         `id`,
-        `is_del`,
-        `create_time`,
-        `update_time`,
-`parent_id`
+        `create_time`
 </sql>
 
     <!--auto generated Code-->
@@ -33,8 +30,9 @@
             `name`,
             `type`,
             `url`,
-            `info`,
+            `icon`,
             `id`,
+            `parent_id`,
             `is_del`,
             `create_time`,
             `update_time`
@@ -42,8 +40,9 @@
             #{pojo.name},
             #{pojo.type},
             #{pojo.url},
-            #{pojo.info},
+            #{pojo.icon},
             #{pojo.id},
+            #{pojo.parentId},
             #{pojo.isDel},
             #{pojo.createTime},
             #{pojo.updateTime}
@@ -57,8 +56,9 @@
             <if test="pojo.name!=null"> `name`,</if>
             <if test="pojo.type!=null"> `type`,</if>
             <if test="pojo.url!=null"> `url`,</if>
-            <if test="pojo.info!=null"> `info`,</if>
+            <if test="pojo.icon!=null"> `icon`,</if>
             <if test="pojo.id!=null"> `id`,</if>
+            <if test="pojo.parentId!=null"> `parent_id`,</if>
             <if test="pojo.isDel!=null"> `is_del`,</if>
             <if test="pojo.createTime!=null"> `create_time`,</if>
             <if test="pojo.updateTime!=null"> `update_time`,</if>
@@ -68,8 +68,9 @@
             <if test="pojo.name!=null">#{pojo.name},</if>
             <if test="pojo.type!=null">#{pojo.type},</if>
             <if test="pojo.url!=null">#{pojo.url},</if>
-            <if test="pojo.info!=null">#{pojo.info},</if>
+            <if test="pojo.icon!=null">#{pojo.icon},</if>
             <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.parentId!=null"> #{pojo.parentId},</if>
             <if test="pojo.isDel!=null">#{pojo.isDel},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
             <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
@@ -86,7 +87,7 @@
             #{pojo.name},
             #{pojo.type},
             #{pojo.url},
-            #{pojo.info},
+            #{pojo.icon},
             #{pojo.id},
             #{pojo.isDel},
             #{pojo.createTime},
@@ -102,13 +103,45 @@
             <if test="pojo.name != null"> `name` = #{pojo.name}, </if>
             <if test="pojo.type != null"> `type` = #{pojo.type}, </if>
             <if test="pojo.url != null"> `url` = #{pojo.url}, </if>
-            <if test="pojo.info != null"> `info` = #{pojo.info}, </if>
-            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+            <if test="pojo.icon != null"> `icon` = #{pojo.icon}, </if>
+            <if test="pojo.parentId != null"> `parent_id` = #{pojo.parentId}, </if>
             <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
-            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
             <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
         </set>
         WHERE id = #{pojo.id}
     </update>
+
+    <select id="getTree" resultType="com.technicalinterest.group.dto.TreeDTO">
+        select id,name as title from  v_auth where is_del=0
+        and type=#{type} and parent_id=#{parentId}
+    </select>
+
+    <select id="getAuthListCount" resultType="java.lang.Integer">
+        select count(id) from  v_auth where is_del=0
+        <if test="pojo.name!=null and pojo.name!=''">and name= #{pojo.name}</if>
+        <if test="pojo.type!=null">and type=#{pojo.type}</if>
+        <if test="pojo.parentId!=null">and parent_id=#{pojo.parentId}</if>
+    </select>
+
+    <select id="getAuthList" resultMap="AllColumnMap">
+     select <include refid="all_column"/> from  v_auth where is_del=0
+     <if test="pojo.name!=null and pojo.name!=''">and name= #{pojo.name}</if>
+     <if test="pojo.type!=null">and type=#{pojo.type}</if>
+     <if test="pojo.parentId!=null">and parent_id=#{pojo.parentId}</if>
+    order by id desc
+    </select>
+
+    <select id="getAuth" resultMap="AllColumnMap">
+        select <include refid="all_column"/> from  v_auth where is_del=0
+        <if test="pojo.name!=null and pojo.name!=''">and name= #{pojo.name}</if>
+        <if test="pojo.type!=null">and type=#{pojo.type}</if>
+        <if test="pojo.parentId!=null">and parent_id=#{pojo.parentId}</if>
+        limit 1
+    </select>
+
+    <delete id="delAuth">
+        delete from v_auth where id=#{id}
+    </delete>
+
 </mapper>
 
