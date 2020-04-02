@@ -9,6 +9,7 @@ import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeDetailVO;
 import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeVO;
 import com.technicalinterest.group.dao.Ask;
 import com.technicalinterest.group.dao.Reply;
+import com.technicalinterest.group.dao.Tag;
 import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.*;
 import com.technicalinterest.group.service.Enum.ArticleOrderEnum;
@@ -680,6 +681,10 @@ public class ViewController {
 		if (saveArticle.isSuccess()) {
 			AskVO askVO=new AskVO();
 			BeanUtils.copyProperties(saveArticle.getData(),askVO);
+			ReturnClass<Tag> tag = tagService.getTag(askVO.getTagId());
+            if (tag.isSuccess()){
+				askVO.setTagCN(tag.getData().getName());
+			}
 			apiResult.success(askVO);
 		} else {
 			apiResult.fail(saveArticle.getMsg());

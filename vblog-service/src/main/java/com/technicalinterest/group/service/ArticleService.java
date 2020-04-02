@@ -132,6 +132,15 @@ public interface ArticleService {
 	ReturnClass addReadCount(Long id);
 
 	/**
+	 * @Description:文章评论数增加
+	 * @author: shuyu.wang
+	 * @date: 2019-08-17 19:17
+	 * @param id
+	 * @return null
+	 */
+	ReturnClass addCommentCount(Long id);
+
+	/**
 	 * 查询用户博客数据
 	 * @param userName
 	 * @return

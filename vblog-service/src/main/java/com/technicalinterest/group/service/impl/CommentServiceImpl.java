@@ -6,6 +6,7 @@ import com.technicalinterest.group.dto.CommentDTO;
 import com.technicalinterest.group.dto.CommentResultDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.CommentMapper;
+import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.CommentService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.CommentConstant;
@@ -37,6 +38,8 @@ public class CommentServiceImpl implements CommentService {
 	private UserService userService;
 	@Autowired
 	private ArticleMapper articleMapper;
+	@Autowired
+	private ArticleService articleService;
 
 	@Override
 	public ReturnClass insert(EditCommentDTO pojo) {
@@ -59,6 +62,10 @@ public class CommentServiceImpl implements CommentService {
 		comment.setIsView((short)0);
 		Integer integer = commentMapper.insertSelective(comment);
 		if (integer > 0) {
+			if (Objects.isNull(comment.getParentId())){
+				//增加评论数
+				articleService.addCommentCount(pojo.getArticleId());
+			}
 			return ReturnClass.success(CommentConstant.SAVE_SUCCESS,comment);
 		}
 		return ReturnClass.fail(CommentConstant.SAVE_FAIL);

@@ -272,6 +272,10 @@
         update v_article set read_count=(read_count+1) where id=#{id}
     </update>
 
+    <update id="updateCommentCount">
+        update v_article set comment_count=(comment_count+1) where id=#{id}
+    </update>
+
 
     <select id="allArticleList" resultType="com.technicalinterest.group.dto.ArticlesDTO" parameterType="com.technicalinterest.group.dto.QueryArticleDTO">
         select t1.id,title,t1.user_name as userName,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
