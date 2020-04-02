@@ -239,7 +239,7 @@
             ,like_count as likeCount
         </if>
         <if test="flag==4">
-            ,t1.comment_count as commentCount
+            ,comment_count as commentCount
         </if>
         from v_article where state=1 and is_del=0
         <if test="userName!=null and userName!=''">and user_name=#{userName}</if>
@@ -253,7 +253,7 @@
             order by like_count desc
         </if>
         <if test="flag==4">
-            order by t1.comment_count desc
+            order by comment_count desc
         </if>
         limit 0,#{total}
     </select>
