@@ -75,10 +75,9 @@ public class UploadController {
 
     private static final String SIZE_ERROR = "文件过大！";
 
-    private static final Integer IMG_FILE_SIZE = 300;
+    private static final Integer IMG_FILE_SIZE = 1024;
 
     private static final Integer DOC_FILE_SIZE = 600;
-
 
     private static final String FILE_EMPTY = "文件不能为空！";
 
