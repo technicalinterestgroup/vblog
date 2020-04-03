@@ -30,7 +30,7 @@ public class ArticleContentVO {
 	private String title;
 
 	@ApiModelProperty(value = "摘要")
-	private String submit;
+	private String description;;
 
 	@ApiModelProperty(value = "是否置顶")
 	private Short isTop;

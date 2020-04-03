@@ -96,5 +96,7 @@ public class ArticlesDTO {
 	 */
 	private Short isDel;
 
+	private String description;
+
 
 }

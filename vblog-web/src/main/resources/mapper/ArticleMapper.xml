@@ -218,9 +218,9 @@
     </select>
 
     <select id="getArticleInfo" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select t1.id,t1.title,t1.user_name as userName,t1.submit,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
+        select t1.id,t1.title,t1.user_name as userName,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
         t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount,
-        t1.like_count AS likeCount,t1.comment_count as commentCount
+        t1.like_count AS likeCount,t1.comment_count as commentCount,t1.description
         <if test="userName!=null and userName!=''">
             ,(SELECT count(1) FROM v_collection t4 WHERE t4.article_id=t1.id and t4.user_name=#{userName}) AS vCollection,
             (SELECT count(1) FROM v_like t5 WHERE t5.source_id=t1.id and t5.user_name=#{userName}) AS vLike
