@@ -81,7 +81,7 @@ public class AdminAuthController {
     }
 
     @ApiOperation(value = "充值上传次数")
-    @GetMapping(value = "/user/addupload/{userName}")
+    @GetMapping(value = "/user/addupload/{username}")
     public ApiResult<Long> assUserUpload(@PathVariable String username,@RequestParam("num")Integer num) {
         ApiResult apiResult = new ApiResult();
         ReturnClass returnClass = adminService.addUploadTimes(username, num);

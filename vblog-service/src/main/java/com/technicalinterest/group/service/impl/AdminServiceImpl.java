@@ -181,7 +181,7 @@ public class AdminServiceImpl implements AdminService {
 			throw new VLogException(ResultEnum.NO_DATA);
 		}
 		userByUser.setUploadNum(uploadTime);
-		Integer update = userMapper.update(user);
+		Integer update = userMapper.updateByUserName(user);
 		if (update>0){
 			redisUtil.incr(RedisKeyConstant.uploadTimeKey(userName),(long)uploadTime);
 			return ReturnClass.success();
