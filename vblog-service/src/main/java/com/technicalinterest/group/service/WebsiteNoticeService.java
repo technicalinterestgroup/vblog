@@ -26,7 +26,7 @@ public interface WebsiteNoticeService {
      * @param id
      * @return
      */
-    ReturnClass getWebsiteNoticeDetail(Long id);
+    ReturnClass<WebsiteNotice> getWebsiteNoticeDetail(Long id);
 
     /**
      * 通知列表

@@ -39,7 +39,9 @@ public class UserInfoVO {
 
 	@ApiModelProperty(value = "角色名")
 	private String roleName;
-
+	@ApiModelProperty(value = "上传次数")
+	private Integer uploadNum;
+	@ApiModelProperty(value = "发布时间")
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private Date createTime;
 }

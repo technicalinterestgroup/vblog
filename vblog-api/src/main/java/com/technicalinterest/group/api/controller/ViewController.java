@@ -638,7 +638,7 @@ public class ViewController {
 	@ApiOperation(value = "通告详情查询")
 	@GetMapping(value = "/notice/{id}")
 	@VBlogReadCount(type = "3")
-	public ApiResult<WebsiteNoticeDetailVO> getNoticeDetail(@PathVariable long id) {
+	public ApiResult<WebsiteNoticeDetailVO> getNoticeDetail(@PathVariable long id,@RequestParam(value = "userName",required = false)String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass carousels = websiteNoticeService.getWebsiteNoticeDetail(id);
 		if (carousels.isSuccess()) {
@@ -675,7 +675,7 @@ public class ViewController {
 	@ApiOperation(value = "问题详情")
 	@GetMapping(value = "/ask/detail/{id}")
 	@VBlogReadCount(type = "2")
-	public ApiResult<AskVO> getAskDetail(@PathVariable Long id) {
+	public ApiResult<AskVO> getAskDetail(@PathVariable Long id,@RequestParam(value = "userName",required = false)String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass<Ask> saveArticle = askService.getAskDetailById(id);
 		if (saveArticle.isSuccess()) {

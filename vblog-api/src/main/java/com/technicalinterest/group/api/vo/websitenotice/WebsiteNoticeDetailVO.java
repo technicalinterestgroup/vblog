@@ -60,4 +60,19 @@ public class WebsiteNoticeDetailVO {
 
     private Date updateTime;
 
+    /**
+     * 文章状态 0：草稿，1：发布
+     */
+    private Boolean state;
+    /**
+     * 是否在首页轮播
+     */
+    private Integer isIndex;
+    /**
+     * 1:首页 2：博客页
+     */
+    private Short type;
+
+    private String carouselUrl;
+
 }

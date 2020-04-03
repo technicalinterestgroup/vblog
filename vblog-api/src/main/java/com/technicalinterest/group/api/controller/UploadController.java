@@ -89,7 +89,6 @@ public class UploadController {
 
     @ApiOperation(value = "图片上传", notes = "图片上传")
     @PostMapping(value = "/img/upload")
-    @BlogOperation(value = "图片上传")
     public ApiResult<String> uploadImg(@RequestParam(value = "file") MultipartFile file) {
         //次数校验
         String userName= checkeUploadTime();
@@ -110,7 +109,7 @@ public class UploadController {
         try {
             String s = aliyunOSSService.uploadImg2Oss(file, userName);
             apiResult.success(s);
-            redisUtil.decr(RedisKeyConstant.uploadTimeKey(userName),-1);
+            redisUtil.decr(RedisKeyConstant.uploadTimeKey(userName),1);
         } catch (Exception e) {
             log.error("图片上传异常", e);
             apiResult.fail("图片上传异常");
@@ -128,7 +127,7 @@ public class UploadController {
         for (MultipartFile pic : files.values()) {
             try {
                 String s = aliyunOSSService.uploadImg2Oss(pic, userName);
-                redisUtil.decr(RedisKeyConstant.uploadTimeKey(userName),-1);
+                redisUtil.decr(RedisKeyConstant.uploadTimeKey(userName),1);
                 apiResult.success(s);
             } catch (Exception e) {
                 log.error("头像上传异常", e);
@@ -241,7 +240,7 @@ public class UploadController {
 
     private String checkeUploadTime(){
         String username= userService.getUserNameByLoginToken();
-        long o = (long)redisUtil.get(RedisKeyConstant.uploadTimeKey(username));
+        int o = (Integer)redisUtil.get(RedisKeyConstant.uploadTimeKey(username));
         if (o<=0){
             throw new VLogException("上传次数达到上限，请联系管理员充值!");
         }
