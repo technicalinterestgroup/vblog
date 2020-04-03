@@ -1,6 +1,7 @@
 package com.technicalinterest.group.api.aspect;
 
 import com.alibaba.fastjson.JSONObject;
+import com.technicalinterest.group.api.param.UserParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.dao.Log;
 import com.technicalinterest.group.dao.User;
@@ -27,6 +28,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -96,7 +98,13 @@ public class BlogLogAspect {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String userName = (String) redisUtil.get(token);
+		String userName=null;
+		if ("登录".equals(operationName)){
+			List<UserParam> userParams = JSONObject.parseArray(params, UserParam.class);
+			userName = userParams.get(0).getUserName();
+		}else {
+			userName = (String) redisUtil.get(token);
+		}
 		log.info(">>>请求返回结果：{}", JSONObject.toJSON(result));
 		try {
 			Log log = Log.builder().url(url).ip(ip).userName(userName).classMethod(methodStr)

@@ -1,5 +1,6 @@
 package com.technicalinterest.group.api.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.technicalinterest.group.dao.BaseDao;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -36,5 +37,6 @@ public class LogVO {
 	@ApiModelProperty(value = "请求结果")
 	private String result;
 	@ApiModelProperty(value = "请求结果")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 }

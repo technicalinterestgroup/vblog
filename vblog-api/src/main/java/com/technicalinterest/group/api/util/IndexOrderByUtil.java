@@ -18,7 +18,7 @@ public class IndexOrderByUtil {
         if (Objects.nonNull(queryArticleParam.getNewTime())&&queryArticleParam.getNewTime()){
             return ArticleOrderEnum.NEW.getOrderByFlag();
         }
-        if (Objects.nonNull(queryArticleParam.getHot())&&queryArticleParam.getHot()){
+        if (Objects.nonNull(queryArticleParam.getRead())&&queryArticleParam.getRead()){
             return ArticleOrderEnum.HOT.getOrderByFlag();
         }
         if (Objects.nonNull(queryArticleParam.getLike())&&queryArticleParam.getLike()){

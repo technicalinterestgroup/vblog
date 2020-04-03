@@ -1,5 +1,6 @@
 package com.technicalinterest.group.service;
 
+import com.technicalinterest.group.dao.Tag;
 import com.technicalinterest.group.dto.TagDTO;
 import com.technicalinterest.group.service.dto.EditTagDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
@@ -25,4 +26,5 @@ public interface TagService{
 
     ReturnClass allTagListDic();
 
+    ReturnClass<Tag> getTag(Long id);
 }

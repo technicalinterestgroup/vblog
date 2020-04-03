@@ -31,7 +31,7 @@ public class QueryArticleParam extends PageBaseParam {
 	@ApiModelProperty(value = "最新")
 	private Boolean newTime;
 	@ApiModelProperty(value = "阅读量最高")
-	private Boolean hot;
+	private Boolean read;
 	@ApiModelProperty(value = "点赞最好")
 	private Boolean like;
 	@ApiModelProperty(value = "评论最高")

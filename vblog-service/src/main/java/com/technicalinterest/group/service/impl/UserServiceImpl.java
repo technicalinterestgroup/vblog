@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
         }
         //清除错误登录次数
         redisUtil.del(LOGIN_ERROR_KEY + userDTO.getUserName());
-        redisUtil.set(RedisKeyConstant.userInfoKey(userDTO.getUserName()),userDTO);
+        redisUtil.set(RedisKeyConstant.userInfoKey(userDTO.getUserName()),userRoleDTO1);
         List<RoleAuthDTO> roleAuthDTOS = getAuthList(userRoleDTO.getRoleId(),0L);
         //生成token
         UserJWTDTO userVO = new UserJWTDTO();

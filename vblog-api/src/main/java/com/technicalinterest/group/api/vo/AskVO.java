@@ -24,6 +24,10 @@ public class AskVO {
      * 标签id
      */
     private Long  tagId;
+    /**
+     * 标签id
+     */
+    private String  tagCN;
 
     /**
      * 作者

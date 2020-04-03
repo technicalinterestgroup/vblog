@@ -9,6 +9,7 @@ import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeDetailVO;
 import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeVO;
 import com.technicalinterest.group.dao.Ask;
 import com.technicalinterest.group.dao.Reply;
+import com.technicalinterest.group.dao.Tag;
 import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.*;
 import com.technicalinterest.group.service.Enum.ArticleOrderEnum;
@@ -637,7 +638,7 @@ public class ViewController {
 	@ApiOperation(value = "通告详情查询")
 	@GetMapping(value = "/notice/{id}")
 	@VBlogReadCount(type = "3")
-	public ApiResult<WebsiteNoticeDetailVO> getNoticeDetail(@PathVariable long id) {
+	public ApiResult<WebsiteNoticeDetailVO> getNoticeDetail(@PathVariable long id,@RequestParam(value = "userName",required = false)String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass carousels = websiteNoticeService.getWebsiteNoticeDetail(id);
 		if (carousels.isSuccess()) {
@@ -674,12 +675,16 @@ public class ViewController {
 	@ApiOperation(value = "问题详情")
 	@GetMapping(value = "/ask/detail/{id}")
 	@VBlogReadCount(type = "2")
-	public ApiResult<AskVO> getAskDetail(@PathVariable Long id) {
+	public ApiResult<AskVO> getAskDetail(@PathVariable Long id,@RequestParam(value = "userName",required = false)String userName) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass<Ask> saveArticle = askService.getAskDetailById(id);
 		if (saveArticle.isSuccess()) {
 			AskVO askVO=new AskVO();
 			BeanUtils.copyProperties(saveArticle.getData(),askVO);
+			ReturnClass<Tag> tag = tagService.getTag(askVO.getTagId());
+            if (tag.isSuccess()){
+				askVO.setTagCN(tag.getData().getName());
+			}
 			apiResult.success(askVO);
 		} else {
 			apiResult.fail(saveArticle.getMsg());

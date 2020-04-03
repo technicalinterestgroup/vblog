@@ -46,6 +46,8 @@ public class WebsiteNoticeServiceImpl implements WebsiteNoticeService {
     public ReturnClass getIndexWebsiteNotice(Short type) {
         WebsiteNotice params=new WebsiteNotice();
         params.setType(type);
+        params.setState(true);
+        params.setIsIndex(true);
         List<WebsiteNotice> websiteNotices = websiteNoticeMapper.websiteNoticeList(params);
         return ReturnClass.success(websiteNotices);
     }
@@ -57,7 +59,7 @@ public class WebsiteNoticeServiceImpl implements WebsiteNoticeService {
      * @return
      */
     @Override
-    public ReturnClass getWebsiteNoticeDetail(Long id) {
+    public ReturnClass<WebsiteNotice> getWebsiteNoticeDetail(Long id) {
         WebsiteNotice websiteNotice = websiteNoticeMapper.websiteNoticeById(id);
         if (Objects.isNull(websiteNotice)){
             throw new VLogException(ResultEnum.NO_URL);

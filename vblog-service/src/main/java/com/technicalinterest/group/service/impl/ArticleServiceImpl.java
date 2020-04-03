@@ -396,6 +396,25 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     /**
+     * @param id
+     * @return null
+     * @Description:文章评论数增加
+     * @author: shuyu.wang
+     * @date: 2019-08-17 19:17
+     */
+    @Override
+    @Async("vblog")
+    public ReturnClass addCommentCount(Long id) {
+        Integer update = articleMapper.updateCommentCount(id);
+        if (update > 0) {
+            log.info("文章评论数增加成功！");
+        } else {
+            log.info("文章评论数增加失败！");
+        }
+        return ReturnClass.success();
+    }
+
+    /**
      * 查询用户博客数据
      *
      * @param userName

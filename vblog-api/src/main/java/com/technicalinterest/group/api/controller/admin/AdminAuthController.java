@@ -73,18 +73,18 @@ public class AdminAuthController {
         return apiResult;
     }
     @ApiOperation(value = "用户剩余上传次数")
-    @GetMapping(value = "/user/uploadtime/{userName}")
-    public ApiResult<Long> getUserUpload(@PathVariable String username) {
+    @GetMapping(value = "/user/uploadtime/{username}")
+    public ApiResult<Integer> getUserUpload(@PathVariable String username) {
         ApiResult apiResult = new ApiResult();
-        apiResult.setData(redisUtil.get(RedisKeyConstant.uploadTimeKey(username)));
+        apiResult.success(redisUtil.get(RedisKeyConstant.uploadTimeKey(username)));
         return apiResult;
     }
 
     @ApiOperation(value = "充值上传次数")
-    @GetMapping(value = "/user/addupload/{userName}")
-    public ApiResult<Long> assUserUpload(@PathVariable String username,@RequestParam("num")Integer num) {
+    @GetMapping(value = "/user/addupload/{username}")
+    public ApiResult<Long> assUserUpload(@PathVariable String username,@RequestParam("uploadNum")Integer uploadNum) {
         ApiResult apiResult = new ApiResult();
-        ReturnClass returnClass = adminService.addUploadTimes(username, num);
+        ReturnClass returnClass = adminService.addUploadTimes(username, uploadNum);
         if (returnClass.isSuccess()){
             apiResult.success();
         }

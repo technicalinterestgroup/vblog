@@ -194,7 +194,7 @@
             </otherwise>
         </choose>
         <if test="pojo.orderBy==1">
-            ,t1.id desc
+            ,t1.update_time desc
         </if>
         <if test="pojo.orderBy==2">
             ,t1.read_count desc
@@ -239,12 +239,12 @@
             ,like_count as likeCount
         </if>
         <if test="flag==4">
-            ,t1.comment_count as commentCount
+            ,comment_count as commentCount
         </if>
         from v_article where state=1 and is_del=0
         <if test="userName!=null and userName!=''">and user_name=#{userName}</if>
         <if test="flag==1">
-            order by id desc
+            order by update_time desc
         </if>
         <if test="flag==2">
             order by read_count desc
@@ -253,7 +253,7 @@
             order by like_count desc
         </if>
         <if test="flag==4">
-            order by t1.comment_count desc
+            order by comment_count desc
         </if>
         limit 0,#{total}
     </select>
@@ -270,6 +270,10 @@
 
     <update id="updateReadCount">
         update v_article set read_count=(read_count+1) where id=#{id}
+    </update>
+
+    <update id="updateCommentCount">
+        update v_article set comment_count=(comment_count+1) where id=#{id}
     </update>
 
 

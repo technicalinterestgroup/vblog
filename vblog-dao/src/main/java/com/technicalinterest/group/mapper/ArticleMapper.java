@@ -87,7 +87,14 @@ public interface ArticleMapper {
      * @return null
      */
     Integer updateReadCount(@Param("id")Long id);
-
+    /**
+     * @Description:更新文章评论数量
+     * @author: shuyu.wang
+     * @date: 2019-08-16 18:41
+     * @param id
+     * @return null
+     */
+    Integer updateCommentCount(@Param("id")Long id);
 
     /**
      * @Description: 管理员查询列表+摘要

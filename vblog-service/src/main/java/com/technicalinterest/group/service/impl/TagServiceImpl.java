@@ -131,4 +131,15 @@ public class TagServiceImpl implements TagService {
 		List<TagDTO> tagDTOS = tagMapper.allTagListDic();
 		return ReturnClass.success(tagDTOS);
 	}
+
+	@Override
+	public ReturnClass<Tag> getTag(Long id) {
+		Tag tag=new Tag();
+		tag.setId(id);
+		Tag tag1 = tagMapper.queryTag(tag);
+		if (Objects.isNull(tag1)){
+			return ReturnClass.fail();
+		}
+		return ReturnClass.success(tag1);
+	}
 }

@@ -47,7 +47,7 @@ public class AdminWebsiteNoticeController {
         return apiResult;
     }
 
-    @ApiOperation(value = "发布通告")
+    @ApiOperation(value = "列表")
     @GetMapping(value = "/list")
     public ApiResult<PageBean<WebsiteNotice>> getNoticeList(QueryWebsiteNoticeParam queryWebsiteNoticeParam ) {
         ApiResult apiResult = new ApiResult();
@@ -66,10 +66,15 @@ public class AdminWebsiteNoticeController {
     @GetMapping(value = "/notice/{id}")
     public ApiResult<WebsiteNoticeDetailVO> getNoticeDetail(@PathVariable long id) {
         ApiResult apiResult = new ApiResult();
-        ReturnClass carousels = websiteNoticeService.getWebsiteNoticeDetail(id);
+        ReturnClass<WebsiteNotice> carousels = websiteNoticeService.getWebsiteNoticeDetail(id);
         if (carousels.isSuccess()) {
             WebsiteNoticeDetailVO websiteNoticeDetailVO=new WebsiteNoticeDetailVO();
             BeanUtils.copyProperties(carousels.getData(),websiteNoticeDetailVO);
+            if (carousels.getData().getIsIndex()){
+                websiteNoticeDetailVO.setIsIndex(1);
+            }else {
+                websiteNoticeDetailVO.setIsIndex(0);
+            }
             apiResult.success(websiteNoticeDetailVO);
         } else {
             apiResult.setMsg(carousels.getMsg());

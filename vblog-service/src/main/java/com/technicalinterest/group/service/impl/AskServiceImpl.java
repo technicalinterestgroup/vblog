@@ -2,8 +2,10 @@ package com.technicalinterest.group.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.Ask;
+import com.technicalinterest.group.dao.Tag;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.mapper.AskMapper;
+import com.technicalinterest.group.mapper.TagMapper;
 import com.technicalinterest.group.service.AskService;
 import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.UserService;
@@ -33,6 +35,8 @@ import java.util.Objects;
 public class AskServiceImpl implements AskService {
     @Autowired
     private AskMapper askMapper;
+    @Autowired
+    private TagMapper tagMapper;
     @Autowired
     private UserService userService;
 
@@ -103,6 +107,7 @@ public class AskServiceImpl implements AskService {
     public ReturnClass<Ask> getAskDetailById(Long id) {
         Ask askById = askMapper.getAskById(id);
         if (Objects.isNull(askById)){
+
             return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
         }
         return ReturnClass.success(askById);
