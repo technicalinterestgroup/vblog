@@ -173,7 +173,8 @@
             <if test="pojo.isIndex != null"> `is_index` = #{pojo.isIndex}, </if>
             <if test="pojo.type != null"> `type` = #{pojo.type}, </if>
             <if test="pojo.readCount != null"> `read_count` = #{pojo.readCount}, </if>
-            <if test="pojo.likeCount != null"> `like_count` = #{pojo.likeCount}, </if>
+            <if test="pojo.likeCount != null and pojo.likeCount==1">`like_count` = (like_count+1),</if>
+            <if test="pojo.likeCount != null and pojo.likeCount==0">`like_count` = (like_count-1),</if>
             <if test="pojo.commentCount != null"> `comment_count` = #{pojo.commentCount}, </if>
             <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
             <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
