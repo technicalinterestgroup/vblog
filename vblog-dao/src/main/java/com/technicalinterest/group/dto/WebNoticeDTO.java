@@ -13,34 +13,14 @@ import java.util.Date;
  * @since: 0.1
  **/
 @Data
-public class ArticlesDTO {
+public class WebNoticeDTO {
 	private Long id;
 
 	/**
 	 * 标题
 	 */
 	private String title;
-	/**
-	 * 摘要
-	 */
-	private String submit;
-	/**
-	 * 是否置顶
-	 */
-	private Short isTop;
-	/**
-	 * 是否推荐
-	 */
-	private Short isRecommend;
-	/**
-	 * 分类id
-	 */
-	private Long categoryId;
 
-	/**
-	 * 分类
-	 */
-	private String categoryCN;
 
 	/**
 	 * 标签id
@@ -58,6 +38,16 @@ public class ArticlesDTO {
 	private String userName;
 
 	/**
+	 * 文章内容html格式
+	 */
+	private String contentFormat;
+
+	/**
+	 * 文章内容md格式
+	 */
+	private String content;
+
+	/**
 	 * 发布时间
 	 */
 	private Date createTime;
@@ -65,16 +55,8 @@ public class ArticlesDTO {
 	/**
 	 * 文章状态阅量
 	 */
-	private Long readCount;
-	/**
-	 * 归档时间
-	 */
-	private String time;
+	private Integer readCount;
 
-	/**
-	 * 归档条数
-	 */
-	private Integer sum;
 	/**
 	 * 评论数
 	 */
@@ -91,10 +73,7 @@ public class ArticlesDTO {
 	 * 点赞数量
 	 */
 	private Integer likeCount;
-	/**
-	 * 状态
-	 */
-	private Short isDel;
+
 
 	private String description;
 

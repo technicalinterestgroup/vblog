@@ -218,12 +218,12 @@
     </select>
 
     <select id="getArticleInfo" resultType="com.technicalinterest.group.dto.ArticlesDTO">
-        select t1.id,t1.title,t1.user_name as userName,t1.submit,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
+        select t1.id,t1.title,t1.user_name as userName,t1.create_time as createTime,t1.category_id as categoryId,t2.name AS categoryCN,
         t1.tag_id AS tagId,t3.name AS tagCN,t1.is_top as isTop,t1.read_count as readCount,
-        t1.like_count AS likeCount,t1.comment_count as commentCount
+        t1.like_count AS likeCount,t1.comment_count as commentCount,t1.description
         <if test="userName!=null and userName!=''">
-            ,(SELECT count(1) FROM v_collection t4 WHERE t4.article_id=t1.id and t4.user_name=#{userName}) AS vCollection,
-            (SELECT count(1) FROM v_like t5 WHERE t5.source_id=t1.id and t5.user_name=#{userName}) AS vLike
+            ,(SELECT count(1) FROM v_collection t4 WHERE t4.source_id=t1.id and t4.type=1 and t4.user_name=#{userName}) AS vCollection,
+            (SELECT count(1) FROM v_like t5 WHERE t5.source_id=t1.id and t5.type=1 and t5.user_name=#{userName}) AS vLike
         </if>
         from v_article t1 left join v_category t2 on t1.category_id=t2.id
         LEFT JOIN v_tag t3 on t1.tag_id=t3.id

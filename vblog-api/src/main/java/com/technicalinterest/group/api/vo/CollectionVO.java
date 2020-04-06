@@ -29,12 +29,16 @@ public class CollectionVO {
 	 * 收藏文章id
 	 */
 	@ApiModelProperty(value = "收藏文章id")
-	private Long articleId;
+	private Long sourceId;
 	/**
 	 * 收藏文章名称
 	 */
 	@ApiModelProperty(value = "收藏文章名称")
 	private String title;
+
+	private String description;
+
+	private Integer type;
 	/**
 	 * 收藏时间
 	 */

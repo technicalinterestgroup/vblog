@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikeDTO {
+public class   LikeDTO {
 
 	/**
 	 * 用户名
@@ -29,7 +29,7 @@ public class LikeDTO {
 	 */
 	private String ipAddress;
 	/**
-	 * 点赞类型1：博客，2 评论
+	 * 点赞类型1：博客，2 评论,3:通知
 	 */
 	private Short type;
 	/**

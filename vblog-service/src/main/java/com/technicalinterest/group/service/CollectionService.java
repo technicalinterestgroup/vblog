@@ -2,6 +2,7 @@ package com.technicalinterest.group.service;
 
 import com.technicalinterest.group.dao.Collection;
 import com.technicalinterest.group.dao.PageBase;
+import com.technicalinterest.group.service.dto.LikeDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +11,9 @@ import java.util.List;
 
 public interface CollectionService {
 
-	ReturnClass insert(Long articleId);
+	ReturnClass insert(LikeDTO likeDTO);
 
-	ReturnClass del(Long articleId);
+	ReturnClass del(LikeDTO likeDTO);
 
 	ReturnClass queryListCollection(PageBase pageBase);
 }

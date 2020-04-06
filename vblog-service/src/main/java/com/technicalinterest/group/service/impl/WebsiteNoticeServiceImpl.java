@@ -3,6 +3,7 @@ package com.technicalinterest.group.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.WebsiteNotice;
 import com.technicalinterest.group.dto.ArticlesDTO;
+import com.technicalinterest.group.dto.WebNoticeDTO;
 import com.technicalinterest.group.mapper.WebsiteNoticeMapper;
 import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.UserService;
@@ -61,6 +62,21 @@ public class WebsiteNoticeServiceImpl implements WebsiteNoticeService {
     @Override
     public ReturnClass<WebsiteNotice> getWebsiteNoticeDetail(Long id) {
         WebsiteNotice websiteNotice = websiteNoticeMapper.websiteNoticeById(id);
+        if (Objects.isNull(websiteNotice)){
+            throw new VLogException(ResultEnum.NO_URL);
+        }
+        return ReturnClass.success(websiteNotice);
+    }
+
+    /**
+     * 首页轮播通知
+     * @param id
+     * @param userName
+     * @return
+     */
+    @Override
+    public ReturnClass<WebNoticeDTO> getWebsiteNoticeDetail(Long id, String userName) {
+        WebNoticeDTO websiteNotice = websiteNoticeMapper.getWebsiteNotice(id,userName);
         if (Objects.isNull(websiteNotice)){
             throw new VLogException(ResultEnum.NO_URL);
         }

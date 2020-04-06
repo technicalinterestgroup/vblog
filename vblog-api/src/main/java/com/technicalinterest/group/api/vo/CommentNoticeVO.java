@@ -45,6 +45,10 @@ public class CommentNoticeVO {
 	private Short type;
 
 	private String typeCN;
+	public String getTypeCN() {
+		this.setTypeCN();
+		return typeCN;
+	}
 
 	public void setTypeCN() {
 		if (this.type==null){

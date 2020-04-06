@@ -12,18 +12,20 @@ import com.technicalinterest.group.dto.CategoryDTO;
 import com.technicalinterest.group.dto.CollectionDTO;
 import com.technicalinterest.group.service.CollectionService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
+import com.technicalinterest.group.service.dto.LikeDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
+import com.technicalinterest.group.service.util.IpAdrressUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,16 +81,16 @@ public class CollectionController {
 	 * @Description: 添加收藏
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
-	 * @param articleId
+	 * @param sourceId
 	 * @return null
 	 */
 	@ApiOperation(value = "添加收藏", notes = "添加收藏")
-	@GetMapping(value = "/new/{articleId}")
+	@GetMapping(value = "/new/{sourceId}")
 	@BlogOperation(value = "添加收藏")
-	@DistributeLock( key = "#articleId", timeout = 1, expire = 1, errMsg = "00000")
-	public ApiResult<String> addCollection(@PathVariable("articleId") Long articleId) {
+	public ApiResult<String> addCollection(@PathVariable("sourceId") Long sourceId,@RequestParam(value = "type")Short type) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass insert = collectionService.insert(articleId);
+		LikeDTO pojo= LikeDTO.builder().sourceId(sourceId).type(type).build();
+		ReturnClass insert = collectionService.insert(pojo);
 		if (insert.isSuccess()) {
 			apiResult.success(insert.getMsg(), null);
 		} else {
@@ -101,15 +103,16 @@ public class CollectionController {
 	 * @Description: 取消收藏
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
-	 * @param articleId
+	 * @param sourceId
 	 * @return null
 	 */
 	@ApiOperation(value = "取消收藏", notes = "取消收藏")
-	@GetMapping(value = "/del/{articleId}")
+	@GetMapping(value = "/del/{sourceId}")
 	@BlogOperation(value = "取消收藏")
-	public ApiResult<String> delCollection(@PathVariable("articleId") Long articleId) {
+	public ApiResult<String> delCollection(@PathVariable("sourceId") Long sourceId,@RequestParam(value = "type")Short type) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass insert = collectionService.del(articleId);
+		LikeDTO pojo= LikeDTO.builder().sourceId(sourceId).type(type).build();
+		ReturnClass insert = collectionService.del(pojo);
 		if (insert.isSuccess()) {
 			apiResult.success(insert.getMsg(), null);
 		} else {
