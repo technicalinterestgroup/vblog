@@ -1,6 +1,7 @@
 package com.technicalinterest.group.service;
 
 import com.technicalinterest.group.dao.WebsiteNotice;
+import com.technicalinterest.group.dto.WebNoticeDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.dto.VSystemDTO;
 import com.technicalinterest.group.service.dto.WebsiteNoticeDTO;
@@ -27,6 +28,13 @@ public interface WebsiteNoticeService {
      * @return
      */
     ReturnClass<WebsiteNotice> getWebsiteNoticeDetail(Long id);
+
+    /**
+     * 首页轮播通知
+     * @param id
+     * @return
+     */
+    ReturnClass<WebNoticeDTO> getWebsiteNoticeDetail(Long id,String userName);
 
     /**
      * 通知列表

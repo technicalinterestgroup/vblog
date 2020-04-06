@@ -25,8 +25,12 @@ public class Collection extends BaseDao {
 	private String userName;
 
 	/**
-	 * 收藏文章id
+	 * 点赞类型1：博客，2 评论 3 通告
 	 */
-	private Long articleId;
+	private Short type;
+	/**
+	 * 文章/评论/通告 id
+	 */
+	private Long sourceId;
 
 }

@@ -4,35 +4,37 @@
     <!--auto generated Code-->
     <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.Collection">
         <result column="user_name" property="userName"/>
-        <result column="article_id" property="articleId"/>
         <result column="id" property="id"/>
         <result column="is_del" property="isDel"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
+        <result column="type" property="type"/>
+        <result column="source_id" property="sourceId"/>
     </resultMap>
 
     <!--auto generated Code-->
     <sql id="all_column">
         `user_name`,
-        `article_id`,
         `id`,
         `is_del`,
         `create_time`,
-        `update_time`
-    </sql>
+        `update_time`,
+        `type`,
+        `source_id`
+</sql>
 
     <!--auto generated Code-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
         INSERT INTO v_collection (
             `user_name`,
-            `article_id`,
+            `source_id`,
             `id`,
             `is_del`,
             `create_time`,
             `update_time`
         ) VALUES (
             #{pojo.userName},
-            #{pojo.articleId},
+            #{pojo.sourceId},
             #{pojo.id},
             #{pojo.isDel},
             #{pojo.createTime},
@@ -45,7 +47,8 @@
         INSERT INTO v_collection
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.userName!=null"> `user_name`,</if>
-            <if test="pojo.articleId!=null"> `article_id`,</if>
+            <if test="pojo.type!=null"> `type`,</if>
+            <if test="pojo.sourceId!=null"> `source_id`,</if>
             <if test="pojo.id!=null"> `id`,</if>
             <if test="pojo.isDel!=null"> `is_del`,</if>
             <if test="pojo.createTime!=null"> `create_time`,</if>
@@ -54,7 +57,8 @@
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="pojo.userName!=null">#{pojo.userName},</if>
-            <if test="pojo.articleId!=null">#{pojo.articleId},</if>
+            <if test="pojo.type!=null">#{pojo.type},</if>
+            <if test="pojo.sourceId!=null">#{pojo.sourceId},</if>
             <if test="pojo.id!=null">#{pojo.id},</if>
             <if test="pojo.isDel!=null">#{pojo.isDel},</if>
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
@@ -84,7 +88,8 @@
         UPDATE v_collection
         <set>
             <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
-            <if test="pojo.articleId != null"> `article_id` = #{pojo.articleId}, </if>
+            <if test="pojo.type != null"> `type` = #{pojo.type}, </if>
+            <if test="pojo.source_id != null"> `source_id` = #{pojo.sourceId}, </if>
             <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
             <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
             <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
@@ -97,7 +102,7 @@
         select <include refid="all_column"/> from v_collection
         <where>
             <if test="id!=null">and id=#{id}</if>
-            <if test="articleId!=null">and article_id=#{articleId}</if>
+            <if test="sourceId!=null">and source_id=#{sourceId}</if>
             <if test="userName!=null">and user_name=#{userName}</if>
         </where>
 
@@ -105,13 +110,13 @@
 
     <select id="queryListCollectionByUserName" resultType="com.technicalinterest.group.dto.CollectionDTO">
         select t1.article_id as articleId,t2.title,t2.user_name as userName,t1.create_time as createTime,
-        FROM v_collection t1 inner join v_article t2 on t1.article_id=t2.id where t1.user_name=#{userName}
+        FROM v_collection t1 inner join v_article t2 on t1.source_id=t2.id where t1.user_name=#{userName}
         order by t1.create_time desc
     </select>
 
     <select id="queryCountCollectionByUserName" resultType="java.lang.Integer">
          select count(t1.id)
-        FROM v_collection t1 inner join v_article t2 on t1.article_id=t2.id where t1.user_name=#{userName}
+        FROM v_collection t1 inner join v_article t2 on t1.source_id=t2.id where t1.user_name=#{userName}
     </select>
 
 

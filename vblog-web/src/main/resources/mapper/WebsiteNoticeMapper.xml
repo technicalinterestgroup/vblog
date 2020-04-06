@@ -201,8 +201,27 @@
         <if test="pojo.state !=null">and state=#{pojo.state}</if>
     </select>
     <select id="websiteNoticeById" resultMap="AllColumnMap">
-        select <include refid="all_column"/> from v_website_notice where is_del=0
+        select <include refid="all_column"/>
+        from v_website_notice where is_del=0
        and id=#{id} limit 1
+    </select>
+
+    <select id="getWebsiteNotice" resultType="com.technicalinterest.group.dto.WebNoticeDTO">
+        select t1.`title`,
+        t1.`content_format` as contentFormat,
+        t1.`content`,
+        t1.`description`,
+        t1.`user_name` as userName,
+        t1.`read_count` as readCount,
+        t1.`id`,
+        t1.`create_time` as createTime,
+        t1.like_count as likeCount
+        <if test="userName!=null and userName!=''">
+            ,(SELECT count(1) FROM v_collection t4 WHERE t4.source_id=t1.id and t4.type=3 and t4.user_name=#{userName}) AS vCollection,
+            (SELECT count(1) FROM v_like t5 WHERE t5.source_id=t1.id and t5.type=3 and t5.user_name=#{userName}) AS vLike
+        </if>
+        from v_website_notice t1 where t1.is_del=0
+        and t1.id=#{id} limit 1
     </select>
 
     <update id="addReadCount">

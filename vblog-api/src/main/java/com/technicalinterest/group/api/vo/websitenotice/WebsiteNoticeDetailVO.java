@@ -1,6 +1,7 @@
 package com.technicalinterest.group.api.vo.websitenotice;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.technicalinterest.group.dao.BaseDao;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
@@ -74,5 +75,18 @@ public class WebsiteNoticeDetailVO {
     private Short type;
 
     private String carouselUrl;
+
+    /**
+     * 是否收藏 1是
+     */
+    @JsonProperty("vCollection")
+    private Integer vCollection;
+    /**
+     * 是否点赞 1是
+     */
+    @JsonProperty("vLike")
+    private Integer vLike;
+
+
 
 }

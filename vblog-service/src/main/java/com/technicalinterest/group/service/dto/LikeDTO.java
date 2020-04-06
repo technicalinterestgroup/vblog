@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LikeDTO {
+public class   LikeDTO {
 
 	/**
 	 * 用户名

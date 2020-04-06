@@ -3,14 +3,17 @@ package com.technicalinterest.group.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.Collection;
 import com.technicalinterest.group.dao.PageBase;
+import com.technicalinterest.group.dao.WebsiteNotice;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.CollectionDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.CollectionMapper;
+import com.technicalinterest.group.mapper.WebsiteNoticeMapper;
 import com.technicalinterest.group.service.CollectionService;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.CollectionConstant;
 import com.technicalinterest.group.service.Enum.ResultEnum;
+import com.technicalinterest.group.service.dto.LikeDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
@@ -32,21 +35,32 @@ public class CollectionServiceImpl implements CollectionService {
 	private UserService userService;
 	@Autowired
 	private ArticleMapper articleMapper;
+	@Autowired
+	private WebsiteNoticeMapper websiteNoticeMapper;
 
 	@Override
-	public ReturnClass insert(Long articleId) {
+	public ReturnClass insert(LikeDTO likeDTO) {
 		String userName= userService.getUserNameByLoginToken();
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(articleId, null);
-		if (Objects.isNull(articleInfo)) {
+		WebsiteNotice websiteNotice=null;
+		//博客
+		if (likeDTO.getType()==1) {
+			ArticlesDTO articleInfo = articleMapper.getArticleInfo(likeDTO.getSourceId(), null);
+			if (Objects.isNull(articleInfo)) {
+				throw new VLogException(ResultEnum.NO_URL);
+			}
+		//通知
+	} else if (likeDTO.getType() == 3) {
+		websiteNotice = websiteNoticeMapper.websiteNoticeById(likeDTO.getSourceId());
+		if (Objects.isNull(websiteNotice)) {
 			throw new VLogException(ResultEnum.NO_URL);
 		}
-		Collection collectionPa = Collection.builder().userName(userName).articleId(articleId).build();
+	}
+		Collection collectionPa = Collection.builder().userName(userName).type(likeDTO.getType()).sourceId(likeDTO.getSourceId()).build();
 		Collection collection2 = collectionMapper.queryCollection(collectionPa);
 		if (Objects.nonNull(collection2)) {
 			return ReturnClass.success(CollectionConstant.ADD_REPAT);
 		}
-		Collection collection = Collection.builder().articleId(articleId).userName(userName).build();
-		int insert = collectionMapper.insert(collection);
+		int insert = collectionMapper.insertSelective(collectionPa);
 		if (insert > 0) {
 			return ReturnClass.success(CollectionConstant.SUS_ADD);
 		}
@@ -54,9 +68,9 @@ public class CollectionServiceImpl implements CollectionService {
 	}
 
 	@Override
-	public ReturnClass del(Long articleId) {
+	public ReturnClass del(LikeDTO likeDTO) {
 		String userName= userService.getUserNameByLoginToken();
-		Collection collectionPa = Collection.builder().userName(userName).articleId(articleId).build();
+		Collection collectionPa = Collection.builder().userName(userName).type(likeDTO.getType()).sourceId(likeDTO.getSourceId()).build();
 		Collection collection = collectionMapper.queryCollection(collectionPa);
 		if (Objects.isNull(collection)) {
 			throw new VLogException(ResultEnum.NO_URL);

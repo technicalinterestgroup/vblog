@@ -640,7 +640,7 @@ public class ViewController {
 	@VBlogReadCount(type = "3")
 	public ApiResult<WebsiteNoticeDetailVO> getNoticeDetail(@PathVariable long id,@RequestParam(value = "userName",required = false)String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass carousels = websiteNoticeService.getWebsiteNoticeDetail(id);
+		ReturnClass carousels = websiteNoticeService.getWebsiteNoticeDetail(id,userName);
 		if (carousels.isSuccess()) {
 			WebsiteNoticeDetailVO websiteNoticeDetailVO=new WebsiteNoticeDetailVO();
 			BeanUtils.copyProperties(carousels.getData(),websiteNoticeDetailVO);

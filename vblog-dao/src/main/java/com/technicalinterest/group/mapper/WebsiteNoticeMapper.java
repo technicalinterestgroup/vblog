@@ -1,5 +1,6 @@
 package com.technicalinterest.group.mapper;
 
+import com.technicalinterest.group.dto.WebNoticeDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,6 +37,13 @@ public interface WebsiteNoticeMapper {
      * @return
      */
     WebsiteNotice websiteNoticeById(@Param("id") Long id);
+
+    /**
+     * 根据id查询详情
+     * @param id
+     * @return
+     */
+    WebNoticeDTO getWebsiteNotice(@Param("id") Long id,@Param("userName") String userName);
 
     /**
      * 增加阅读数
