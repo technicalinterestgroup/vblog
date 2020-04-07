@@ -1,9 +1,12 @@
 package com.technicalinterest.group.service;
 
 import com.technicalinterest.group.dao.Ask;
+import com.technicalinterest.group.dao.Reply;
 import com.technicalinterest.group.service.dto.AskDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
+
+import java.util.List;
 
 /**
  * @ClassName: AskService
@@ -41,4 +44,5 @@ public interface AskService {
      * @param id
      */
     void updateReplayCount(Long id);
+
 }

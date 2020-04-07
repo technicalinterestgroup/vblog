@@ -1,7 +1,10 @@
 package com.technicalinterest.group.service;
 
+import com.technicalinterest.group.dao.Reply;
 import com.technicalinterest.group.service.dto.EditCommentDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
+
+import java.util.List;
 
 public interface CommentService {
 
@@ -16,5 +19,6 @@ public interface CommentService {
      * @param id
      * @return null
     */
-	ReturnClass getArticleComment(Long id);
+	ReturnClass getArticleComment(Long id,Short type);
+
 }

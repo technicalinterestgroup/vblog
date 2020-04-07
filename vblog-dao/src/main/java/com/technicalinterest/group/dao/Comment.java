@@ -50,4 +50,6 @@ public class Comment extends BaseDao {
 	 * 是否被查看
 	 */
 	private Short isView;
+
+	private Short type;
 }

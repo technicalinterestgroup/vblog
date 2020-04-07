@@ -2,9 +2,11 @@ package com.technicalinterest.group.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.Ask;
+import com.technicalinterest.group.dao.Reply;
 import com.technicalinterest.group.dao.Tag;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.mapper.AskMapper;
+import com.technicalinterest.group.mapper.ReplyMapper;
 import com.technicalinterest.group.mapper.TagMapper;
 import com.technicalinterest.group.service.AskService;
 import com.technicalinterest.group.service.Enum.ResultEnum;
@@ -36,7 +38,7 @@ public class AskServiceImpl implements AskService {
     @Autowired
     private AskMapper askMapper;
     @Autowired
-    private TagMapper tagMapper;
+    private ReplyMapper replyMapper;
     @Autowired
     private UserService userService;
 
@@ -165,4 +167,5 @@ public class AskServiceImpl implements AskService {
     public void updateReplayCount(Long id) {
         askMapper.updateReplayCount(id);
     }
+
 }

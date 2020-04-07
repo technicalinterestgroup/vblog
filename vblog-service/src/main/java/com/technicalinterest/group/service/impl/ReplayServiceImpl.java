@@ -42,6 +42,10 @@ public class ReplayServiceImpl implements ReplayService {
     @Override
     public ReturnClass<String> saveReply(Reply reply) {
         reply.setUserName(userService.getUserNameByLoginToken());
+        ReturnClass<Ask> askDetailById = askService.getAskDetailById(reply.getAskId());
+        if (!askDetailById.isSuccess()){
+            return ReturnClass.fail("问题不存在！");
+        }
         reply.setCreateTime(new Date());
         reply.setUpdateTime(new Date());
         int i = replyMapper.insertSelective(reply);
@@ -59,7 +63,8 @@ public class ReplayServiceImpl implements ReplayService {
      */
     @Override
     public ReturnClass<List<Reply>> getReplyList(Long askId) {
-        return null;
+        List<Reply> replysByAsk = replyMapper.getReplysByAsk(askId);
+        return ReturnClass.success(replysByAsk);
     }
 
     /**

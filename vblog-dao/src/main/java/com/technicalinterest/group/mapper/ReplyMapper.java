@@ -17,4 +17,6 @@ public interface ReplyMapper {
     int update(@Param("pojo") Reply pojo);
 
     Reply getOneReply(@Param("id") Long id);
+
+    List<Reply> getReplysByAsk(@Param("askId") Long askId);
 }

@@ -597,9 +597,9 @@ public class ViewController {
 
 	@ApiOperation(value = "博客评论", notes = "评论")
 	@GetMapping(value = "/comment/list/{articleId}")
-	public ApiResult<CommentResultDTO> listCommet1(@PathVariable("articleId") Long articleId) {
+	public ApiResult<CommentResultDTO> listCommet1(@PathVariable("articleId") Long articleId,@RequestParam(value = "type")Short type) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass returnClass = commentService.getArticleComment(articleId);
+		ReturnClass returnClass = commentService.getArticleComment(articleId,type);
 		if (returnClass.isSuccess()) {
 			apiResult.success(returnClass.getData());
 		} else {
@@ -692,7 +692,7 @@ public class ViewController {
 		return apiResult;
 	}
 	@ApiOperation(value = "问题回答列表")
-	@PostMapping(value = "/{id}/replys")
+	@GetMapping(value = "/ask/{id}/replys")
 	public ApiResult<List<ReplyVO>> getReplyList(@PathVariable Long id) {
 		ApiResult apiResult = new ApiResult();
 		ReturnClass<List<Reply>> result=replayService.getReplyList(id);

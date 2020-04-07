@@ -128,5 +128,9 @@
     <select id="getOneReply" resultMap="AllColumnMap">
         select <include refid="all_column"/> from v_reply where id=#{id} limit 1
     </select>
+
+    <select id="getReplysByAsk" resultMap="AllColumnMap">
+        select <include refid="all_column"/> from v_reply where ask_id=#{askId}  order by id desc
+    </select>
 </mapper>
 

@@ -24,10 +24,13 @@ public class NewCommentParam {
 	private String commentContent;
 
 	@ApiModelProperty(value = "文章id")
-	@NotNull(message = "文章id不能为空")
+	@NotNull(message = "id不能为空")
 	private Long articleId;
 
 	@ApiModelProperty(value = "上级评论id")
 	private Long parentId;
+	@ApiModelProperty(value = "类型")
+	@NotNull(message = "类型不能为空")
+	private Short type;
 
 }

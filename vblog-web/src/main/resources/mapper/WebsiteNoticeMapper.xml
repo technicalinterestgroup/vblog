@@ -214,7 +214,7 @@
         t1.`user_name` as userName,
         t1.`read_count` as readCount,
         t1.`id`,
-        t1.`create_time` as createTime,
+        t1.`update_time` as updateTime,
         t1.like_count as likeCount
         <if test="userName!=null and userName!=''">
             ,(SELECT count(1) FROM v_collection t4 WHERE t4.source_id=t1.id and t4.type=3 and t4.user_name=#{userName}) AS vCollection,

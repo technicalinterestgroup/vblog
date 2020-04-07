@@ -1,13 +1,17 @@
 package com.technicalinterest.group.service.impl;
 
 import com.technicalinterest.group.dao.Comment;
+import com.technicalinterest.group.dao.Reply;
 import com.technicalinterest.group.dto.ArticlesDTO;
 import com.technicalinterest.group.dto.CommentDTO;
 import com.technicalinterest.group.dto.CommentResultDTO;
+import com.technicalinterest.group.dto.WebNoticeDTO;
 import com.technicalinterest.group.mapper.ArticleMapper;
 import com.technicalinterest.group.mapper.CommentMapper;
+import com.technicalinterest.group.mapper.WebsiteNoticeMapper;
 import com.technicalinterest.group.service.ArticleService;
 import com.technicalinterest.group.service.CommentService;
+import com.technicalinterest.group.service.Enum.TypeEnum;
 import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.constant.CommentConstant;
 import com.technicalinterest.group.service.Enum.ResultEnum;
@@ -40,19 +44,34 @@ public class CommentServiceImpl implements CommentService {
 	private ArticleMapper articleMapper;
 	@Autowired
 	private ArticleService articleService;
+	@Autowired
+	private WebsiteNoticeMapper websiteNoticeMapper;
 
 	@Override
 	public ReturnClass insert(EditCommentDTO pojo) {
 		Comment comment = new Comment();
 		BeanUtils.copyProperties(pojo, comment);
 		comment.setUserName(userService.getUserNameByLoginToken());
-		ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getArticleId(),null);
-		if (Objects.isNull(articleInfo)){
-			throw new VLogException(CommentConstant.ARTICLE_ID_ERROR);
+		//博客
+		if (pojo.getType()== TypeEnum.BLOG.getCode().intValue()){
+			ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getArticleId(),null);
+			if (Objects.isNull(articleInfo)){
+				throw new VLogException(CommentConstant.ARTICLE_ID_ERROR);
+			}
+			if (StringUtils.equals(articleInfo.getUserName(),comment.getUserName())){
+				comment.setIsAuther((short)1);
+			}
+			//通告
+		}else if (pojo.getType()==TypeEnum.NOTICE.getCode().intValue()){
+			WebNoticeDTO websiteNotice = websiteNoticeMapper.getWebsiteNotice(pojo.getArticleId(), null);
+			if (Objects.isNull(websiteNotice)){
+				throw new VLogException(CommentConstant.ARTICLE_ID_ERROR);
+			}
+			if (StringUtils.equals(websiteNotice.getUserName(),comment.getUserName())){
+				comment.setIsAuther((short)1);
+			}
 		}
-		if (StringUtils.equals(articleInfo.getUserName(),comment.getUserName())){
-			comment.setIsAuther((short)1);
-		}
+
 		if (Objects.nonNull(comment.getParentId())){
 			Comment comment1 = commentMapper.queryCommentById(comment.getParentId());
 			if (Objects.isNull(comment1)){
@@ -96,13 +115,13 @@ public class CommentServiceImpl implements CommentService {
 	 * @return null
 	 */
 	@Override
-	public ReturnClass getArticleComment(Long id) {
+	public ReturnClass getArticleComment(Long id,Short type) {
 		//id是否存在
 		CommentResultDTO commentResultDTO=new CommentResultDTO();
-		List<CommentDTO> commentDTOS = commentMapper.queryListComment(null, id, null);
+		List<CommentDTO> commentDTOS = commentMapper.queryListComment(null, id, null,type);
 		Map<Long,List<CommentDTO>> refCommnet=new HashMap<>();
 		for (CommentDTO entity : commentDTOS) {
-			List<CommentDTO> commentDTOS1 = commentMapper.queryListComment(null, null, entity.getId());
+			List<CommentDTO> commentDTOS1 = commentMapper.queryListComment(null, null, entity.getId(),type);
 			if (!commentDTOS.isEmpty()) {
 				refCommnet.put(entity.getId(), commentDTOS1);
 			}
@@ -124,7 +143,7 @@ public class CommentServiceImpl implements CommentService {
 	 */
 	private List<CommentDTO> getChildParent(Long id) {
 
-		List<CommentDTO> commentDTOS = commentMapper.queryListComment(null, null, id);
+		List<CommentDTO> commentDTOS = commentMapper.queryListComment(null, null, id,null);
 		if (commentDTOS.isEmpty()) {
 			return null;
 		}

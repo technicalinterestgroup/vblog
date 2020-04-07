@@ -41,4 +41,6 @@ public class EditCommentDTO {
 	 * 是否是作者回复
 	 */
 	private Short isAuther;
+
+	private Short type;
 }

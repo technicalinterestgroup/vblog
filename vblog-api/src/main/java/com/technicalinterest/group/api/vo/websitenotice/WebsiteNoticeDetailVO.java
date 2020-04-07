@@ -1,9 +1,11 @@
 package com.technicalinterest.group.api.vo.websitenotice;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.technicalinterest.group.dao.BaseDao;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -58,7 +60,8 @@ public class WebsiteNoticeDetailVO {
      * 文章评论量
      */
     private Integer commentCount;
-
+    @ApiModelProperty(value = "发布时间")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date updateTime;
 
     /**
