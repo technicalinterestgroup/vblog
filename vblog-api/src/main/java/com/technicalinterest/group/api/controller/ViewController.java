@@ -704,6 +704,19 @@ public class ViewController {
 		}
 		return apiResult;
 	}
+	@ApiOperation(value = "最新问题")
+	@GetMapping(value = "/ask/new/list")
+	public ApiResult<List<AskListVO>> getNewAskList(@RequestParam(value = "userName",required = false)String userName) {
+		ApiResult apiResult = new ApiResult();
+		ReturnClass<List<com.technicalinterest.group.dto.AskDTO>> topList = askService.getTopAskList(userName,null);
+		if (topList.isSuccess()) {
+			List list = ListBeanUtils.copyProperties(topList.getData(), AskListVO.class);
+			apiResult.success(list);
+		} else {
+			apiResult.fail(topList.getMsg());
+		}
+		return apiResult;
+	}
 	@ApiOperation(value = "测试ws")
 	@GetMapping(value = "/socket")
 	public ApiResult<List<BlogUserVO>> test(@RequestParam("userName")String userName,@RequestParam(value = "msg")String msg) {

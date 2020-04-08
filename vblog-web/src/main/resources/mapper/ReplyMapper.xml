@@ -137,7 +137,8 @@
         t1.`content`,
         t1.`like_count` as likeCount,
         t1.`id`,
-        t1.`create_time` as createTime
+        t1.`create_time` as createTime,
+        t1.state
         <if test="userName!=null and userName!=''">
             ,(SELECT count(1) FROM v_like t5 WHERE t5.source_id=t1.id and t5.type=4 and t5.user_name=#{userName}) AS vLike
         </if>

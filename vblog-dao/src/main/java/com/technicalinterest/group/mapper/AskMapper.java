@@ -28,4 +28,6 @@ public interface AskMapper {
     int updateReadCount(@Param("id") Long id);
 
     int updateReplayCount(@Param("id") Long id);
+
+    List<AskDTO> getAskTopList(@Param("userName") String userName,@Param("type") Integer type,@Param("size") Integer size);
 }

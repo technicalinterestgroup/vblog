@@ -177,4 +177,9 @@ public class AskServiceImpl implements AskService {
         askMapper.updateReplayCount(id);
     }
 
+    @Override
+    public ReturnClass<List<com.technicalinterest.group.dto.AskDTO>> getTopAskList(String userName,Integer type) {
+        List<com.technicalinterest.group.dto.AskDTO> askTopList = askMapper.getAskTopList(userName,type, 5);
+        return ReturnClass.success(askTopList);
+    }
 }

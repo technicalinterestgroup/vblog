@@ -45,4 +45,6 @@ public interface AskService {
      */
     void updateReplayCount(Long id);
 
+    ReturnClass<List<com.technicalinterest.group.dto.AskDTO>> getTopAskList(String userName,Integer type);
+
 }
