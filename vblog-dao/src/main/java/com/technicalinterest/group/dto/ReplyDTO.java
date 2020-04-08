@@ -1,20 +1,20 @@
-package com.technicalinterest.group.api.vo;
+package com.technicalinterest.group.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.technicalinterest.group.dao.BaseDao;
 import lombok.Data;
 
 import java.util.Date;
 
 /**
- * @ClassName: ReplyVO
+ * @ClassName: Ask
  * @Author: shuyu.wang
  * @Description:
- * @Date: 2020/4/1 13:34
+ * @Date: 2020/3/31 15:16
  * @Version: 1.0
  */
 @Data
-public class ReplyVO {
+public class ReplyDTO{
+
     private Long id;
 
     private Long askId;
@@ -45,9 +45,7 @@ public class ReplyVO {
      */
     private Short  state;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
 
-    @JsonProperty("vLike")
     private Integer vLike;
 }

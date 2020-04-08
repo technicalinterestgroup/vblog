@@ -19,10 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -51,6 +48,22 @@ public class ReplyController {
         Reply reply=new Reply();
         BeanUtils.copyProperties(replayParam, reply);
         ReturnClass save = replayService.saveReply(reply);
+        if (save.isSuccess()) {
+            apiResult.success(save.getMsg());
+        } else {
+            apiResult.fail(save.getMsg());
+        }
+        return apiResult;
+    }
+
+    @ApiOperation(value = "采纳答案")
+    @GetMapping(value = "/adoption")
+    @BlogOperation(value = "采纳答案")
+    public ApiResult<String> adoption(@RequestParam(value = "id")Long id) {
+        log.info("采纳答案 参数{}", id);
+        ApiResult apiResult = new ApiResult();
+        Reply reply=new Reply();
+        ReturnClass save = replayService.acceptionReply(id);
         if (save.isSuccess()) {
             apiResult.success(save.getMsg());
         } else {

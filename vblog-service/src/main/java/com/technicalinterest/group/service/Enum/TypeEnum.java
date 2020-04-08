@@ -3,7 +3,8 @@ package com.technicalinterest.group.service.Enum;
 public enum TypeEnum {
     BLOG((short)1, "博客"),
     COMMENT((short)2, "评论"),
-    NOTICE((short)3, "通告");
+    NOTICE((short)3, "通告"),
+    ASK((short)4, "问答");
 
     private Short code;
     private String message;
@@ -13,8 +14,8 @@ public enum TypeEnum {
         this.message = message;
     }
 
-    public Short getCode() {
-        return code;
+    public short getCode() {
+        return code.shortValue();
     }
 
     public String getMessage() {

@@ -137,7 +137,7 @@
             <if test="pojo.contentFormat != null"> `content_format` = #{pojo.contentFormat}, </if>
             <if test="pojo.content != null"> `content` = #{pojo.content}, </if>
             <if test="pojo.readCount != null"> `read_count` = #{pojo.readCount}, </if>
-            <if test="pojo.replyCount != null"> `reply_count` = #{pojo.replyCount}, </if>
+            <if test="pojo.replyCount != null"> `reply_count` = reply_count+1, </if>
             <if test="pojo.state != null"> `state` = #{pojo.state}, </if>
             <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
             <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>

@@ -15,9 +15,11 @@ import com.technicalinterest.group.service.dto.AskDTO;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
+import com.technicalinterest.group.service.util.HtmlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +44,9 @@ public class AskServiceImpl implements AskService {
     @Autowired
     private UserService userService;
 
+    @Value("${submit_length}")
+    private Integer ARTICLE_LENGTH;
+
     /**
      * 新增或编辑
      *
@@ -52,6 +57,9 @@ public class AskServiceImpl implements AskService {
     public ReturnClass saveOrUpdateAsk(Ask ask) {
         String userName=userService.getUserNameByLoginToken();
         int flag=0;
+        //文章摘要
+        String summaryText = HtmlUtil.cleanHtmlTag(ask.getContentFormat());
+        ask.setDescription(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
         if (Objects.isNull(ask.getId())){
             ask.setState((short)0);
             ask.setUserName(userName);
@@ -71,7 +79,7 @@ public class AskServiceImpl implements AskService {
             flag=askMapper.update(ask);
         }
         if (flag>0){
-            return ReturnClass.success();
+            return ReturnClass.success(ask.getId());
         }
         return ReturnClass.fail();
     }
@@ -153,8 +161,9 @@ public class AskServiceImpl implements AskService {
         int i = askMapper.updateReadCount(id);
         if (i>0){
             log.info("阅读数增加成功");
+        }else {
+            log.error("阅读数增加失败,id={}",id);
         }
-        log.error("阅读数增加失败,id={}",id);
     }
 
     /**

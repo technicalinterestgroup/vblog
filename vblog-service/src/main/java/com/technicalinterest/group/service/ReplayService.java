@@ -1,6 +1,7 @@
 package com.technicalinterest.group.service;
 
 import com.technicalinterest.group.dao.Reply;
+import com.technicalinterest.group.dto.ReplyDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
 
 import java.util.List;
@@ -25,13 +26,12 @@ public interface ReplayService {
      * @param askId
      * @return
      */
-    ReturnClass<List<Reply>> getReplyList(Long askId);
+    ReturnClass<List<ReplyDTO>> getReplyList(Long askId, String userName);
 
     /**
      * 采纳答案
-     * @param userName
      * @param id
      * @return
      */
-    ReturnClass<String> acceptionReply(String userName,Long id);
+    ReturnClass<String> acceptionReply(Long id);
 }

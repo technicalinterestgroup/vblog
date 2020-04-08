@@ -53,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
 		BeanUtils.copyProperties(pojo, comment);
 		comment.setUserName(userService.getUserNameByLoginToken());
 		//博客
-		if (pojo.getType()== TypeEnum.BLOG.getCode().intValue()){
+		if (pojo.getType()== TypeEnum.BLOG.getCode()){
 			ArticlesDTO articleInfo = articleMapper.getArticleInfo(pojo.getArticleId(),null);
 			if (Objects.isNull(articleInfo)){
 				throw new VLogException(CommentConstant.ARTICLE_ID_ERROR);
@@ -62,7 +62,7 @@ public class CommentServiceImpl implements CommentService {
 				comment.setIsAuther((short)1);
 			}
 			//通告
-		}else if (pojo.getType()==TypeEnum.NOTICE.getCode().intValue()){
+		}else if (pojo.getType()==TypeEnum.NOTICE.getCode()){
 			WebNoticeDTO websiteNotice = websiteNoticeMapper.getWebsiteNotice(pojo.getArticleId(), null);
 			if (Objects.isNull(websiteNotice)){
 				throw new VLogException(CommentConstant.ARTICLE_ID_ERROR);

@@ -693,9 +693,9 @@ public class ViewController {
 	}
 	@ApiOperation(value = "问题回答列表")
 	@GetMapping(value = "/ask/{id}/replys")
-	public ApiResult<List<ReplyVO>> getReplyList(@PathVariable Long id) {
+	public ApiResult<List<ReplyVO>> getReplyList(@PathVariable Long id,@RequestParam(value = "userName",required = false)String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass<List<Reply>> result=replayService.getReplyList(id);
+		ReturnClass<List<ReplyDTO>> result=replayService.getReplyList(id,userName);
 		if (result.isSuccess()) {
 			List<ReplyVO> replyVOS = ListBeanUtils.copyProperties(result.getData(), ReplyVO.class);
 			apiResult.success(replyVOS);

@@ -44,14 +44,14 @@ public class AskController {
     @ApiOperation(value = "问题发布")
     @PostMapping(value = "/new")
     @BlogOperation(value = "问题发布")
-    public ApiResult<String> saveAsk(@Valid @RequestBody AskParam askParam) {
+    public ApiResult<Long> saveAsk(@Valid @RequestBody AskParam askParam) {
         log.info("问题发布 参数{}", JSONObject.toJSON(askParam));
         ApiResult apiResult = new ApiResult();
         Ask ask=new Ask();
         BeanUtils.copyProperties(askParam, ask);
         ReturnClass saveArticle = askService.saveOrUpdateAsk(ask);
         if (saveArticle.isSuccess()) {
-            apiResult.success(saveArticle.getMsg());
+            apiResult.success(saveArticle.getData());
         } else {
             apiResult.fail(saveArticle.getMsg());
         }

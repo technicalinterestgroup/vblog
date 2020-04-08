@@ -125,6 +125,7 @@
             <if test="pojo.id!=null">and id=#{pojo.id}</if>
             <if test="pojo.sourceId!=null">and source_id=#{pojo.sourceId}</if>
             <if test="pojo.userName!=null">and user_name=#{pojo.userName}</if>
+            <if test="pojo.type!=null">and type=#{pojo.type}</if>
         </where>
     </select>
 

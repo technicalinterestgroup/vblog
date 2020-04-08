@@ -115,7 +115,8 @@
             <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
             <if test="pojo.contentFormat != null"> `content_format` = #{pojo.contentFormat}, </if>
             <if test="pojo.content != null"> `content` = #{pojo.content}, </if>
-            <if test="pojo.likeCount != null"> `like_count` = #{pojo.likeCount}, </if>
+            <if test="pojo.likeCount != null and pojo.likeCount==1">`like_count` = (like_count+1),</if>
+            <if test="pojo.likeCount != null and pojo.likeCount==0">`like_count` = (like_count-1),</if>
             <if test="pojo.state != null"> `state` = #{pojo.state}, </if>
             <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
             <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
@@ -129,8 +130,18 @@
         select <include refid="all_column"/> from v_reply where id=#{id} limit 1
     </select>
 
-    <select id="getReplysByAsk" resultMap="AllColumnMap">
-        select <include refid="all_column"/> from v_reply where ask_id=#{askId}  order by id desc
+    <select id="getReplysByAsk" resultType="com.technicalinterest.group.dto.ReplyDTO">
+        select  t1.`ask_id` as askId,
+        t1.`user_name` as userName,
+        t1.`content_format` as contentFormat,
+        t1.`content`,
+        t1.`like_count` as likeCount,
+        t1.`id`,
+        t1.`create_time` as createTime
+        <if test="userName!=null and userName!=''">
+            ,(SELECT count(1) FROM v_like t5 WHERE t5.source_id=t1.id and t5.type=4 and t5.user_name=#{userName}) AS vLike
+        </if>
+         from v_reply t1 where t1.ask_id=#{askId}  order by t1.id desc
     </select>
 </mapper>
 
