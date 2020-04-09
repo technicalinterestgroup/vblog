@@ -160,15 +160,32 @@
         <if test="id!= null "> and id=#{id}</if>
     </select>
 
-    <select id="getAskList"  resultType="com.technicalinterest.group.dto.AskDTO" parameterType="com.technicalinterest.group.dao.Ask">
+    <select id="getAskDTOById" resultType="com.technicalinterest.group.dto.AskDTO" parameterType="com.technicalinterest.group.dao.Ask">
         select `title`,
         `user_name` as userName,
-        `description`,
         `read_count` as readCount,
-        `reply_count` as replyCount,
         `state`,
         `id`,
-        `create_time` as createTime,(select t2.name from v_tag t2 where t1.tag_id=t2.id limit 1)as tagCN,t1.tag_id as tagId
+        content_format as contentFormat,
+        content,
+        `create_time` as createTime,(select t2.name from v_tag t2 where t1.tag_id=t2.id limit 1)as tagCN,
+        t1.tag_id as tagId
+        <if test="userName!=null and userName!=''">
+            ,(SELECT count(1) FROM v_collection t4 WHERE t4.source_id=t1.id and t4.type=4 and t4.user_name=#{userName}) AS vCollection
+        </if> from v_ask t1 where t1.is_del=0
+        <if test="id!= null "> and t1.id=#{id}</if>
+    </select>
+
+    <select id="getAskList"  resultType="com.technicalinterest.group.dto.AskDTO" parameterType="com.technicalinterest.group.dao.Ask">
+        select t1.`title`,
+        t1.`user_name` as userName,
+        t1.`description`,
+        t1.`read_count` as readCount,
+        t1.`reply_count` as replyCount,
+        t1.`state`,
+        t1.`id`,
+        t1.`create_time` as createTime,(select t2.name from v_tag t2 where t1.tag_id=t2.id limit 1)as tagCN,
+        t1.tag_id as tagId
         from v_ask t1 where t1.is_del=0
         <if test="pojo.id!= null "> and  t1.id=#{pojo.id}</if>
         <if test="pojo.userName!= null and pojo.userName!=''"> and  t1.user_name=#{pojo.userName}</if>

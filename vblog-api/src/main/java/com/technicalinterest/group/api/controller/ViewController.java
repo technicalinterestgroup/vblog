@@ -8,8 +8,6 @@ import com.technicalinterest.group.api.vo.*;
 import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeDetailVO;
 import com.technicalinterest.group.api.vo.websitenotice.WebsiteNoticeVO;
 import com.technicalinterest.group.dao.Ask;
-import com.technicalinterest.group.dao.Reply;
-import com.technicalinterest.group.dao.Tag;
 import com.technicalinterest.group.dto.*;
 import com.technicalinterest.group.service.*;
 import com.technicalinterest.group.service.Enum.ArticleOrderEnum;
@@ -17,7 +15,7 @@ import com.technicalinterest.group.service.annotation.BlogOperation;
 import com.technicalinterest.group.service.annotation.VBlogReadCount;
 import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.dto.*;
-import com.technicalinterest.group.service.dto.AskDTO;
+import com.technicalinterest.group.service.dto.AskDTOParam;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.ListBeanUtils;
 import com.technicalinterest.group.service.util.WebSocketUtils;
@@ -656,7 +654,7 @@ public class ViewController {
 	public ApiResult<PageBean<AskListVO>> getAskList(QueryAskParam queryAskParam) {
 		log.info("问题发布 参数{}", JSONObject.toJSON(queryAskParam));
 		ApiResult apiResult = new ApiResult();
-		AskDTO ask=new AskDTO();
+		AskDTOParam ask=new AskDTOParam();
 		BeanUtils.copyProperties(queryAskParam, ask);
 		ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> saveArticle = askService.getAskPage(ask);
 		if (saveArticle.isSuccess()) {
@@ -677,14 +675,14 @@ public class ViewController {
 	@VBlogReadCount(type = "2")
 	public ApiResult<AskVO> getAskDetail(@PathVariable Long id,@RequestParam(value = "userName",required = false)String userName) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass<Ask> saveArticle = askService.getAskDetailById(id);
+		ReturnClass<AskDTO> saveArticle = askService.getAskDetailById(id,userName);
 		if (saveArticle.isSuccess()) {
 			AskVO askVO=new AskVO();
 			BeanUtils.copyProperties(saveArticle.getData(),askVO);
-			ReturnClass<Tag> tag = tagService.getTag(askVO.getTagId());
-            if (tag.isSuccess()){
-				askVO.setTagCN(tag.getData().getName());
-			}
+//			ReturnClass<Tag> tag = tagService.getTag(askVO.getTagId());
+//            if (tag.isSuccess()){
+//				askVO.setTagCN(tag.getData().getName());
+//			}
 			apiResult.success(askVO);
 		} else {
 			apiResult.fail(saveArticle.getMsg());

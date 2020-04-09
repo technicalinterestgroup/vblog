@@ -15,5 +15,5 @@ public interface CollectionService {
 
 	ReturnClass del(LikeDTO likeDTO);
 
-	ReturnClass queryListCollection(PageBase pageBase);
+	ReturnClass queryListCollection(Short type,PageBase pageBase);
 }

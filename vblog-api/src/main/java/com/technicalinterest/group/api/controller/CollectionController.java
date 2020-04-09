@@ -53,11 +53,11 @@ public class CollectionController {
 	@ApiOperation(value = "博客收藏列表", notes = "博客收藏列表")
 	@GetMapping(value = "/list")
 	@BlogOperation(value = "博客收藏列表")
-	public ApiResult<PageBean<CollectionVO>> listCategory(@Validated PageBaseParam pageBaseParam) {
+	public ApiResult<PageBean<CollectionVO>> listCategory(@RequestParam(value = "type")Short type,@Validated PageBaseParam pageBaseParam) {
 		ApiResult apiResult = new ApiResult();
 		PageBase pageBase = new PageBase();
 		BeanUtils.copyProperties(pageBaseParam, pageBase);
-		ReturnClass listCollection = collectionService.queryListCollection(pageBase);
+		ReturnClass listCollection = collectionService.queryListCollection(type,pageBase);
 		if (listCollection.isSuccess()) {
 			PageBean<CollectionDTO> pageBean = (PageBean<CollectionDTO>) listCollection.getData();
 			List<CollectionVO> list = new ArrayList<>();

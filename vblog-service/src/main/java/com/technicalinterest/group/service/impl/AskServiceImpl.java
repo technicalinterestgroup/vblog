@@ -2,16 +2,13 @@ package com.technicalinterest.group.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.Ask;
-import com.technicalinterest.group.dao.Reply;
-import com.technicalinterest.group.dao.Tag;
-import com.technicalinterest.group.dto.ArticlesDTO;
+import com.technicalinterest.group.dto.AskDTO;
 import com.technicalinterest.group.mapper.AskMapper;
 import com.technicalinterest.group.mapper.ReplyMapper;
-import com.technicalinterest.group.mapper.TagMapper;
 import com.technicalinterest.group.service.AskService;
 import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.dto.AskDTO;
+import com.technicalinterest.group.service.dto.AskDTOParam;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
@@ -85,37 +82,37 @@ public class AskServiceImpl implements AskService {
     }
 
     @Override
-    public ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPage(AskDTO askDTO) {
+    public ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPage(AskDTOParam askDTOParam) {
         Ask query=new Ask();
-        BeanUtils.copyProperties(askDTO,query);
+        BeanUtils.copyProperties(askDTOParam,query);
         Integer askListCount = askMapper.getAskListCount(query);
         if (askListCount<1){
             return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
         }
-        PageHelper.startPage(askDTO.getCurrentPage(), askDTO.getPageSize());
+        PageHelper.startPage(askDTOParam.getCurrentPage(), askDTOParam.getPageSize());
         List<com.technicalinterest.group.dto.AskDTO> askList = askMapper.getAskList(query);
-        PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = new PageBean<>(askList, askDTO.getCurrentPage(), askDTO.getPageSize(), askListCount);
+        PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = new PageBean<>(askList, askDTOParam.getCurrentPage(), askDTOParam.getPageSize(), askListCount);
         return ReturnClass.success(pageBean);
     }
 
     @Override
-    public ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPageByToken(AskDTO askDTO) {
+    public ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPageByToken(AskDTOParam askDTOParam) {
         Ask query=new Ask();
-        BeanUtils.copyProperties(askDTO,query);
+        BeanUtils.copyProperties(askDTOParam,query);
         query.setUserName(userService.getUserNameByLoginToken());
         Integer askListCount = askMapper.getAskListCount(query);
         if (askListCount<1){
             return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
         }
-        PageHelper.startPage(askDTO.getCurrentPage(), askDTO.getPageSize());
+        PageHelper.startPage(askDTOParam.getCurrentPage(), askDTOParam.getPageSize());
         List<com.technicalinterest.group.dto.AskDTO> askList = askMapper.getAskList(query);
-        PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = new PageBean<>(askList, askDTO.getCurrentPage(), askDTO.getPageSize(), askListCount);
+        PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = new PageBean<>(askList, askDTOParam.getCurrentPage(), askDTOParam.getPageSize(), askListCount);
         return ReturnClass.success(pageBean);
     }
 
     @Override
-    public ReturnClass<Ask> getAskDetailById(Long id) {
-        Ask askById = askMapper.getAskById(id);
+    public ReturnClass<AskDTO> getAskDetailById(Long id, String userName) {
+        AskDTO askById = askMapper.getAskDTOById(id,userName);
         if (Objects.isNull(askById)){
 
             return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());

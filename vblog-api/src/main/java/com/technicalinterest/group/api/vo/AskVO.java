@@ -1,6 +1,7 @@
 package com.technicalinterest.group.api.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -62,6 +63,9 @@ public class AskVO {
      * 状态
      */
     private Short  state;
+
+    @JsonProperty("vCollection")
+    private Integer vCollection;
 
     @ApiModelProperty(value = "发布时间")
     @JsonFormat(pattern = "yyyy-MM-dd")

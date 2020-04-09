@@ -23,4 +23,5 @@ public class PageBaseParam {
 	 */
 	@ApiModelProperty(value = "每页条数")
 	private Integer pageSize=10;
+
 }

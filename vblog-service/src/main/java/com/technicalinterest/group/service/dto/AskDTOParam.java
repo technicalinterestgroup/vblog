@@ -11,7 +11,7 @@ import lombok.Data;
  * @Version: 1.0
  */
 @Data
-public class AskDTO extends PageBase {
+public class AskDTOParam extends PageBase {
 
     private String keyWord;
 

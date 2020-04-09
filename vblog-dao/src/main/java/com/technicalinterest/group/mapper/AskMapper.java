@@ -21,6 +21,8 @@ public interface AskMapper {
 
     Ask getAskById(@Param("id") Long id);
 
+    AskDTO getAskDTOById(@Param("id") Long id,@Param("userName")String userName);
+
     List<AskDTO> getAskList(@Param("pojo") Ask pojo);
 
     Integer getAskListCount(@Param("pojo") Ask pojo);
