@@ -15,6 +15,7 @@
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
         <result column="is_view" property="isView"/>
+        <result column="type" property="type"/>
     </resultMap>
 
     <!--auto generated Code-->
@@ -30,8 +31,9 @@
         `is_del`,
         `create_time`,
         `update_time`,
-        `is_view`
-    </sql>
+        `is_view`,
+        `type`
+</sql>
     <!--auto generated Code-->
     <sql id="commnet_column">
         t1.`comment_content`,
@@ -43,8 +45,9 @@
         t1.`is_auther`,
         t1.`id`,
         t1.`create_time`,
-        t2.photo as avatar
-    </sql>
+        t2.photo as avatar,
+        `type`
+</sql>
 
     <!--auto generated Code-->
     <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
@@ -91,6 +94,7 @@
             <if test="pojo.createTime!=null">`create_time`,</if>
             <if test="pojo.updateTime!=null">`update_time`,</if>
             <if test="pojo.isView!=null">`is_view`,</if>
+            <if test="pojo.type!=null">`type`,</if>
         </trim>
         VALUES
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -106,6 +110,7 @@
             <if test="pojo.createTime!=null">#{pojo.createTime},</if>
             <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
             <if test="pojo.isView!=null">#{pojo.isView},</if>
+            <if test="pojo.type!=null">#{pojo.type},</if>
         </trim>
     </insert>
 
@@ -169,6 +174,7 @@
             <if test="userName!=null and userName!=''">and user_name=#{userName}</if>
             <if test="articleId!=null">and article_id=#{articleId} and parent_id=0</if>
             <if test="parentId!=null">and parent_id=#{parentId}</if>
+            <if test="type!=null">and type=#{type}</if>
         </where>
         order by create_time desc
     </select>

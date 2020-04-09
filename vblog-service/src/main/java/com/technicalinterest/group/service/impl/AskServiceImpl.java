@@ -2,20 +2,21 @@ package com.technicalinterest.group.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.Ask;
-import com.technicalinterest.group.dao.Tag;
-import com.technicalinterest.group.dto.ArticlesDTO;
+import com.technicalinterest.group.dto.AskDTO;
 import com.technicalinterest.group.mapper.AskMapper;
-import com.technicalinterest.group.mapper.TagMapper;
+import com.technicalinterest.group.mapper.ReplyMapper;
 import com.technicalinterest.group.service.AskService;
 import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.UserService;
-import com.technicalinterest.group.service.dto.AskDTO;
+import com.technicalinterest.group.service.dto.AskDTOParam;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.exception.VLogException;
+import com.technicalinterest.group.service.util.HtmlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +37,12 @@ public class AskServiceImpl implements AskService {
     @Autowired
     private AskMapper askMapper;
     @Autowired
-    private TagMapper tagMapper;
+    private ReplyMapper replyMapper;
     @Autowired
     private UserService userService;
+
+    @Value("${submit_length}")
+    private Integer ARTICLE_LENGTH;
 
     /**
      * 新增或编辑
@@ -50,6 +54,9 @@ public class AskServiceImpl implements AskService {
     public ReturnClass saveOrUpdateAsk(Ask ask) {
         String userName=userService.getUserNameByLoginToken();
         int flag=0;
+        //文章摘要
+        String summaryText = HtmlUtil.cleanHtmlTag(ask.getContentFormat());
+        ask.setDescription(summaryText.length() > ARTICLE_LENGTH ? summaryText.substring(0, ARTICLE_LENGTH - 1) : summaryText);
         if (Objects.isNull(ask.getId())){
             ask.setState((short)0);
             ask.setUserName(userName);
@@ -69,43 +76,43 @@ public class AskServiceImpl implements AskService {
             flag=askMapper.update(ask);
         }
         if (flag>0){
-            return ReturnClass.success();
+            return ReturnClass.success(ask.getId());
         }
         return ReturnClass.fail();
     }
 
     @Override
-    public ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPage(AskDTO askDTO) {
+    public ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPage(AskDTOParam askDTOParam) {
         Ask query=new Ask();
-        BeanUtils.copyProperties(askDTO,query);
+        BeanUtils.copyProperties(askDTOParam,query);
         Integer askListCount = askMapper.getAskListCount(query);
         if (askListCount<1){
             return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
         }
-        PageHelper.startPage(askDTO.getCurrentPage(), askDTO.getPageSize());
+        PageHelper.startPage(askDTOParam.getCurrentPage(), askDTOParam.getPageSize());
         List<com.technicalinterest.group.dto.AskDTO> askList = askMapper.getAskList(query);
-        PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = new PageBean<>(askList, askDTO.getCurrentPage(), askDTO.getPageSize(), askListCount);
+        PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = new PageBean<>(askList, askDTOParam.getCurrentPage(), askDTOParam.getPageSize(), askListCount);
         return ReturnClass.success(pageBean);
     }
 
     @Override
-    public ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPageByToken(AskDTO askDTO) {
+    public ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPageByToken(AskDTOParam askDTOParam) {
         Ask query=new Ask();
-        BeanUtils.copyProperties(askDTO,query);
+        BeanUtils.copyProperties(askDTOParam,query);
         query.setUserName(userService.getUserNameByLoginToken());
         Integer askListCount = askMapper.getAskListCount(query);
         if (askListCount<1){
             return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
         }
-        PageHelper.startPage(askDTO.getCurrentPage(), askDTO.getPageSize());
+        PageHelper.startPage(askDTOParam.getCurrentPage(), askDTOParam.getPageSize());
         List<com.technicalinterest.group.dto.AskDTO> askList = askMapper.getAskList(query);
-        PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = new PageBean<>(askList, askDTO.getCurrentPage(), askDTO.getPageSize(), askListCount);
+        PageBean<com.technicalinterest.group.dto.AskDTO> pageBean = new PageBean<>(askList, askDTOParam.getCurrentPage(), askDTOParam.getPageSize(), askListCount);
         return ReturnClass.success(pageBean);
     }
 
     @Override
-    public ReturnClass<Ask> getAskDetailById(Long id) {
-        Ask askById = askMapper.getAskById(id);
+    public ReturnClass<AskDTO> getAskDetailById(Long id, String userName) {
+        AskDTO askById = askMapper.getAskDTOById(id,userName);
         if (Objects.isNull(askById)){
 
             return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
@@ -151,8 +158,9 @@ public class AskServiceImpl implements AskService {
         int i = askMapper.updateReadCount(id);
         if (i>0){
             log.info("阅读数增加成功");
+        }else {
+            log.error("阅读数增加失败,id={}",id);
         }
-        log.error("阅读数增加失败,id={}",id);
     }
 
     /**
@@ -164,5 +172,11 @@ public class AskServiceImpl implements AskService {
     @Async("vblog")
     public void updateReplayCount(Long id) {
         askMapper.updateReplayCount(id);
+    }
+
+    @Override
+    public ReturnClass<List<com.technicalinterest.group.dto.AskDTO>> getTopAskList(String userName,Integer type) {
+        List<com.technicalinterest.group.dto.AskDTO> askTopList = askMapper.getAskTopList(userName,type, 5);
+        return ReturnClass.success(askTopList);
     }
 }

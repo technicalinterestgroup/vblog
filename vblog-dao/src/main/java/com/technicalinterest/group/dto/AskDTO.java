@@ -56,4 +56,9 @@ public class AskDTO{
 
     private Date createTime;
 
+    private Integer vCollection;
+
+    private String contentFormat;
+
+    private String content;
 }

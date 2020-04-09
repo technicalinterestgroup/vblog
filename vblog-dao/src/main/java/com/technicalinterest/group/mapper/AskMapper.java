@@ -21,6 +21,8 @@ public interface AskMapper {
 
     Ask getAskById(@Param("id") Long id);
 
+    AskDTO getAskDTOById(@Param("id") Long id,@Param("userName")String userName);
+
     List<AskDTO> getAskList(@Param("pojo") Ask pojo);
 
     Integer getAskListCount(@Param("pojo") Ask pojo);
@@ -28,4 +30,6 @@ public interface AskMapper {
     int updateReadCount(@Param("id") Long id);
 
     int updateReplayCount(@Param("id") Long id);
+
+    List<AskDTO> getAskTopList(@Param("userName") String userName,@Param("type") Integer type,@Param("size") Integer size);
 }

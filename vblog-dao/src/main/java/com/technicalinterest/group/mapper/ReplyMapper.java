@@ -1,5 +1,6 @@
 package com.technicalinterest.group.mapper;
 
+import com.technicalinterest.group.dto.ReplyDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,4 +18,6 @@ public interface ReplyMapper {
     int update(@Param("pojo") Reply pojo);
 
     Reply getOneReply(@Param("id") Long id);
+
+    List<ReplyDTO> getReplysByAsk(@Param("askId") Long askId,@Param("userName") String userName);
 }

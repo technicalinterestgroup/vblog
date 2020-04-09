@@ -32,13 +32,13 @@ public class LikeController {
 	private LikeService likeService;
 
 	/**
-	 * @Description: 博客点赞
+	 * @Description: 点赞
 	 * @author: shuyu.wang
 	 * @date: 2019-08-15 17:39
 	 * @param sourceId
 	 * @return null
 	 */
-	@ApiOperation(value = "博客点赞", notes = "博客点赞")
+	@ApiOperation(value = "点赞")
 	@GetMapping(value = "/new/{sourceId}")
 	@BlogOperation(value = "博客点赞")
 	public ApiResult<String> addCollection(@PathVariable("sourceId") Long sourceId,@RequestParam(value = "type")Short type) {
@@ -62,7 +62,7 @@ public class LikeController {
 	 * @param sourceId
 	 * @return null
 	 */
-	@ApiOperation(value = "博客取消点赞", notes = "取消点赞")
+	@ApiOperation(value = "取消点赞")
 	@GetMapping(value = "/del/{sourceId}")
 	@BlogOperation(value = "取消点赞")
 	public ApiResult<String> delCollection(@PathVariable("sourceId") Long sourceId,@RequestParam(value = "type")Short type) {

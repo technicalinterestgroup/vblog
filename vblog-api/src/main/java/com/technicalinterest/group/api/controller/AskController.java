@@ -1,9 +1,7 @@
 package com.technicalinterest.group.api.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.github.blackshadowwalker.spring.distributelock.annotation.DistributeLock;
 import com.technicalinterest.group.api.param.AskParam;
-import com.technicalinterest.group.api.param.NewArticleContentParam;
 import com.technicalinterest.group.api.param.QueryAskParam;
 import com.technicalinterest.group.api.vo.ApiResult;
 import com.technicalinterest.group.api.vo.AskListVO;
@@ -11,8 +9,7 @@ import com.technicalinterest.group.api.vo.AskVO;
 import com.technicalinterest.group.dao.Ask;
 import com.technicalinterest.group.service.AskService;
 import com.technicalinterest.group.service.annotation.BlogOperation;
-import com.technicalinterest.group.service.dto.ArticleContentDTO;
-import com.technicalinterest.group.service.dto.AskDTO;
+import com.technicalinterest.group.service.dto.AskDTOParam;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
 import com.technicalinterest.group.service.util.ListBeanUtils;
@@ -44,14 +41,14 @@ public class AskController {
     @ApiOperation(value = "问题发布")
     @PostMapping(value = "/new")
     @BlogOperation(value = "问题发布")
-    public ApiResult<String> saveAsk(@Valid @RequestBody AskParam askParam) {
+    public ApiResult<Long> saveAsk(@Valid @RequestBody AskParam askParam) {
         log.info("问题发布 参数{}", JSONObject.toJSON(askParam));
         ApiResult apiResult = new ApiResult();
         Ask ask=new Ask();
         BeanUtils.copyProperties(askParam, ask);
         ReturnClass saveArticle = askService.saveOrUpdateAsk(ask);
         if (saveArticle.isSuccess()) {
-            apiResult.success(saveArticle.getMsg());
+            apiResult.success(saveArticle.getData());
         } else {
             apiResult.fail(saveArticle.getMsg());
         }
@@ -64,7 +61,7 @@ public class AskController {
     public ApiResult<PageBean<AskListVO>> getAskList(QueryAskParam queryAskParam) {
         log.info("问题发布 参数{}", JSONObject.toJSON(queryAskParam));
         ApiResult apiResult = new ApiResult();
-        AskDTO ask=new AskDTO();
+        AskDTOParam ask=new AskDTOParam();
         BeanUtils.copyProperties(queryAskParam, ask);
         ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> saveArticle = askService.getAskPageByToken(ask);
         if (saveArticle.isSuccess()) {

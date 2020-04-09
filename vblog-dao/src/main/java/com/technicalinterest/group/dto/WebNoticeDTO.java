@@ -50,7 +50,7 @@ public class WebNoticeDTO {
 	/**
 	 * 发布时间
 	 */
-	private Date createTime;
+	private Date updateTime;
 
 	/**
 	 * 文章状态阅量

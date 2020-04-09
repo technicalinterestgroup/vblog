@@ -1,9 +1,12 @@
 package com.technicalinterest.group.service;
 
 import com.technicalinterest.group.dao.Ask;
-import com.technicalinterest.group.service.dto.AskDTO;
+import com.technicalinterest.group.dto.AskDTO;
+import com.technicalinterest.group.service.dto.AskDTOParam;
 import com.technicalinterest.group.service.dto.PageBean;
 import com.technicalinterest.group.service.dto.ReturnClass;
+
+import java.util.List;
 
 /**
  * @ClassName: AskService
@@ -20,11 +23,11 @@ public interface AskService {
      */
     ReturnClass saveOrUpdateAsk(Ask ask);
 
-    ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPage(AskDTO askDTO);
+    ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPage(AskDTOParam askDTOParam);
 
-    ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPageByToken(AskDTO askDTO);
+    ReturnClass<PageBean<com.technicalinterest.group.dto.AskDTO>> getAskPageByToken(AskDTOParam askDTOParam);
 
-    ReturnClass<Ask> getAskDetailById(Long id);
+    ReturnClass<AskDTO> getAskDetailById(Long id, String userName);
 
     ReturnClass<Ask> getAskDetailByToken(Long id);
 
@@ -41,4 +44,7 @@ public interface AskService {
      * @param id
      */
     void updateReplayCount(Long id);
+
+    ReturnClass<List<com.technicalinterest.group.dto.AskDTO>> getTopAskList(String userName,Integer type);
+
 }

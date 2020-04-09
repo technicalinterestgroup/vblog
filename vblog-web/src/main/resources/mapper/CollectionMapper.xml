@@ -104,20 +104,52 @@
             <if test="id!=null">and id=#{id}</if>
             <if test="sourceId!=null">and source_id=#{sourceId}</if>
             <if test="userName!=null">and user_name=#{userName}</if>
+            <if test="type!=null">and type=#{type}</if>
         </where>
 
     </select>
 
     <select id="queryListCollectionByUserName" resultType="com.technicalinterest.group.dto.CollectionDTO">
+        <if test="type !=null and type==1">
         select t1.source_id as sourceId,t2.title,t2.user_name as userName,t2.description,t1.create_time as createTime,
         t1.type as type
         FROM v_collection t1 inner join v_article t2 on t1.source_id=t2.id where t1.user_name=#{userName}
+        and t1.type=#{type}
         order by t1.create_time desc
+        </if>
+        <if test="type !=null and type==3">
+            select t1.source_id as sourceId,t2.title,t2.user_name as userName,t2.description,t1.create_time as createTime,
+            t1.type as type
+            FROM v_collection t1 inner join v_website_notice t2 on t1.source_id=t2.id where t1.user_name=#{userName}
+            and t1.type=#{type}
+            order by t1.create_time desc
+        </if>
+        <if test="type !=null and type==4">
+            select t1.source_id as sourceId,t2.title,t2.user_name as userName,t2.description,t1.create_time as createTime,
+            t1.type as type
+            FROM v_collection t1 inner join v_ask t2 on t1.source_id=t2.id where t1.user_name=#{userName}
+            and t1.type=#{type}
+            order by t1.create_time desc
+        </if>
     </select>
 
     <select id="queryCountCollectionByUserName" resultType="java.lang.Integer">
-         select count(t1.id)
-        FROM v_collection t1 inner join v_article t2 on t1.source_id=t2.id where t1.user_name=#{userName}
+        <if test="type !=null and type==1">
+            select count(t1.id)
+            FROM v_collection t1 inner join v_article t2 on t1.source_id=t2.id where t1.user_name=#{userName}
+            and t1.type=#{type}
+        </if>
+        <if test="type !=null and type==3">
+            select count(t1.id)
+            FROM v_collection t1 inner join v_website_notice t2 on t1.source_id=t2.id where t1.user_name=#{userName}
+            and t1.type=#{type}
+        </if>
+        <if test="type !=null and type==4">
+            select count(t1.id)
+            FROM v_collection t1 inner join v_ask t2 on t1.source_id=t2.id where t1.user_name=#{userName}
+            and t1.type=#{type}
+        </if>
+
     </select>
 
 

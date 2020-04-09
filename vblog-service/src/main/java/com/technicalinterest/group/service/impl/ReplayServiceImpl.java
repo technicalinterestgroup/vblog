@@ -2,6 +2,8 @@ package com.technicalinterest.group.service.impl;
 
 import com.technicalinterest.group.dao.Ask;
 import com.technicalinterest.group.dao.Reply;
+import com.technicalinterest.group.dto.ReplyDTO;
+import com.technicalinterest.group.mapper.AskMapper;
 import com.technicalinterest.group.mapper.ReplyMapper;
 import com.technicalinterest.group.service.AskService;
 import com.technicalinterest.group.service.Enum.ResultEnum;
@@ -32,6 +34,8 @@ public class ReplayServiceImpl implements ReplayService {
     private UserService userService;
     @Autowired
     private AskService askService;
+    @Autowired
+    private AskMapper askMapper;
 
     /**
      * 新增回答
@@ -42,10 +46,16 @@ public class ReplayServiceImpl implements ReplayService {
     @Override
     public ReturnClass<String> saveReply(Reply reply) {
         reply.setUserName(userService.getUserNameByLoginToken());
+        Ask askById = askMapper.getAskById(reply.getAskId());
+        if (Objects.isNull(askById)){
+            return ReturnClass.fail("问题不存在！");
+        }
         reply.setCreateTime(new Date());
         reply.setUpdateTime(new Date());
         int i = replyMapper.insertSelective(reply);
         if (i>0){
+            askById.setReplyCount(1);
+            askMapper.update(askById);
             return ReturnClass.success();
         }
         return ReturnClass.fail();
@@ -58,20 +68,20 @@ public class ReplayServiceImpl implements ReplayService {
      * @return
      */
     @Override
-    public ReturnClass<List<Reply>> getReplyList(Long askId) {
-        return null;
+    public ReturnClass<List<ReplyDTO>> getReplyList(Long askId,String userName) {
+        List<ReplyDTO> replysByAsk = replyMapper.getReplysByAsk(askId,userName);
+        return ReturnClass.success(replysByAsk);
     }
 
     /**
      * 采纳答案
      *
-     * @param userName
      * @param id
      * @return
      */
     @Override
     @Transactional
-    public ReturnClass<String> acceptionReply(String userName, Long id) {
+    public ReturnClass<String> acceptionReply(Long id) {
         Reply oneReply = replyMapper.getOneReply(id);
         if (Objects.isNull(oneReply)){
             throw new VLogException(ResultEnum.NO_DATA);

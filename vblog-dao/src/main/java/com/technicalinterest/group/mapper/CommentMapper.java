@@ -23,7 +23,7 @@ public interface CommentMapper {
 
     Integer delComment(@Param("id")Long id);
 
-    List<CommentDTO> queryListComment(@Param("userName")String userName,@Param("articleId")Long articleId,@Param("parentId")Long parentId);
+    List<CommentDTO> queryListComment(@Param("userName")String userName,@Param("articleId")Long articleId,@Param("parentId")Long parentId,@Param("type")Short type);
 
     
     /**
