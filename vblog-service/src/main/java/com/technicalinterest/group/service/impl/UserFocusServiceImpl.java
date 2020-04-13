@@ -44,10 +44,10 @@ public class UserFocusServiceImpl implements UserFocusService{
 		query.setFocusUserName(focusUserName);
 		UserFocus userFocus = userFocusMapper.selectOneUserFocus(query);
 		if (Objects.isNull(userFocus)){
-			userFocus.setCreateTime(new Date());
-			userFocus.setState(true);
-			userFocus.setIsDel((short) 0);
-			int i = userFocusMapper.insertSelective(userFocus);
+			query.setCreateTime(new Date());
+			query.setState(true);
+			query.setIsDel((short) 0);
+			int i = userFocusMapper.insertSelective(query);
 			if (i>0){
 				return ReturnClass.success("关注成功");
 			}
@@ -106,7 +106,7 @@ public class UserFocusServiceImpl implements UserFocusService{
 			return ReturnClass.fail(ResultEnum.NO_DATA.getMsg());
 		}
 		PageHelper.startPage(pageBase.getCurrentPage(), pageBase.getPageSize());
-		List<UserFocusDTO> userFocusDTOS = userFocusMapper.selectYourFocus(userName);;
+		List<UserFocusDTO> userFocusDTOS = userFocusMapper.selectMyFocusAndMutual(userName);;
 		PageBean<UserFocusDTO> pageBa=new PageBean<>(userFocusDTOS,pageBase.getCurrentPage(),pageBase.getPageSize(),integer);
 		return ReturnClass.success(pageBa);
 	}

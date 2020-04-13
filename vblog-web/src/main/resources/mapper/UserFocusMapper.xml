@@ -103,17 +103,17 @@
 
     <select id="selectOneUserFocus" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.UserFocus">
         select <include refid="all_column"/> from v_user_focus where is_del=0
-        <if test="pojo.userName!=null and pojo.userName!=''">user_name=#{pojo.userName}</if>
-        <if test="pojo.focusUserName!=null and pojo.focusUserName!=''">focus_user_name=#{pojo.focusUserName}</if>
+        <if test="pojo.userName!=null and pojo.userName!=''">and user_name=#{pojo.userName}</if>
+        <if test="pojo.focusUserName!=null and pojo.focusUserName!=''">and focus_user_name=#{pojo.focusUserName}</if>
     </select>
 
     <select id="selectYourFocus" resultType="com.technicalinterest.group.dto.UserFocusDTO">
-        select t1.focus_user_name as userName,(select t2.photo from v_user t2 on t2.user_name=t1.focus_user_name)as avatar
+        select t1.focus_user_name as userName,(select t2.photo from v_user t2 where t2.user_name=t1.focus_user_name)as avatar
          from `v_user_focus` t1 where t1.is_del=0 and t1.state=1 and  t1.`user_name`=#{userName} order by t1.create_time desc
     </select>
 
     <select id="selectFocusYou" resultType="com.technicalinterest.group.dto.UserFocusDTO">
-        select t1.user_name as userName,(select t2.photo from v_user t2 on t2.user_name=t2.user_name)as avatar
+        select t1.user_name as userName,(select t2.photo from v_user t2 where t2.user_name=t1.user_name)as avatar
          from `v_user_focus` t1 where t1.is_del=0 and t1.state=1 and t1.`focus_user_name`=#{userName} order by t1.create_time desc
     </select>
 
@@ -123,11 +123,11 @@
     </select>
 
     <select id="selectMyFocusAndMutual" resultType="com.technicalinterest.group.dto.UserFocusDTO">
-        SELECT t1.focus_user_name,CASE WHEN t2.id IS NULL THEN 1
-        ELSE 2 END AS state,t1.create_time FROM
+        SELECT t1.focus_user_name as userName,CASE WHEN t2.id IS NULL THEN 1
+        ELSE 2 END AS state,(select t2.photo from v_user t2 where t2.user_name=t1.focus_user_name)as avatar FROM
         (SELECT * FROM v_user_focus WHERE user_name =#{userName} and state=1)
         AS t1 LEFT JOIN v_user_focus t2 ON t1.focus_user_name = t2.user_name
-        where  t2.state=1
+        and  t2.state=1
         order by t1.create_time desc
     </select>
 
