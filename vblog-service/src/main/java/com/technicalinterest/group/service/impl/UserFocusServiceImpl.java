@@ -127,4 +127,28 @@ public class UserFocusServiceImpl implements UserFocusService{
 		PageBean<UserFocusDTO> pageBa=new PageBean<>(userFocusDTOS,pageBase.getCurrentPage(),pageBase.getPageSize(),integer);
 		return ReturnClass.success(pageBa);
 	}
+
+	/**
+	 * 查询是否关注过
+	 *
+	 * @param userName
+	 * @param focusUserName
+	 * @return
+	 */
+	@Override
+	public ReturnClass<String> isFocus(String userName, String focusUserName) {
+		UserFocus query=new UserFocus();
+		if (Objects.isNull(userName)||Objects.isNull(focusUserName)){
+			return ReturnClass.fail();
+		}
+		query.setUserName(userName);
+		query.setFocusUserName(focusUserName);
+		UserFocus userFocus = userFocusMapper.selectOneUserFocus(query);
+		if (Objects.nonNull(userFocus)){
+			if(userFocus.getState()){
+				return ReturnClass.success();
+			}
+		}
+		return ReturnClass.fail();
+	}
 }

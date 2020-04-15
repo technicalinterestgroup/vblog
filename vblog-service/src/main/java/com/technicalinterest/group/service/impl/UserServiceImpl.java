@@ -10,17 +10,16 @@ import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.mapper.RoleAuthMapper;
 import com.technicalinterest.group.mapper.UserMapper;
 import com.technicalinterest.group.mapper.UserRoleMapper;
-import com.technicalinterest.group.service.MailService;
-import com.technicalinterest.group.service.VSystemService;
+import com.technicalinterest.group.service.*;
 import com.technicalinterest.group.service.Enum.ResultEnum;
 import com.technicalinterest.group.service.constant.RedisKeyConstant;
 import com.technicalinterest.group.service.constant.UserConstant;
 import com.technicalinterest.group.service.context.RequestHeaderContext;
 import com.technicalinterest.group.service.dto.*;
-import com.technicalinterest.group.service.UserService;
 import com.technicalinterest.group.service.exception.VLogException;
 import com.technicalinterest.group.service.util.JWTUtil;
 import com.technicalinterest.group.service.util.RedisUtil;
+import com.technicalinterest.group.service.util.SpringContextUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -65,6 +64,8 @@ public class UserServiceImpl implements UserService {
     private VSystemService systemService;
     @Autowired
     private DefaultKaptcha producer;
+    @Autowired
+    private UserFocusService userFocusService;
 
     @Value("${server}")
     private String SERVER;
@@ -502,13 +503,22 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public ReturnClass getUserInfo(String userName) {
+    public ReturnClass<UserBlogInfoDTO> getUserInfo(String userName,String loginUser) {
+        UserBlogInfoDTO result=new UserBlogInfoDTO();
         User user = User.builder().userName(userName).build();
         User userByUser = userMapper.getUserByUser(user);
         if (Objects.isNull(userByUser)) {
             throw new VLogException(ResultEnum.NO_URL);
         }
-        return ReturnClass.success(userByUser);
+        BeanUtils.copyProperties(userByUser,result);
+        ArticleService articleService= SpringContextUtil.getBean(ArticleServiceImpl.class);
+        ReturnClass blogUserInfo = articleService.getBlogInfoByUser(userName);
+        BeanUtils.copyProperties(blogUserInfo,result);
+        ReturnClass<String> isFocus=userFocusService.isFocus(loginUser,userName);
+        if (isFocus.isSuccess()){
+            result.setIsFocus(true);
+        }
+        return ReturnClass.success(result);
     }
 
     /**

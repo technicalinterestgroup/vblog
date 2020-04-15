@@ -113,8 +113,12 @@
     </select>
 
     <select id="selectFocusYou" resultType="com.technicalinterest.group.dto.UserFocusDTO">
-        select t1.user_name as userName,(select t2.photo from v_user t2 where t2.user_name=t1.user_name)as avatar
-         from `v_user_focus` t1 where t1.is_del=0 and t1.state=1 and t1.`focus_user_name`=#{userName} order by t1.create_time desc
+        SELECT t1.user_name AS userName,CASE WHEN t2.id IS NULL THEN 1
+        ELSE 2 END AS state,(SELECT t2.photo FROM v_user t2 WHERE t2.user_name=t1.user_name)AS avatar FROM
+        (SELECT * FROM v_user_focus WHERE focus_user_name =#{userName} AND state=1)
+        AS t1 LEFT JOIN v_user_focus t2 ON t1.user_name = t2.focus_user_name
+        AND  t2.state=1
+        ORDER BY t1.create_time DESC
     </select>
 
     <select id="selectFocusYouCount" resultType="java.lang.Integer">

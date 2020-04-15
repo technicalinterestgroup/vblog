@@ -43,4 +43,12 @@ public interface UserFocusService {
 	 */
 	ReturnClass<PageBean<UserFocusDTO>> getFocusYou(PageBase pageBase);
 
+	/**
+	 * 查询是否关注过
+	 * @param userName
+	 * @param focusUserName
+	 * @return
+	 */
+	ReturnClass<String> isFocus(String userName,String focusUserName);
+
 }
