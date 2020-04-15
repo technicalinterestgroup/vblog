@@ -5,6 +5,7 @@ import com.technicalinterest.group.dao.User;
 import com.technicalinterest.group.dto.UserRoleDTO;
 import com.technicalinterest.group.service.dto.EditUserDTO;
 import com.technicalinterest.group.service.dto.ReturnClass;
+import com.technicalinterest.group.service.dto.UserBlogInfoDTO;
 import com.technicalinterest.group.service.dto.UserDTO;
 
 /**
@@ -135,7 +136,7 @@ public interface UserService {
      * @param userName
      * @return
      */
-    ReturnClass getUserInfo(String userName);
+    ReturnClass<UserBlogInfoDTO> getUserInfo(String userName,String loginUser);
 
     /**
      * 根据登录token获取用户名

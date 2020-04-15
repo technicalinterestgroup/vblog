@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.technicalinterest.group.mapper.UserFocusMapper">
+    <!--auto generated Code-->
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.UserFocus">
+        <result column="user_name" property="userName"/>
+        <result column="focus_user_name" property="focusUserName"/>
+        <result column="state" property="state"/>
+        <result column="id" property="id"/>
+        <result column="is_del" property="isDel"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!--auto generated Code-->
+    <sql id="all_column">
+        `user_name`,
+        `focus_user_name`,
+        `state`,
+        `id`,
+        `is_del`,
+        `create_time`,
+        `update_time`
+    </sql>
+
+    <!--auto generated Code-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_user_focus (
+            `user_name`,
+            `focus_user_name`,
+            `state`,
+            `id`,
+            `is_del`,
+            `create_time`,
+            `update_time`
+        ) VALUES (
+            #{pojo.userName},
+            #{pojo.focusUserName},
+            #{pojo.state},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+        )
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="pojo.id">
+        INSERT INTO v_user_focus
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.userName!=null"> `user_name`,</if>
+            <if test="pojo.focusUserName!=null"> `focus_user_name`,</if>
+            <if test="pojo.state!=null"> `state`,</if>
+            <if test="pojo.id!=null"> `id`,</if>
+            <if test="pojo.isDel!=null"> `is_del`,</if>
+            <if test="pojo.createTime!=null"> `create_time`,</if>
+            <if test="pojo.updateTime!=null"> `update_time`,</if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pojo.userName!=null">#{pojo.userName},</if>
+            <if test="pojo.focusUserName!=null">#{pojo.focusUserName},</if>
+            <if test="pojo.state!=null">#{pojo.state},</if>
+            <if test="pojo.id!=null">#{pojo.id},</if>
+            <if test="pojo.isDel!=null">#{pojo.isDel},</if>
+            <if test="pojo.createTime!=null">#{pojo.createTime},</if>
+            <if test="pojo.updateTime!=null">#{pojo.updateTime},</if>
+        </trim>
+    </insert>
+
+    <!--auto generated Code-->
+    <insert id="insertList">
+        INSERT INTO v_user_focus (
+        <include refid="all_column"/>
+        )VALUES
+        <foreach collection="pojos" item="pojo" index="index" separator=",">
+            (
+            #{pojo.userName},
+            #{pojo.focusUserName},
+            #{pojo.state},
+            #{pojo.id},
+            #{pojo.isDel},
+            #{pojo.createTime},
+            #{pojo.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <!--auto generated Code-->
+    <update id="update">
+        UPDATE v_user_focus
+        <set>
+            <if test="pojo.userName != null"> `user_name` = #{pojo.userName}, </if>
+            <if test="pojo.focusUserName != null"> `focus_user_name` = #{pojo.focusUserName}, </if>
+            <if test="pojo.state != null"> `state` = #{pojo.state}, </if>
+            <if test="pojo.id != null"> `id` = #{pojo.id}, </if>
+            <if test="pojo.isDel != null"> `is_del` = #{pojo.isDel}, </if>
+            <if test="pojo.createTime != null"> `create_time` = #{pojo.createTime}, </if>
+            <if test="pojo.updateTime != null"> `update_time` = #{pojo.updateTime} </if>
+        </set>
+        WHERE id = #{pojo.id}
+    </update>
+
+    <select id="selectOneUserFocus" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.UserFocus">
+        select <include refid="all_column"/> from v_user_focus where is_del=0
+        <if test="pojo.userName!=null and pojo.userName!=''">and user_name=#{pojo.userName}</if>
+        <if test="pojo.focusUserName!=null and pojo.focusUserName!=''">and focus_user_name=#{pojo.focusUserName}</if>
+    </select>
+
+    <select id="selectYourFocus" resultType="com.technicalinterest.group.dto.UserFocusDTO">
+        select t1.focus_user_name as userName,(select t2.photo from v_user t2 where t2.user_name=t1.focus_user_name)as avatar
+         from `v_user_focus` t1 where t1.is_del=0 and t1.state=1 and  t1.`user_name`=#{userName} order by t1.create_time desc
+    </select>
+
+    <select id="selectFocusYou" resultType="com.technicalinterest.group.dto.UserFocusDTO">
+        SELECT t1.user_name AS userName,CASE WHEN t2.id IS NULL THEN 1
+        ELSE 2 END AS state,(SELECT t2.photo FROM v_user t2 WHERE t2.user_name=t1.user_name)AS avatar FROM
+        (SELECT * FROM v_user_focus WHERE focus_user_name =#{userName} AND state=1)
+        AS t1 LEFT JOIN v_user_focus t2 ON t1.user_name = t2.focus_user_name
+        AND  t2.state=1
+        ORDER BY t1.create_time DESC
+    </select>
+
+    <select id="selectFocusYouCount" resultType="java.lang.Integer">
+        select count(t1.id)
+         from `v_user_focus` t1 where t1.is_del=0 and t1.state=1 and t1.`focus_user_name`=#{userName}
+    </select>
+
+    <select id="selectMyFocusAndMutual" resultType="com.technicalinterest.group.dto.UserFocusDTO">
+        SELECT t1.focus_user_name as userName,CASE WHEN t2.id IS NULL THEN 1
+        ELSE 2 END AS state,(select t2.photo from v_user t2 where t2.user_name=t1.focus_user_name)as avatar FROM
+        (SELECT * FROM v_user_focus WHERE user_name =#{userName} and state=1)
+        AS t1 LEFT JOIN v_user_focus t2 ON t1.focus_user_name = t2.user_name
+        and  t2.state=1
+        order by t1.create_time desc
+    </select>
+
+    <select id="selectMyFocusAndMutualCount" resultType="java.lang.Integer">
+        select count(t1.id)
+         from `v_user_focus` t1 where t1.is_del=0 and t1.state=1 and  t1.`user_name`=#{userName}
+    </select>
+
+</mapper>
+

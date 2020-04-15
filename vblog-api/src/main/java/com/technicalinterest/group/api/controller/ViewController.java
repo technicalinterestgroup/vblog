@@ -219,14 +219,12 @@ public class ViewController {
 	 */
 	@ApiOperation(value = "会员用户信息", notes = "用户信息")
 	@GetMapping(value = "/user/info/{userName}")
-	public ApiResult<UserBlogInfoVO> userInfo(@PathVariable("userName") String userName) {
+	public ApiResult<UserBlogInfoVO> userInfo(@PathVariable("userName") String userName,@RequestParam(value = "loginUser",required = false)String loginUser) {
 		ApiResult apiResult = new ApiResult();
-		ReturnClass userInfo = userService.getUserInfo(userName);
+		ReturnClass<UserBlogInfoDTO> userInfo = userService.getUserInfo(userName,loginUser);
 		if (userInfo.isSuccess()) {
-			ReturnClass blogUserInfo = articleService.getBlogInfoByUser(userName);
 			UserBlogInfoVO userVO = new UserBlogInfoVO();
 			BeanUtils.copyProperties(userInfo.getData(), userVO);
-			BeanUtils.copyProperties(blogUserInfo.getData(), userVO);
 			apiResult.success(userVO);
 		} else {
 			throw new VLogException(ResultEnum.NO_URL);

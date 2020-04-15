@@ -1,4 +1,4 @@
-package com.technicalinterest.group.api.vo;
+package com.technicalinterest.group.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
@@ -16,7 +16,7 @@ import lombok.Data;
 @Data
 @ApiModel(description = "用户信息")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserBlogInfoVO {
+public class UserBlogInfoDTO {
     @ApiModelProperty(value = "用户名")
     private String userName;
     @ApiModelProperty(value = "昵称")
@@ -38,5 +38,5 @@ public class UserBlogInfoVO {
     @ApiModelProperty(value = "阅读数")
     private Integer readCount;
 
-    private Boolean isFocus;
+    private Boolean isFocus=false;
 }
