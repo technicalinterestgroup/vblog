@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <!-- map下划线自动转大写 -->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <!-- 打印查询语句 -->
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!-- 返回字段为空时null也显示该字段 -->
+        <setting name="callSettersOnNulls" value="true"/>
+    </settings>
+
+    <!-- 别名定义 -->
+    <typeAliases>
+        <!-- 批量别名定义,指定包名，mybatis自动扫描包中的po类，自动定义别名，别名是类名(首字母大写或小写都可以,一般用小写) -->
+        <!-- <package name="com.hotpot..pojo" /> -->
+        <!--<typeAlias type="com.hotpot.sys.pojo.SysUser" alias="sysUser"/> -->
+
+        <!-- 批量别名定义
+                       指定包名，mybatis自动扫描包中的po类，自动定义别名，别名就是类名（首字母大写或小写都可以）
+        -->
+        <!--<package name="com.demo.pojo"/>-->
+    </typeAliases>
+
+    <plugins>
+        <!-- 分页 -->
+        <plugin interceptor="com.github.pagehelper.PageInterceptor">
+            <!-- config params as the following -->
+            <!--<!–分页参数合理化  –>-->
+            <property name="reasonable" value="true"/>
+        </plugin>
+        <!-- 打印sql拦截器 -->
+        <plugin interceptor="com.technicalinterest.group.interceptor.MybatisInterceptor"></plugin>
+
+    </plugins>
+</configuration>
