@@ -2,7 +2,7 @@ package com.technicalinterest.group.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.technicalinterest.group.dao.Ask;
-import com.technicalinterest.group.dao.Collection;
+import com.technicalinterest.group.dao.CollectionArticle;
 import com.technicalinterest.group.dao.PageBase;
 import com.technicalinterest.group.dao.WebsiteNotice;
 import com.technicalinterest.group.dto.ArticlesDTO;
@@ -67,12 +67,12 @@ public class CollectionServiceImpl implements CollectionService {
         } else {
             return ReturnClass.fail("类型不匹配");
         }
-        Collection collectionPa = Collection.builder().userName(userName).type(likeDTO.getType()).sourceId(likeDTO.getSourceId()).build();
-        Collection collection2 = collectionMapper.queryCollection(collectionPa);
-        if (Objects.nonNull(collection2)) {
+        CollectionArticle collectionArticlePa = CollectionArticle.builder().userName(userName).type(likeDTO.getType()).sourceId(likeDTO.getSourceId()).build();
+        CollectionArticle collectionArticle2 = collectionMapper.queryCollection(collectionArticlePa);
+        if (Objects.nonNull(collectionArticle2)) {
             return ReturnClass.success(CollectionConstant.ADD_REPAT);
         }
-        int insert = collectionMapper.insertSelective(collectionPa);
+        int insert = collectionMapper.insertSelective(collectionArticlePa);
         if (insert > 0) {
             return ReturnClass.success(CollectionConstant.SUS_ADD);
         }
@@ -82,15 +82,15 @@ public class CollectionServiceImpl implements CollectionService {
     @Override
     public ReturnClass del(LikeDTO likeDTO) {
         String userName = userService.getUserNameByLoginToken();
-        Collection collectionPa = Collection.builder().userName(userName).type(likeDTO.getType()).sourceId(likeDTO.getSourceId()).build();
-        Collection collection = collectionMapper.queryCollection(collectionPa);
-        if (Objects.isNull(collection)) {
+        CollectionArticle collectionArticlePa = CollectionArticle.builder().userName(userName).type(likeDTO.getType()).sourceId(likeDTO.getSourceId()).build();
+        CollectionArticle collectionArticle = collectionMapper.queryCollection(collectionArticlePa);
+        if (Objects.isNull(collectionArticle)) {
             throw new VLogException(ResultEnum.NO_URL);
         }
-        if (!StringUtils.equals(userName, collection.getUserName())) {
+        if (!StringUtils.equals(userName, collectionArticle.getUserName())) {
             throw new VLogException(ResultEnum.NO_AUTH);
         }
-        Integer integer = collectionMapper.delCollection(collection.getId());
+        Integer integer = collectionMapper.delCollection(collectionArticle.getId());
         if (integer > 0) {
             return ReturnClass.success(CollectionConstant.SUS_DEL);
         }

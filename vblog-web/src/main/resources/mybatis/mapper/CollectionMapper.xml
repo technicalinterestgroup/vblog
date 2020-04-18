@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.technicalinterest.group.mapper.CollectionMapper">
     <!--auto generated Code-->
-    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.Collection">
+    <resultMap id="AllColumnMap" type="com.technicalinterest.group.dao.CollectionArticle">
         <result column="user_name" property="userName"/>
         <result column="id" property="id"/>
         <result column="is_del" property="isDel"/>
@@ -98,7 +98,7 @@
         WHERE id = #{pojo.id}
     </update>
 
-    <select id="queryCollection" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.Collection">
+    <select id="queryCollection" resultMap="AllColumnMap" parameterType="com.technicalinterest.group.dao.CollectionArticle">
         select <include refid="all_column"/> from v_collection
         <where>
             <if test="id!=null">and id=#{id}</if>

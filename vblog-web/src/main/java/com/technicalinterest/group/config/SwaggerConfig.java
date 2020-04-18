@@ -3,6 +3,7 @@ package com.technicalinterest.group.config;
 import com.technicalinterest.group.constant.SwaggerConstant;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Path;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,11 @@ import java.util.ArrayList;
 @Configuration
 @ComponentScan("com.technicalinterest.group")
 public class SwaggerConfig {
+
+	@Value("${spring.profiles.active}")
+	private String profile;
+
+	private static final String PROD_ENV="prod";
 
 	@Bean
 	public Docket createRestApi() {

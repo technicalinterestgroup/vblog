@@ -1,6 +1,6 @@
 package com.technicalinterest.group.mapper;
 
-import com.technicalinterest.group.dao.Collection;
+import com.technicalinterest.group.dao.CollectionArticle;
 import com.technicalinterest.group.dto.CollectionDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -9,15 +9,15 @@ import java.util.List;
 
 @Mapper
 public interface CollectionMapper {
-    Integer insert(@Param("pojo") Collection pojo);
+    Integer insert(@Param("pojo") CollectionArticle pojo);
 
-    Integer insertSelective(@Param("pojo") Collection pojo);
+    Integer insertSelective(@Param("pojo") CollectionArticle pojo);
 
-    Integer insertList(@Param("pojos") List<Collection> pojo);
+    Integer insertList(@Param("pojos") List<CollectionArticle> pojo);
 
-    Integer update(@Param("pojo") Collection pojo);
+    Integer update(@Param("pojo") CollectionArticle pojo);
 
-    Collection queryCollection(Collection pojo);
+    CollectionArticle queryCollection(CollectionArticle pojo);
 
 
     /**
